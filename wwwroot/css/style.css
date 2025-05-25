@@ -416,8 +416,7 @@ option {
     transform: scale(1.05); /* Hiệu ứng phóng to nhẹ */
 }
 /* Style for search input */
-#searchInput, #searchInputhopdong, #searchInputInsuracnce {
-    margin-bottom: 10px;
+#searchInput{
     padding: 8px;
     width: 16rem;
     border-radius: 8px;

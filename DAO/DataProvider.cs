@@ -66,7 +66,18 @@ namespace Hospital_Test.DAO
             }
             return list;
         }
+        public List<T> GetListItemQuery(string query)
+        {
+            DataTable data = ExcuteQuery(query);
 
+            var list = new List<T>();
+            foreach (DataRow dr in data.Rows)
+            {
+                T item = (T)Activator.CreateInstance(typeof(T), dr);
+                list.Add(item);
+            }
+            return list;
+        }
         public List<T> GetListItem(string col, string val, string tableName = "")
         {
             if (tableName == "") tableName = typeof(T).Name;
