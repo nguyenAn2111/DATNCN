@@ -95,7 +95,8 @@ namespace Hospital_Test.Controllers
                 FROM dbo.tbl_maintain m
                 LEFT JOIN dbo.tbl_device d ON m.FK_device_id = d.device_id
                 LEFT JOIN dbo.tbl_room r ON m.FK_room_id = r.room_id
-                LEFT JOIN dbo.tbl_status s ON m.FK_status_id = s.status_id;";
+                LEFT JOIN dbo.tbl_status s ON m.FK_status_id = s.status_id
+                WHERE s.status_id LIKE '0%'";
 
             List<Maintain> Maintain;
             Maintain = DataProvider<Maintain>.Instance.GetListItemQuery(query);
@@ -151,7 +152,8 @@ namespace Hospital_Test.Controllers
                 FROM dbo.tbl_repair re
                 LEFT JOIN dbo.tbl_device d ON re.FK_device_id = d.device_id
                 LEFT JOIN dbo.tbl_room r ON re.FK_room_id = r.room_id
-                LEFT JOIN dbo.tbl_status s ON re.FK_status_id = s.status_id;";
+                LEFT JOIN dbo.tbl_status s ON re.FK_status_id = s.status_id
+                WHERE s.status_id LIKE '1%'";
 
             List<Repair> Repair;
             Repair = DataProvider<Repair>.Instance.GetListItemQuery(query);
