@@ -20,5 +20,12 @@ namespace Hospital_Test.Models
         public string FK_contract_id { get; set; }
         public string FK_status_id { get; set; }
         public string FK_room_id { get; set; }
+
+        public Device(DataRow row)
+        {
+            this.device_id = row["device_id"] != DBNull.Value ? row["device_id"].ToString() : "";
+            this.device_name = row["device_name"] != DBNull.Value ? row["device_name"].ToString() : "";
+        }
+        public Device() { }
     }
 }

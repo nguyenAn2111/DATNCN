@@ -39,11 +39,20 @@ namespace Hospital_Test.Controllers
             return View("~/Views/Shared/Baotri_Suachua.cshtml");
         }
 
+
         public IActionResult Baotri_Add()
         {
+            List<Device> devices;
+            devices = DataProvider<Device>.Instance.GetListItem("FK_status_id", "00", "tbl_device");
+            List<Room> rooms;
+            rooms = DataProvider<Room>.Instance.GetListItem("tbl_room");
+
+            MaintainDetail maintaindetails = new MaintainDetail();
+            maintaindetails.devices = devices;
+            maintaindetails.rooms = rooms;
+
             return RedirectToAction("Baotri");
         }
-
         [HttpPost]
         public IActionResult Baotri_Add(string btrname, string btrID, string Btrdate, string btrDelivery, int btrDeliPhone, string btrMaintain, int btrMaintainPhone )
         {
@@ -56,35 +65,35 @@ namespace Hospital_Test.Controllers
             //DataProvider<Staff>.Instance.ExcuteQuery(query);
             return RedirectToAction("Baotri");
         }
+
         public IActionResult Baotri()
         {
-            // Khởi tạo
+            // Lấy tham số từ query như hiện tại
             string field;
             string sortOrder;
             string searchField;
             string searchString;
             string page;
 
-            /// Lấy query, không có => đặt mặc định
-            var urlQuery = Request.HttpContext.Request.Query; // Url: .../Member?Sort={sortOrder}&searchField={searchField}...
+            var urlQuery = Request.HttpContext.Request.Query;
             field = urlQuery["field"];
             sortOrder = urlQuery["sort"];
             searchField = urlQuery["searchField"];
             searchString = urlQuery["SearchString"];
             page = urlQuery["page"];
-            field = field == null ? "All" : field;
 
-            sortOrder = sortOrder == null ? "Name" : sortOrder; ;
+            field = field == null ? "All" : field;
+            sortOrder = sortOrder == null ? "Name" : sortOrder;
             searchField = searchField == null ? "device_name" : searchField;
             searchString = searchString == null ? "" : searchString;
             page = page == null ? "1" : page;
             int currentPage = Convert.ToInt32(page);
 
-            ItemDisplay<Maintain> MaintainList = new ItemDisplay<Maintain>();
-            MaintainList.SortOrder = sortOrder;
-            MaintainList.CurrentSearchField = searchField;
-            MaintainList.CurrentSearchString = searchString;
-            MaintainList.CurrentPage = currentPage;
+            ItemDisplay<Maintain> maintainList = new ItemDisplay<Maintain>();
+            maintainList.SortOrder = sortOrder;
+            maintainList.CurrentSearchField = searchField;
+            maintainList.CurrentSearchString = searchString;
+            maintainList.CurrentPage = currentPage;
 
             string query = @"
                SELECT
@@ -98,16 +107,27 @@ namespace Hospital_Test.Controllers
                 LEFT JOIN dbo.tbl_status s ON m.FK_status_id = s.status_id
                 WHERE s.status_id LIKE '0%'";
 
-            List<Maintain> Maintain;
-            Maintain = DataProvider<Maintain>.Instance.GetListItemQuery(query);
-            Maintain = Function.Instance.searchItems(Maintain, MaintainList);
-            Maintain = Function.Instance.sortItems(Maintain, MaintainList.SortOrder);
-            MaintainList.Paging(Maintain, 10);
+            List<Maintain> maintain = DataProvider<Maintain>.Instance.GetListItemQuery(query);
+            maintain = Function.Instance.searchItems(maintain, maintainList);
+            maintain = Function.Instance.sortItems(maintain, maintainList.SortOrder);
+            maintainList.Paging(maintain, 10);
 
+            // Lấy dữ liệu devices và rooms cho form lập kế hoạch
+            var maintainForm = new MaintainDetail
+            {
+                devices = DataProvider<Device>.Instance.GetListItem("FK_status_id", "00", "tbl_device"),
+                rooms = DataProvider<Room>.Instance.GetListItem("", "tbl_room")
+            };
 
-            return View("~/Views/Shared/Baotri.cshtml", MaintainList);
+            // Tạo view model tổng hợp
+            var viewModel = new MaintainPageViewModel
+            {
+                MaintainList = maintainList,
+                MaintainForm = maintainForm
+            };
+
+            return View("~/Views/Shared/Baotri.cshtml", viewModel);
         }
-
         [HttpPost]
         public IActionResult Baotri(String sortOrder, String searchString, String searchField, int currentPage = 1)
         {
@@ -170,7 +190,37 @@ namespace Hospital_Test.Controllers
         }
         public IActionResult Kho()
         {
-            return View("~/Views/Shared/Kho.cshtml");
+            // Khởi tạo
+            string field;
+            string sortOrder;
+            string searchField;
+            string searchString;
+            string page;
+
+            /// Lấy query, không có => đặt mặc định
+            var urlQuery = Request.HttpContext.Request.Query;
+            field = urlQuery["field"];
+            sortOrder = urlQuery["sort"];
+            searchField = urlQuery["searchField"];
+            searchString = urlQuery["SearchString"];
+            page = urlQuery["page"];
+            field = field == null ? "All" : field;
+
+            sortOrder = sortOrder == null ? "Name" : sortOrder; ;
+            searchField = searchField == null ? "device_name" : searchField;
+            searchString = searchString == null ? "" : searchString;
+            page = page == null ? "1" : page;
+            int currentPage = Convert.ToInt32(page);
+
+            ItemDisplay<Storage> StorageList = new ItemDisplay<Storage>();
+            StorageList.SortOrder = sortOrder;
+            StorageList.CurrentSearchField = searchField;
+            StorageList.CurrentSearchString = searchString;
+            StorageList.CurrentPage = currentPage;
+
+
+
+            return View("~/Views/Shared/Kho.cshtml", StorageList);
         }
         public IActionResult Taichinh_Hopdong()
         {

@@ -30,6 +30,7 @@ namespace Hospital_Test.Models
             this.repair_broken = (DateTime)row["repair_broken"];
             this.repair_date = (DateTime)row["repair_date"];
             this.FK_room_id = (string)row["FK_room_id"];
+
             this.device_name = row["device_name"] != DBNull.Value ? row["device_name"].ToString() : "";
             this.room_name = row["room_name"] != DBNull.Value ? row["room_name"].ToString() : "";
             this.status_name = row["status_name"] != DBNull.Value ? row["status_name"].ToString() : "";

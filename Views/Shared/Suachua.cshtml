@@ -53,6 +53,7 @@
                         <table id="dataTable" style="width:100%;">
                             <thead>
                                 <tr>
+                                    <th>Mã id</th>
                                     <th>Tên thiết bị<br></th>
                                     <th>Ngày hỏng</th>
                                     <th>Ngày sửa chữa (dự kiến)</th>
@@ -68,6 +69,7 @@
                                         foreach (var item in Model.Items)
                                         {
                                             <tr>
+                                                <td id="facility"> @item.FK_device_id</td>
                                                 <td id="facility"> @item.device_name</td>
                                                 <td id="facility"> @item.repair_broken</td>
                                                 <td id="facility"> @item.repair_date</td>

@@ -1,5 +1,4 @@
-﻿@{
-}
+﻿@model ItemDisplay<Storage>
 
 <!DOCTYPE html>
 <html>
@@ -19,7 +18,7 @@
     </style>
 </head>
 <body>
-
+    <form asp-action="Kho" method="post">
         <div class="surgery-schedule">
             <div class="surgery-major">
                 <div class="surgery-title">
@@ -379,8 +378,8 @@
                                     <th>Thiết bị</th>
                                     <th>Kho nguồn</th>
                                     <th>Kho đích</th>
-                                    <th>Số lượng</th>
-                                    <th>Trạng thái</th>
+                                    <th>Số lượng điều chuyển</th>
+                                    <th>Người quản lí</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -389,14 +388,7 @@
                                     <td>Kho 1</td>
                                     <td>Kho 2</td>
                                     <td>5</td>
-                                    <td>Đang chuyển</td>
-                                </tr>
-                                <tr>
-                                    <td>Bơm tiêm điện</td>
-                                    <td>Kho 2</td>
-                                    <td>Kho 3</td>
-                                    <td>3</td>
-                                    <td>Hoàn thành</td>
+                                    <td>Lê Minh Hà</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -405,7 +397,7 @@
             </div>
         </div>
 
-    <script>
+        <script>
         window.onclick = function (event) {
             // Kiểm tra nếu người dùng bấm vào vùng ngoài modal (tức là phần nền mờ)
             if (event.target === document.getElementById('exportModal') ||
@@ -461,5 +453,5 @@
             });
         });
     </script>
-
+    </form>
 </body>
