@@ -19,7 +19,6 @@
     </style>
 </head>
 <body>
-    <form asp-action="Baotri" method="post">
         <div class="surgery-schedule">
             <div class="surgery-major">
                 <div class="surgery-title">
@@ -51,10 +50,11 @@
                                 Tìm Kiếm
                             </button>
                         </div>
-
+                    <form asp-action="Baotri" method="post">
                         <table id="dataTable" style="width:100%;">
                             <thead>
                                 <tr>
+                                    <th>STT</th>
                                     <th>Mã ID</th>
                                     <th>Tên thiết bị<br></th>
                                     <th>Ngày bảo trì (dự kiến)</th>
@@ -63,16 +63,16 @@
                                     <th> Xem thêm </th>
                                 </tr>
                             </thead>
-
                             <tbody>
                                 @if (Model.MaintainList.PageCount > 0)
                                 {
                                     foreach (var item in Model.MaintainList.Items)
                                     {
                                         <tr>
-                                            <td id="faccility">@item.FK_device_id</td>
+                                            <td id="facility">@(string.IsNullOrEmpty(item.maintain_id) ? "Chưa xếp lịch" : item.maintain_id)</td>
+                                            <td id="faccility">@item.device_id</td>
                                             <td id="facility">@item.device_name</td>
-                                            <td id="facility">@item.maintain_date</td>
+                                            <td id="facility">@(item.maintain_date?.ToString("dd/MM/yyyy") ?? "Chưa xếp lịch")</td>
                                             <td id="facility">@item.room_name</td>
                                             <td id="facility">@item.status_name</td>
                                             <td id="facility">
@@ -90,6 +90,8 @@
                                         <td id="facility">NOT FOUND </td>
                                         <td id="facility">NOT FOUND </td>
                                         <td id="facility">NOT FOUND </td>
+                                        <td id="facility">NOT FOUND </td>
+                                        <td id="facility">NOT FOUND </td>
                                         <td id="facility">
                                             <div class="dropdown">
                                                 <i class="bi bi-three-dots dropdown-toggle-icon" style="cursor: pointer;"></i>
@@ -100,45 +102,44 @@
                                 
                             </tbody>
 
-                        </table>
-
                         <div id="floatingDropdown" class="floating-dropdown" style="display: none;">
                             <a href="#">Chi tiết thông tin thiết bị</a>
                             <a href="#">Chỉnh sửa lịch bảo trì</a>
                         </div>
 
                     </table>
+                    </form>
                 </div>
             </div>
-        </div> //bảng 
+        </div>
 
         <div class="maintain-data">
             <section class="maintain-title" id="kehoach">
                 2. Kế hoạch bảo trì
             </section>
-
             <div class="repair-request-form" style="max-width: none;" onsubmit="handleSubmit(event)">
-                <form asp-action="Baotri_Add" method="post">
+                <form asp-action="Baotri_Add" method="post" >
                     <div class="planer-form">
                         <label>Tên thiết bị cần lập lịch:</label>
-                        <select name="btrname" type="text" style="width: 18rem; margin-right: 1rem;" />
-                        @foreach (var item in Model.MaintainForm.devices)
+                        <select name="btrdevicesname" type="text" style="width: 18rem; margin-right: 1rem;">
+                        @foreach (var item in Model.MaintainForm.devices_maintain)
                         {
                             <option value="@item.device_id">@item.device_name</option>
                         }
                         </select>
 
                         <label>Mã series (mã thiết bị)</label>
-                        <select name="btrID" type="text" style="text-transform: uppercase;" />
-                        @foreach (var item in Model.MaintainForm.devices)
+                    <select name="btrID" type="text" style="width: 18rem; margin-right: 1rem;">
+
+                        @foreach (var item in Model.MaintainForm.devices_maintain)
                         {
-                        <option value="@item.device_id">@item.device_id</option>
+                            <option value="@item.device_id">@item.device_id</option>
                         }
                         </select>
 
                         <label>Ngày bảo trì:</label>
                         <input name="Btrdate" type="date"/>
-                    </div> <br>
+                    </div>
                     <div class="planer-form">
                         <label>Người phụ trách giao nhận thiết bị:</label>
                         <input name="btrDelivery" type="text" style="margin-right: 1rem;" />
@@ -148,22 +149,30 @@
                             Số điện thoại liên hệ:
                         </label>
                         <input type="tel" name="btrDeliPhone" style="margin-left: 0.25rem;" pattern="[0-9]{10}" placeholder="0123456789" />
-                    </div><br>
+                    </div>
 
                     <div class="planer-form">
                         <label>Người phụ trách bảo trì:</label>
-                        <input name="btrMaintain" type="text" style="margin-right: 1rem;" />
+                        <input name="btrMaintainance" type="text" style="margin-right: 1rem;"/>
 
                         <label>
                             <i class="fa-solid fa-phone" style="margin-right: 0.25rem;"></i>
                             Số điện thoại liên hệ:
                         </label>
-                        <input type="tel" name="btrMaintainPhone" style="margin-left: 0.25rem; pattern="[0-9]{10}" placeholder="0123456789" />
-                    </div> <br>
-                    <button>Lưu</button>
+                        <input type="tel" name="btrMaintainPhone" style="margin-left: 0.25rem;" pattern="[0-9]{10}" placeholder="0123456789" />
+                    </div>
+
+                    <div class="planer_form">
+                        <lable>Đơn giá bảo trì:</lable>
+                        <input type="number" name="btrFinance" style="margin-left: 0.25rem;" />
+
+                        <lable>Hóa đơn_Hợp đồng:</lable>
+                        <input type="text" name="btrContact"/>
+                    </div>
+                    <button type="submit">Lưu</button>
                 </form>
             </div>
-        </div> //form nhập liệu
+        </div> 
 
         <div class="maintain-data">
             <section class="maintain-title" id="thongbao">
@@ -211,6 +220,7 @@
                         </div>
                     </div>
                 </div>
+                <!--Lập lại lịch bảo trì -->
                 <div id="rescheduleModal" class="modal">
                     <div class="modal-content">
                         <div style="text-align: center; font-family: Lato; color: #001F54; font-size: 1.5rem; font-weight: 800; text-transform: uppercase;">
@@ -307,7 +317,17 @@
                     }
                 });
             });
-        </script>
 
-    </form>      
+            //định dạng tiền
+            function formatMoney(input) {
+                let value = input.value.replace(/\./g, '');
+
+                if (isNaN(value)) {
+                    input.value = '';
+                    return;
+                }
+                input.value = value.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+            }
+        </script>
+     
 </body>

@@ -18,6 +18,7 @@ using System.Reflection.Metadata.Ecma335;
 using System.Configuration;
 using DocumentFormat.OpenXml.Office2013.Excel;
 using Mono.TextTemplating;
+using DocumentFormat.OpenXml.Drawing.Charts;
 
 namespace Hospital_Test.Controllers
 {
@@ -42,30 +43,81 @@ namespace Hospital_Test.Controllers
 
         public IActionResult Baotri_Add()
         {
+            List<Maintain> maintains;
+            maintains = DataProvider<Maintain>.Instance.GetListItem("tbl_maintain");
             List<Device> devices;
             devices = DataProvider<Device>.Instance.GetListItem("FK_status_id", "00", "tbl_device");
             List<Room> rooms;
             rooms = DataProvider<Room>.Instance.GetListItem("tbl_room");
+            List<Contact> contacts;
+            contacts = DataProvider<Contact>.Instance.GetListItem("tbl_contact");
 
             MaintainDetail maintaindetails = new MaintainDetail();
-            maintaindetails.devices = devices;
-            maintaindetails.rooms = rooms;
+            maintaindetails.maintains_id = maintains;
+            maintaindetails.devices_maintain = devices;
+            maintaindetails.rooms_maintain = rooms;
+            maintaindetails.contacts_maintain = contacts;
 
-            return RedirectToAction("Baotri");
+            return View("Baotri", maintaindetails);
         }
         [HttpPost]
-        public IActionResult Baotri_Add(string btrname, string btrID, string Btrdate, string btrDelivery, int btrDeliPhone, string btrMaintain, int btrMaintainPhone )
+        public IActionResult Baotri_Add(string btrmaintainID, string btrdevicesname, string Btrdate, string btrDelivery, int btrDeliPhone, string btrMaintainance, int btrMaintainPhone, int btrFinance, int btrContact, string btrStatus, string btrRoom)
         {
-            DateTime btrdate = new DateTime();
-            btrdate = DateTime.Parse(Btrdate);
-            string maintainDate = btrdate.ToString("yyyy-MM-dd");
 
-            //string query = String.Format("Insert into dbo.tbl_Surgery(Surgery_ID, FK_Patient_ID, Surgery_Time, FK_Staff_Main, FK_Room_ID) " +
-            //"values({0},{1}, '{2}', {3}, {4} )", surgeryID, pID, surgerytime, surmain, roomID);
-            //DataProvider<Staff>.Instance.ExcuteQuery(query);
+
+           
+            // 2. đoạn này là tự động cộng id cho maintain_id bằng cách lấy id lớn nhất rồi cộng thêm "1" 
+            List<Maintain> maintainid = DataProvider<Maintain>.Instance.GetListItem("tbl_maintain");
+            int max_maintain = 0;
+            foreach (var item in maintainid)
+            {
+                int currentId;
+                if (int.TryParse(item.maintain_id, out currentId))
+                {
+                    if (currentId > max_maintain)
+                    {
+                        max_maintain = currentId;
+                    }
+                }
+            }
+            string BtrmaintainID = (max_maintain + 1).ToString();
+
+            // 3. đoạn này cũng là tự động cộng id cho contact_id bằng cách lấy id lớn nhất rồi cộng thêm "1" 
+            List<Contact> Contacts_maintain = DataProvider<Contact>.Instance.GetListItem("tbl_contact");
+            int max_contact = 0;
+            foreach (var item in Contacts_maintain)
+            {
+                int currentId;
+                if (int.TryParse(item.contact_id, out currentId))
+                {
+                    if (currentId > max_contact)
+                    {
+                        max_contact = currentId;
+                    }
+                }
+            }
+            string BtrContact_id = (max_contact + 1).ToString();
+
+            //4. Thêm vào bảng dbo.tbl_contact khi đã có contact_id và địa chỉ, lưu file với contact_type  là "Hợp đồng bảo trì" 
+            string query_contact_maintain = String.Format("Insert into dbo.tbl_contact (contact_id, contact_type, contact_address, contact_finance)" + "Values ('{0}' , 2 , N'{1}', {2} )", BtrContact_id , btrContact , btrFinance);
+            DataProvider<Contact>.Instance.ExcuteQuery(query_contact_maintain);
+
+
+            btrStatus = "01";
+            btrRoom = "KHO";
+
+            string query = String.Format("Insert into dbo.tbl_maintain (maintain_id, maintain_date, maintain_maintenance, maintain_maintenance_phone, maintain_delivery, maintain_delivery_phone, FK_device_id, FK_status_id, FK_room_id, FK_contact_id )"
+            + "values('{0}', '{1}', N'{2}', {3}, N'{4}', {5}, '{6}', '{7}', N'{8}', {9})", BtrmaintainID, Btrdate, btrMaintainance, btrMaintainPhone, btrDelivery, btrDeliPhone, btrdevicesname, btrStatus, btrRoom, BtrContact_id);
+            DataProvider<Maintain>.Instance.ExcuteQuery(query);
+
+            string updateQuery = String.Format("UPDATE dbo.tbl_device SET FK_room_id = '{0}' WHERE device_id = '{1}'", btrRoom, btrdevicesname);
+            DataProvider<Device>.Instance.ExcuteQuery(updateQuery);
+
+            string updateQuery_device = String.Format("UPDATE dbo.tbl_device SET FK_status_id = '{0}' WHERE device_id = '{1}' ", btrStatus, btrdevicesname);
+            DataProvider<Device>.Instance.ExcuteQuery(updateQuery_device);
+
             return RedirectToAction("Baotri");
         }
-
         public IActionResult Baotri()
         {
             // Lấy tham số từ query như hiện tại
@@ -98,25 +150,25 @@ namespace Hospital_Test.Controllers
             string query = @"
                SELECT
                     m.*,
+                    d.device_id,
                     d.device_name,
                     r.room_name,
                     s.status_name
-                FROM dbo.tbl_maintain m
-                LEFT JOIN dbo.tbl_device d ON m.FK_device_id = d.device_id
-                LEFT JOIN dbo.tbl_room r ON m.FK_room_id = r.room_id
-                LEFT JOIN dbo.tbl_status s ON m.FK_status_id = s.status_id
-                WHERE s.status_id LIKE '0%'";
-
+                FROM dbo.tbl_device d
+                LEFT JOIN dbo.tbl_maintain m ON m.FK_device_id = d.device_id
+                LEFT JOIN dbo.tbl_room r ON d.FK_room_id = r.room_id  -- join qua device thay vì maintain
+                LEFT JOIN dbo.tbl_status s ON d.FK_status_id = s.status_id
+                WHERE d.FK_status_id LIKE '0%'";
             List<Maintain> maintain = DataProvider<Maintain>.Instance.GetListItemQuery(query);
+
             maintain = Function.Instance.searchItems(maintain, maintainList);
             maintain = Function.Instance.sortItems(maintain, maintainList.SortOrder);
             maintainList.Paging(maintain, 10);
 
-            // Lấy dữ liệu devices và rooms cho form lập kế hoạch
             var maintainForm = new MaintainDetail
             {
-                devices = DataProvider<Device>.Instance.GetListItem("FK_status_id", "00", "tbl_device"),
-                rooms = DataProvider<Room>.Instance.GetListItem("", "tbl_room")
+                devices_maintain = DataProvider<Device>.Instance.GetListItem("FK_status_id", "00", "tbl_device"),
+                rooms_maintain = DataProvider<Room>.Instance.GetListItem("tbl_room")
             };
 
             // Tạo view model tổng hợp
