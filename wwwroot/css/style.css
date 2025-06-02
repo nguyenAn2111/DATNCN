@@ -1028,6 +1028,7 @@ section {
         font-weight: bold;
         border-radius: 8px;
         cursor: pointer;
+        width: fit-content;
         transition: background-color 0.2s;
     }
 
@@ -1458,3 +1459,9 @@ section {
         transform: scale(1.05);
         color: #0069cb;
     }
+
+.device-item p {
+    font-size: 1rem;
+    font-weight: 600;
+    padding-top: 1rem;
+}

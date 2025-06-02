@@ -163,10 +163,10 @@
                     </div>
 
                     <div class="planer_form">
-                        <lable>Đơn giá bảo trì:</lable>
+                        <label>Đơn giá bảo trì:</label>
                         <input type="number" name="btrFinance" style="margin-left: 0.25rem;" />
 
-                        <lable>Hóa đơn_Hợp đồng:</lable>
+                        <label>Hóa đơn_Hợp đồng:</label>
                         <input type="text" name="btrContact"/>
                     </div>
                     <button type="submit">Lưu</button>
@@ -178,48 +178,79 @@
             <section class="maintain-title" id="thongbao">
                 3. Tiến độ - Thông báo
             </section>
+            <form asp-action="Baotri" method="post">
             <div class="maintenance-dashboard">
                 <!-- Quá hạn -->
                 <div class="status-column overdue">
                     <h3> ⛔ Quá hạn bảo trì</h3>
-                    <div class="device-item">
-                        <strong>Máy xét nghiệm huyết học</strong>
-                        Hạn: 05/04/2025<br>
-                        Vị trí: Khoa Xét nghiệm
-                        <div style="padding-top: 0.5rem;">
-                            <button id="popup-button" class="reschedule-btn" onclick="openRescheduleModal('Máy xét nghiệm huyết học')">📅 Lập lại lịch</button>
-                            <button id="popup-button" onclick="sendReminder('Máy thở Philip', 'Nguyễn Văn A', '0987654321')"> 📩 Gửi nhắc</button>
-                        </div>
-                    </div>
-                </div>
-
+                    @if (Model.OverdueList != null && Model.OverdueList.Any())
+                    {
+                        foreach (var item in Model.OverdueList)
+                        {
+                            <div class="device-item">
+                                <strong>@item.device_name</strong>
+                                Hạn: @item.maintain_date?.ToString("dd/MM/yyyy")
+                                Vị trí: @item.room_name
+                                <div style="padding-top: 0.5rem;">
+                                    <button type="button" id="popup-button" class="reschedule-btn" onclick="openRescheduleModal('@item.device_name')">📅 Lập lại lịch</button>
+                                    <button type="button" id="popup-button" onclick="sendReminder('@item.device_name', 'Nguyễn Văn A', '0987654321')">📩 Gửi nhắc</button>
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <p>Không có thiết bị quá hạn bảo trì.</p>
+                    }
+                 </div>
                 <!-- Sắp đến hạn -->
                 <div class="status-column comingup">
-                    <h3>🕒 Sắp đến hạn</h3>
-                    <div class="device-item">
-                        <strong>Máy thở Philip</strong>
-                        Hạn: 10/04/2025<br>
-                        Vị trí: Phòng ICU
-                        <div style="padding-top: 0.5rem;">
-                            <button id="popup-button" class="reschedule-btn" onclick="openRescheduleModal('Máy xét nghiệm huyết học')">📅 Lập lại lịch</button>
-                            <button id="popup-button" onclick="sendReminder('Máy thở Philip', 'Nguyễn Văn A', '0987654321')"> 📩 Gửi nhắc</button>
-                        </div>
+                        <h3>🕒 Sắp đến hạn</h3>
+                        @if (Model.ComingupList != null && Model.ComingupList.Any())
+                        {
+                            foreach (var item in Model.ComingupList)
+                            {
+                                <div class="device-item">
+                                    <strong>@item.device_name</strong>
+                                    Hạn: @item.maintain_date?.ToString("dd/MM/yyyy")
+                                    Vị trí: @item.room_name
+                                    <div style="padding-top: 0.5rem;">
+                                        <button type="button" id="popup-button" class="reschedule-btn" onclick="openRescheduleModal('@item.device_name')">📅 Lập lại lịch</button>
+                                        <button type="button" id="popup-button" onclick="sendReminder('@item.device_name', 'Nguyễn Văn A', '0987654321')">📩 Gửi nhắc</button>
+                                    </div>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <p>Không có thiết bị sắp đến hạn.</p>
+                        }
                     </div>
-                </div>
-
                 <!-- Đã hoàn thành hoặc lên lịch -->
                 <div class="status-column completed">
-                    <h3>✅ Đã bảo trì / Lên lịch</h3>
-                    <div class="device-item">
-                        <strong>Máy siêu âm</strong>
-                        Đã bảo trì ngày: 01/04/2025<br>
-                        Người phụ trách: Nguyễn Văn A
-                        <div style="padding-top: 0.5rem;">
-                            <button id="popup-button" class="reschedule-btn" onclick="openRescheduleModal('Máy xét nghiệm huyết học')">📅 Lập lại lịch</button>
-                            <button id="popup-button" onclick="sendReminder('Máy thở Philip', 'Nguyễn Văn A', '0987654321')"> 📩 Gửi nhắc</button>
-                        </div>
+                        <h3>✅ Đã bảo trì / Lên lịch</h3>
+                        @if (Model.CompletedList != null && Model.CompletedList.Any())
+                        {
+                            foreach (var item in Model.CompletedList)
+                            {
+                                <div class="device-item">
+                                    <strong>@item.device_name</strong>
+                                    Đã bảo trì ngày: @item.maintain_date?.ToString("dd/MM/yyyy")
+                                    Người phụ trách: Nguyễn Văn A
+                                    <div style="padding-top: 0.5rem;">
+                                        <button type="button" id="popup-button" class="reschedule-btn" onclick="openRescheduleModal('@item.device_name')">📅 Lập lại lịch</button>
+                                        <button type="button" id="popup-button" onclick="sendReminder('@item.device_name', 'Nguyễn Văn A', '0987654321')">📩 Gửi nhắc</button>
+                                    </div>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <div class="device-item">
+                                <p>Không có thiết bị đã bảo trì hoặc lên lịch.</p>
+                            </div>
+                        }
                     </div>
-                </div>
                 <!--Lập lại lịch bảo trì -->
                 <div id="rescheduleModal" class="modal">
                     <div class="modal-content">
@@ -231,7 +262,7 @@
                             <input type="text" id="deviceName" style="margin-right:1rem;" readonly />
 
                             <label>Ngày bảo trì mới:</label>
-                            <input type="date" id="newDate" required /><br><br>
+                            <input type="date" id="newDate" required /><br /><br />
 
                             <button id="popup-button-reschedule" type="submit">Cập nhật</button>
                             <button id="popup-button-reschedule" type="button" onclick="closeRescheduleModal()">Huỷ</button>
@@ -239,6 +270,7 @@
                     </div>
                 </div>
             </div>
+            </form>
         </div>
 
         <script>

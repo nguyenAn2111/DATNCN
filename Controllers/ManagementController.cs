@@ -171,11 +171,27 @@ namespace Hospital_Test.Controllers
                 rooms_maintain = DataProvider<Room>.Instance.GetListItem("tbl_room")
             };
 
+            DateTime today = DateTime.Today;
+            var overdue = maintain
+                .Where(m => m.maintain_date != null && m.maintain_date.Value.Date < today)
+                .ToList();
+
+            var comingup = maintain
+                .Where(m => m.maintain_date != null && m.maintain_date.Value.Date >= today && m.maintain_date.Value.Date <= today.AddDays(2))
+                .ToList();
+
+            var completed = maintain
+                .Where(m => m.maintain_date != null && m.maintain_date.Value.Date > today.AddDays(2) && m.maintain_date.Value.Date <= today.AddDays(30))
+                .ToList();
+
             // Tạo view model tổng hợp
             var viewModel = new MaintainPageViewModel
             {
                 MaintainList = maintainList,
-                MaintainForm = maintainForm
+                MaintainForm = maintainForm,
+                OverdueList = overdue,
+                ComingupList = comingup,
+                CompletedList = completed
             };
 
             return View("~/Views/Shared/Baotri.cshtml", viewModel);
