@@ -252,13 +252,6 @@ body {
     background-color: #ffff;
     border-radius: 12px;
 }
-
-p {
-    width: fit-content;
-    float: left;
-    font-size: 1.5rem;
-}
-
 .doctor.dropbox {
     width: fit-content;
     float: inline-end;
@@ -1463,5 +1456,4 @@ section {
 .device-item p {
     font-size: 1rem;
     font-weight: 600;
-    padding-top: 1rem;
 }

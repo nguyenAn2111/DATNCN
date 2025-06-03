@@ -189,18 +189,25 @@
                         {
                             <div class="device-item">
                                 <strong>@item.device_name</strong>
-                                Hạn: @item.maintain_date?.ToString("dd/MM/yyyy")
-                                Vị trí: @item.room_name
+                                <div>
+                                    Hạn: @item.maintain_date?.ToString("dd/MM/yyyy")
+                                </div>
+                                <div>
+                                    Vị trí: @item.room_name
+                                </div>
+                                
                                 <div style="padding-top: 0.5rem;">
                                     <button type="button" id="popup-button" class="reschedule-btn" onclick="openRescheduleModal('@item.device_name')">📅 Lập lại lịch</button>
-                                    <button type="button" id="popup-button" onclick="sendReminder('@item.device_name', 'Nguyễn Văn A', '0987654321')">📩 Gửi nhắc</button>
+                                    <button type="button" id="popup-button" onclick="sendReminder('@item.device_name', '@item.maintain_maintenance', '@item.maintain_maintenance_phone')">📩 Gửi nhắc</button>
                                 </div>
                             </div>
                         }
                     }
                     else
                     {
-                        <p>Không có thiết bị quá hạn bảo trì.</p>
+                        <div class="device-item">
+                            <p>Không có thiết bị quá hạn bảo trì.</p>
+                        </div>
                     }
                  </div>
                 <!-- Sắp đến hạn -->
@@ -212,18 +219,24 @@
                             {
                                 <div class="device-item">
                                     <strong>@item.device_name</strong>
+                                    <div>
                                     Hạn: @item.maintain_date?.ToString("dd/MM/yyyy")
+                                    </div>
+                                    <div>
                                     Vị trí: @item.room_name
+                                    </div>
                                     <div style="padding-top: 0.5rem;">
                                         <button type="button" id="popup-button" class="reschedule-btn" onclick="openRescheduleModal('@item.device_name')">📅 Lập lại lịch</button>
-                                        <button type="button" id="popup-button" onclick="sendReminder('@item.device_name', 'Nguyễn Văn A', '0987654321')">📩 Gửi nhắc</button>
+                                    <button type="button" id="popup-button" onclick="sendReminder('@item.device_name', '@item.maintain_maintenance', '@item.maintain_maintenance_phone')">📩 Gửi nhắc</button>
                                     </div>
                                 </div>
                             }
                         }
                         else
                         {
-                            <p>Không có thiết bị sắp đến hạn.</p>
+                            <div class="device-item">
+                                <p>Không có thiết bị sắp đến hạn.</p>
+                            </div>
                         }
                     </div>
                 <!-- Đã hoàn thành hoặc lên lịch -->
@@ -236,10 +249,10 @@
                                 <div class="device-item">
                                     <strong>@item.device_name</strong>
                                     Đã bảo trì ngày: @item.maintain_date?.ToString("dd/MM/yyyy")
-                                    Người phụ trách: Nguyễn Văn A
+                                    Người phụ trách: @item.maintain_maintenance
                                     <div style="padding-top: 0.5rem;">
                                         <button type="button" id="popup-button" class="reschedule-btn" onclick="openRescheduleModal('@item.device_name')">📅 Lập lại lịch</button>
-                                        <button type="button" id="popup-button" onclick="sendReminder('@item.device_name', 'Nguyễn Văn A', '0987654321')">📩 Gửi nhắc</button>
+                                        <button type="button" id="popup-button" onclick="sendReminder('@item.device_name', '@item.maintain_maintenance', '@item.maintain_maintenance_phone')">📩 Gửi nhắc</button>
                                     </div>
                                 </div>
                             }
