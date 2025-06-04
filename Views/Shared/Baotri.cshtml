@@ -1,4 +1,5 @@
-﻿@model MaintainPageViewModel
+﻿@using DocumentFormat.OpenXml.Office.CustomUI
+@model MaintainPageViewModel
 
 <!DOCTYPE html>
 <html>
@@ -39,8 +40,7 @@
             </section>
             <div class="maintain-table">
                 <div class="surgery-table">
-                    <table id="surgery-table">
-                        <div class="wrap-sreach">
+                    <div class="wrap-sreach">
                             <input name="searchString" id="searchInput" class="search" style="width: 21rem;" type="text" placeholder="🔍Điền thông tin">
 
                             <input type="month" id="filter-date">
@@ -81,35 +81,77 @@
                                                 </div>
                                             </td>
                                         </tr>
+
+                                    <div id="floatingDropdown" class="floating-dropdown" style="display: none;">
+                                        @* <a onclick="" class="detailDeviceLink" style="cursor: pointer;" data-maintains="@item.maintain_id"> Chi tiết thông tin thiết bị</a> *@
+                                        <a class="detailDeviceLink" style="cursor: pointer;" data-maintains="@item.maintain_id"> Chi tiết thông tin thiết bị</a>
+                                    </div>
                                     }
                                 }
-                                else
-                                {
-                                    <tr>
-                                        <td id="facility">NOT FOUND </td>
-                                        <td id="facility">NOT FOUND </td>
-                                        <td id="facility">NOT FOUND </td>
-                                        <td id="facility">NOT FOUND </td>
-                                        <td id="facility">NOT FOUND </td>
-                                        <td id="facility">NOT FOUND </td>
-                                        <td id="facility">
-                                            <div class="dropdown">
-                                                <i class="bi bi-three-dots dropdown-toggle-icon" style="cursor: pointer;"></i>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                }
-                                
                             </tbody>
-
-                        <div id="floatingDropdown" class="floating-dropdown" style="display: none;">
-                            <a href="#">Chi tiết thông tin thiết bị</a>
-                            <a href="#">Chỉnh sửa lịch bảo trì</a>
-                        </div>
-
                     </table>
                     </form>
-                </div>
+
+                    <div id="maintainDetailModal" class="modal" style="display:none;">
+                        <div class="modal-content">
+                            <span class="close" id="closeMaintainDetailModal">&times;</span>
+                            <h3>Chi tiết thiết bị</h3>
+                        <form id="deviceDetailForm">
+                            <div id="deviceDetailContent">
+                                <div class="form-group-title">Thông tin thiết bị</div>
+                                <div class="form-group">
+                                    <div>
+                                        <label for="deviceName">Tên thiết bị:</label>
+                                        <input type="text" id="deviceName" name="device_name" readonly>
+                                    </div>
+                                    <div>
+                                        <label for="deviceID">Mã ID của thiết bị:</label>
+                                        <input type="text" id="deviceID" readonly>
+                                    </div>
+                                </div><br>
+                                <div class="form-group-title">Trạng thái bảo trì</div>
+                                <div class="form-group">
+                                    <div>
+                                        <label for="manufacturer">Ngày bảo trì (dự kiến):</label>
+                                        <input type="datetime-local" id="manufacturer" name="maintenance_date" readonly>
+                                    </div>
+                                    <div>
+                                        <label for="status-id">Cập nhật trạng thái:</label>
+                                        <select name="status_id" id="status-id" disabled>
+                                            <option value="02">Đang bảo trì</option>
+                                            <option value="03">Đã bảo trì xong</option>
+                                        </select>
+                                    </div>
+                                </div><br>
+                                <div class="form-group-title">Thông tin người phụ trách giao nhận</div>
+                                <div class="form-group">
+                                    <div>
+                                        <label for="deliveryPerson">Người phụ trách giao nhận thiết bị:</label>
+                                        <input type="text" id="deliveryPerson" readonly>
+                                    </div>
+                                    <div>
+                                        <label for="deliveryPhone">Số điện thoại liên hệ:</label>
+                                        <input type="tel" id="deliveryPhone" pattern="[0-9]{10}" placeholder="0123456789" readonly>
+                                    </div>
+                                </div><br>
+                                <div class="form-group-title">Thông tin người phụ trách bảo trì</div>
+                                <div class="form-group">
+                                    <div>
+                                        <label for="maintenancePerson">Người phụ trách bảo trì:</label>
+                                        <input type="text" id="maintenancePerson" readonly>
+                                    </div>
+                                    <div>
+                                        <label for="maintenancePhone">Số điện thoại liên hệ:</label>
+                                        <input type="tel" id="maintenancePhone" pattern="[0-9]{10}" placeholder="0123456789" readonly>
+                                    </div>
+                                </div><br>
+                                <button type="button" class="cancel-button" id="cancelMaintainDetailModal">Thoát</button>
+                            </div>
+                        </form>
+
+                            
+                        </div>
+                    </div>
             </div>
         </div>
 
@@ -172,7 +214,7 @@
                     <button type="submit">Lưu</button>
                 </form>
             </div>
-        </div> 
+        </div>
 
         <div class="maintain-data">
             <section class="maintain-title" id="thongbao">
@@ -248,8 +290,12 @@
                             {
                                 <div class="device-item">
                                     <strong>@item.device_name</strong>
+                                    <div>
                                     Đã bảo trì ngày: @item.maintain_date?.ToString("dd/MM/yyyy")
+                                    </div>
+                                    <div>
                                     Người phụ trách: @item.maintain_maintenance
+                                    </div>
                                     <div style="padding-top: 0.5rem;">
                                         <button type="button" id="popup-button" class="reschedule-btn" onclick="openRescheduleModal('@item.device_name')">📅 Lập lại lịch</button>
                                         <button type="button" id="popup-button" onclick="sendReminder('@item.device_name', '@item.maintain_maintenance', '@item.maintain_maintenance_phone')">📩 Gửi nhắc</button>
@@ -285,6 +331,8 @@
             </div>
             </form>
         </div>
+
+        @*---------vùng scripts------------------------------------------------------------------------- *@
 
         <script>
             /* modal */
@@ -373,6 +421,46 @@
                 }
                 input.value = value.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
             }
+        </script>
+
+        <script>
+            $(document).ready(function () {
+                // Khi click vào link "Chi tiết thông tin thiết bị"
+                $('.detailDeviceLink').on('click', function () {
+                    var maintainId = $(this).data('maintains'); // Lấy maintain_id từ data attribute, đảm bảo là 'maintains'
+                    $.ajax({
+                        url: '/ManagementController/Baotri_Detail',  // Controller và action đã đúng
+                        type: 'GET',
+                        data: { maintain_id: maintainId },  // Gửi maintain_id qua request
+                        success: function (data) {
+                            console.log("Data received:", data);
+                            $('#deviceDetailContent').html(data);
+                            $('#maintainDetailModal').show();
+                        },
+                        error: function (xhr, status, error) {
+                            // Nếu có lỗi xảy ra khi gọi Ajax
+                            alert("Đã có lỗi xảy ra khi tải dữ liệu.");
+                        }
+                    });
+                });
+
+                // Đóng Modal khi nhấn nút đóng (x)
+                $('#closeMaintainDetailModal').on('click', function () {
+                    $('#maintainDetailModal').hide();  // Ẩn Modal
+                });
+
+                // Đóng Modal khi nhấn nút Thoát
+                $('#cancelMaintainDetailModal').on('click', function () {
+                    $('#maintainDetailModal').hide();  // Ẩn Modal
+                });
+
+                // Đóng Modal khi click ra ngoài vùng modal-content
+                $(window).on('click', function (event) {
+                    if (event.target === $('#maintainDetailModal')[0]) {
+                        $('#maintainDetailModal').hide();  // Ẩn Modal nếu click ra ngoài Modal
+                    }
+                });
+            });
         </script>
      
 </body>

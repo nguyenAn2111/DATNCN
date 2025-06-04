@@ -19,6 +19,7 @@ using System.Configuration;
 using DocumentFormat.OpenXml.Office2013.Excel;
 using Mono.TextTemplating;
 using DocumentFormat.OpenXml.Drawing.Charts;
+using Microsoft.Data.SqlClient;
 
 namespace Hospital_Test.Controllers
 {
@@ -39,8 +40,7 @@ namespace Hospital_Test.Controllers
         public IActionResult Baotri_Suachua() {
             return View("~/Views/Shared/Baotri_Suachua.cshtml");
         }
-
-
+        //---------------------------------------Bảo trì--------------------------------
         public IActionResult Baotri_Add()
         {
             List<Maintain> maintains;
@@ -64,8 +64,6 @@ namespace Hospital_Test.Controllers
         public IActionResult Baotri_Add(string btrmaintainID, string btrdevicesname, string Btrdate, string btrDelivery, int btrDeliPhone, string btrMaintainance, int btrMaintainPhone, int btrFinance, int btrContact, string btrStatus, string btrRoom)
         {
 
-
-           
             // 2. đoạn này là tự động cộng id cho maintain_id bằng cách lấy id lớn nhất rồi cộng thêm "1" 
             List<Maintain> maintainid = DataProvider<Maintain>.Instance.GetListItem("tbl_maintain");
             int max_maintain = 0;
@@ -99,7 +97,7 @@ namespace Hospital_Test.Controllers
             string BtrContact_id = (max_contact + 1).ToString();
 
             //4. Thêm vào bảng dbo.tbl_contact khi đã có contact_id và địa chỉ, lưu file với contact_type  là "Hợp đồng bảo trì" 
-            string query_contact_maintain = String.Format("Insert into dbo.tbl_contact (contact_id, contact_type, contact_address, contact_finance)" + "Values ('{0}' , 2 , N'{1}', {2} )", BtrContact_id , btrContact , btrFinance);
+            string query_contact_maintain = String.Format("Insert into dbo.tbl_contact (contact_id, contact_type, contact_address, contact_finance)" + "Values ('{0}' , 2 , N'{1}', {2} )", BtrContact_id, btrContact, btrFinance);
             DataProvider<Contact>.Instance.ExcuteQuery(query_contact_maintain);
 
 
@@ -115,6 +113,7 @@ namespace Hospital_Test.Controllers
 
             string updateQuery_device = String.Format("UPDATE dbo.tbl_device SET FK_status_id = '{0}' WHERE device_id = '{1}' ", btrStatus, btrdevicesname);
             DataProvider<Device>.Instance.ExcuteQuery(updateQuery_device);
+
 
             return RedirectToAction("Baotri");
         }
@@ -201,6 +200,23 @@ namespace Hospital_Test.Controllers
         {
             return RedirectToAction("Baotri", new { sort = sortOrder, searchField = searchField, searchString = searchString, page = currentPage });
         }
+
+        public IActionResult Baotri_Detail(string maintain_id)  
+        {
+            var maintains = DataProvider<Maintain>.Instance.GetItem("maintain_id", maintain_id, "tbl_maintain");
+
+            if (maintains != null)
+            {
+                return PartialView("_Baotri_Detail", maintains);  // Trả về PartialView với dữ liệu thiết bị
+            }
+            else
+            {
+                return NotFound(); 
+            }
+            
+        }
+
+        //--------------------------------Sửa chữa---------------------------------------
         public IActionResult Suachua()
         {
             // Khởi tạo

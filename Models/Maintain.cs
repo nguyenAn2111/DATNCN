@@ -34,6 +34,9 @@ namespace Hospital_Test.Models
             device_name = row["device_name"] != DBNull.Value ? row["device_name"].ToString() : "";
             room_name = row["room_name"] != DBNull.Value ? row["room_name"].ToString() : "";
             status_name = row["status_name"] != DBNull.Value ? row["status_name"].ToString() : "";
+            maintain_maintenance = row["maintain_maintenance"] != DBNull.Value ? row["maintain_maintenance"].ToString() : "";
+            maintain_maintenance_phone = row["maintain_maintenance_phone"] != DBNull.Value ? row["maintain_maintenance_phone"].ToString() : "";
+
         }
 
     }

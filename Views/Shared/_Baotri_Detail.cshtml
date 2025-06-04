@@ -1,0 +1,56 @@
+﻿@model Hospital_Test.Models.Maintain
+
+
+<div id="maintainDetailModal" class="modal" style="display:none;">
+    <div class="modal-content">
+        <span class="close" id="closeMaintainDetailModal">&times;</span>
+        <h3>Chi tiết thiết bị</h3>
+        <form id="deviceDetailForm">
+            <div id="deviceDetailContent">
+                <div class="form-group-title">Thông tin thiết bị</div>
+                <div class="form-group">
+                    <div>
+                        <label for="deviceName">Tên thiết bị:</label>
+                        <input type="text" id="deviceName" value="@Model.device_name" readonly>
+                    </div>
+                    <div>
+                        <label for="deviceID">Mã ID của thiết bị:</label>
+                        <input type="text" value="@Model.device_id" readonly >
+                    </div>
+                </div><br>
+                <div class="form-group-title">Trạng thái bảo trì</div>
+                <div class="form-group">
+                    <div>
+                        <label for="manufacturer">Ngày bảo trì (dự kiến):</label>
+                        <input type="datetime-local" id="manufacturer" value="@Model.maintain_date" readonly>
+                    </div>
+                    <div>
+                        <label for="status-id">Cập nhật trạng thái:</label>
+                        <input type="text" value="@Model.status_name" readonly />
+                    </div>
+                </div><br>
+                <div class="form-group-title">Thông tin người phụ trách giao nhận</div>
+                <div class="form-group">
+                    <div>
+                        <label for="deliveryPerson">Người phụ trách giao nhận thiết bị:</label>
+                        <input type="text" id="deliveryPerson" value="@Model.maintain_delivery" readonly>
+                    </div>
+                    <div>
+                        <label for="deliveryPhone">Số điện thoại liên hệ:</label>
+                        <input type="tel" id="deliveryPhone" value="@Model.maintain_delivery_phone" readonly>
+                    </div>
+                </div><br>
+                <div class="form-group-title">Thông tin người phụ trách bảo trì</div>
+                <div class="form-group">
+                    <div>
+                        <label for="maintenancePerson">Người phụ trách bảo trì:</label>
+                        <input type="text" id="maintenancePerson" value="@Model.maintain_maintenance" readonly>
+                    </div>
+                    <div>
+                        <label for="maintenancePhone">Số điện thoại liên hệ:</label>
+                        <input type="tel" id="maintenancePhone" value="@Model.maintain_maintenance_phone" readonly>
+                    </div>
+                </div><br>
+                <button type="button" class="cancel-button" id="cancelMaintainDetailModal">Thoát</button>
+            </div>
+        </form>
