@@ -30,7 +30,7 @@ namespace Hospital_Test.Models
 
             maintain_id = row["maintain_id"] != DBNull.Value ? row["maintain_id"].ToString() : "";
             device_id = row["device_id"] != DBNull.Value ? row["device_id"].ToString() : null;
-            FK_room_id = row["FK_room_id"] != DBNull.Value ? row["FK_room_id"].ToString() : null;            
+            FK_room_id = row["FK_room_id"] != DBNull.Value ? row["FK_room_id"].ToString() : null;
             device_name = row["device_name"] != DBNull.Value ? row["device_name"].ToString() : "";
             room_name = row["room_name"] != DBNull.Value ? row["room_name"].ToString() : "";
             status_name = row["status_name"] != DBNull.Value ? row["status_name"].ToString() : "";

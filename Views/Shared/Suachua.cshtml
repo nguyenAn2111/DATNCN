@@ -1,4 +1,4 @@
-﻿@model ItemDisplay<Repair>
+﻿@model RepairPageViewMode
 
 <!DOCTYPE html>
 <html>
@@ -17,7 +17,7 @@
     </style>
 </head>
 <body>
-    <form asp-action="Suachua" method="post">
+   
         <div class="surgery-schedule">
             <div class="surgery-major">
                 <div class="surgery-title">
@@ -31,7 +31,7 @@
             <a href="#yeucau">Tạo yêu cầu sửa chữa</a>
             <a href="#thongbao">Thông báo sửa chữa</a>
         </nav>
-
+    <form asp-action="Suachua" method="post">
         <div class="maintain-data">
             <section class="maintain-title" id="thongtin">
                 1. Danh sách thiết bị sửa chữa
@@ -64,9 +64,9 @@
                             </thead>
 
                             <tbody>
-                                @if (Model.PageCount > 0) //chưa xử lí ngoại lệ, phải thêm database mới chạy bình thường được :) 
-                                    {
-                                        foreach (var item in Model.Items)
+                                @if (Model.RepairList.PageCount > 0) //chưa xử lí ngoại lệ, phải thêm database mới chạy bình thường được :)
+                                {
+                                    foreach (var item in Model.RepairList.Items)
                                         {
                                             <tr>
                                                 <td id="facility"> @item.FK_device_id</td>
@@ -110,7 +110,8 @@
                 </div>
             </div>
         </div>
-
+    </form>
+    <form asp-action="Suachua_Add" method="post">
         <div class="maintain-data">
             <section class="maintain-title" id="yeucau">
                 2. Tạo yêu cầu sửa chữa
@@ -118,41 +119,52 @@
             <div class="repair-request-form">
                 <div class="planer-form">
                         <label for="device">Tên thiết bị:</label>
-                        <input type="text" placeholder="Nhập tên thiết bị cần sửa" style="margin-right: 1rem ;">
+                        <select type="text" name="schDevicename" placeholder="Nhập tên thiết bị cần sửa" style="margin-right: 1rem ;">
+                            @foreach (var item in Model.RepairForm.devices_repair)
+                                {
+                                <option value="@item.device_id">@item.device_name</option>
+                                }
+                        </select>
+
+                        <label for="device">Mã ID thiết bị:</label>
+                        <select type="text" name="schDeviceID" style="margin-right: 1rem ;">
+                        @foreach (var item in Model.RepairForm.devices_repair)
+                        {
+                            <option value="@item.device_id">@item.device_id</option>
+                        }
+                        </select>
 
                         <label for="priority">Mức độ ưu tiên:</label>
-                        <select id="priority" name="priority" required>
-                            <option value="">-- Chọn mức ưu tiên --</option>
+                        <select id="priority" name="schPriority" required>
                             <option value="CAO">Cao</option>
                             <option value="TRUNG BÌNH">Trung bình</option>
                             <option value="THẤP">Thấp</option>
                         </select>
                 </div><br/>
-                <div class="planer-form">
-                        <label for="repairNumber">Số lượng thiết bị cần sửa:</label>
-                        <input type="number" min="0" step="1" style="margin-right: 1rem ;">
 
+                <div class="planer-form">
                         <label for="repairNumber">Đơn giá trên đơn vị sửa:</label>
-                        <input type="text" id="money" name="money" oninput="formatMoney(this)" required>
+                        <input type="number" id="money" name="schFinance" oninput="formatMoney(this)" required>
                 </div> <br/>
+
                 <div class="planer-form" >
                         <!-- Mô tả lỗi -->
                     <label for="description" style= "float: left; margin-right: 0.25rem;">Mô tả lỗi:</label>
-                    <textarea id="description" style="width: 45.5rem;" name="description" placeholder="Nhập mô tả lỗi..." required></textarea>
+                    <textarea id="description" style="width: 45.5rem;" name="schNote" placeholder="Nhập mô tả lỗi..." required></textarea>
                 </div><br/>
                 <div class="planer-form">
                         <label for="image" style="width: 14rem;">Đính kèm hình ảnh (nếu có):</label>
-                        <input style="width: 27rem;" type="file" id="image" name="image" accept="image/*">
+                        <input style="width: 27rem;" type="file" id="image" name="schImage" accept="image/*">
                 </div><br/>
                 <div class="planer-form">
                         <label for="kinked_file">Hóa đơn sửa chữa (nếu có):</label>
-                        <input type="file" id="fileInput" name="files[]" class="file-input" multiple onchange="displayFileNames()">
+                        <input type="file" id="fileInput" name="schContact" class="file-input" multiple onchange="displayFileNames()">
                 </div><br/>
                     <!-- Gửi yêu cầu -->
                     <button type="submit">Gửi yêu cầu</button>
             </div>
         </div>
-
+    </form>
         <div class="maintain-data" id="thongbao">
             <section class="maintain-title">
                 3. Thông báo sửa chữa
@@ -329,5 +341,5 @@
                 });
             });
         </script>
-    </form>
+
 </body>

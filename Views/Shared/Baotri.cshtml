@@ -1,5 +1,4 @@
-﻿@using DocumentFormat.OpenXml.Office.CustomUI
-@model MaintainPageViewModel
+﻿@model MaintainPageViewModel
 
 <!DOCTYPE html>
 <html>
@@ -84,7 +83,7 @@
 
                                     <div id="floatingDropdown" class="floating-dropdown" style="display: none;">
                                         @* <a onclick="" class="detailDeviceLink" style="cursor: pointer;" data-maintains="@item.maintain_id"> Chi tiết thông tin thiết bị</a> *@
-                                        <a class="detailDeviceLink" style="cursor: pointer;" data-maintains="@item.maintain_id"> Chi tiết thông tin thiết bị</a>
+                                        <a href="javascript:void(0);" class="detailDeviceLink" style="cursor: pointer;" data-maintains="@item.maintain_id"> Chi tiết thông tin thiết bị</a>
                                     </div>
                                     }
                                 }
@@ -462,5 +461,5 @@
                 });
             });
         </script>
-     
+
 </body>

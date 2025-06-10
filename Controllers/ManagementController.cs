@@ -20,7 +20,6 @@ using DocumentFormat.OpenXml.Office2013.Excel;
 using Mono.TextTemplating;
 using DocumentFormat.OpenXml.Drawing.Charts;
 using Microsoft.Data.SqlClient;
-
 namespace Hospital_Test.Controllers
 {
     public class ManagementController : Controller
@@ -96,7 +95,7 @@ namespace Hospital_Test.Controllers
             }
             string BtrContact_id = (max_contact + 1).ToString();
 
-            //4. Thêm vào bảng dbo.tbl_contact khi đã có contact_id và địa chỉ, lưu file với contact_type  là "Hợp đồng bảo trì" 
+            //4. Thêm vào bảng dbo.tbl_contact khi đã có contact_id và địa chỉ, lưu file với contact_type  là "Hợp đồng bảo trì", sủa lại 
             string query_contact_maintain = String.Format("Insert into dbo.tbl_contact (contact_id, contact_type, contact_address, contact_finance)" + "Values ('{0}' , 2 , N'{1}', {2} )", BtrContact_id, btrContact, btrFinance);
             DataProvider<Contact>.Instance.ExcuteQuery(query_contact_maintain);
 
@@ -200,7 +199,6 @@ namespace Hospital_Test.Controllers
         {
             return RedirectToAction("Baotri", new { sort = sortOrder, searchField = searchField, searchString = searchString, page = currentPage });
         }
-
         public IActionResult Baotri_Detail(string maintain_id)  
         {
             var maintains = DataProvider<Maintain>.Instance.GetItem("maintain_id", maintain_id, "tbl_maintain");
@@ -217,6 +215,75 @@ namespace Hospital_Test.Controllers
         }
 
         //--------------------------------Sửa chữa---------------------------------------
+        public IActionResult Suachua_Add()
+        {
+            List<Repair> repairs;
+            repairs = DataProvider<Repair>.Instance.GetListItem("tbl_repair");
+            List<Device> devices;
+            devices = DataProvider<Device>.Instance.GetListItem("tbl_device");
+            List<Room> rooms;
+            rooms = DataProvider<Room>.Instance.GetListItem("tbl_room");
+            List<Contact> contacts;
+            contacts = DataProvider<Contact>.Instance.GetListItem("tbl_contact");
+
+            RepairDetail repairdetails = new RepairDetail();
+            repairdetails.repairs_id = repairs;
+            repairdetails.devices_repair = devices;
+            repairdetails.rooms_repair = rooms;
+            repairdetails.contacts_repair = contacts;
+            return View("Suachua", repairdetails);
+        }
+        [HttpPost]
+        public IActionResult Suachua_Add(string schID, string schBroken, string schPriority, string schDate, string schNote, string schImage, int schFinance, string schContact, int schDevice, string schStatus, string schRoom, string schUpdateDate, string schUpdateStatus, string schUpdateNote)
+        {
+            //Tự tạo id cho Repair
+            List<Repair> repairID = DataProvider<Repair>.Instance.GetListItem("tbl_repair");
+            int max_repair= 0;
+            foreach (var item in repairID)
+            {
+                int currentId;
+                if (int.TryParse(item.repair_id, out currentId))
+                {
+                    if (currentId > max_repair)
+                    {
+                        max_repair = currentId;
+                    }
+                }
+            }
+            string SchID = (max_repair + 1).ToString();
+
+            //Tạo id cho contact
+            List<Contact> Contacts_repair = DataProvider<Contact>.Instance.GetListItem("tbl_contact");
+            int max_contact = 0;
+            foreach (var item in Contacts_repair)
+            {
+                int currentId;
+                if (int.TryParse(item.contact_id, out currentId))
+                {
+                    if (currentId > max_contact)
+                    {
+                        max_contact = currentId;
+                    }
+                }
+            }
+            string SchContact_id = (max_contact + 1).ToString();
+            // Thêm vào bảng dbo.tbl_contact khi đã có contact_id và địa chỉ, lưu file với contact_type  là "Hợp đồng suachua" 
+            string query_contact_repair = String.Format("Insert into dbo.tbl_contact (contact_id, contact_type, contact_address, contact_finance)" + "Values ('{0}' , 3 , N'{1}', {2} )", SchContact_id, schContact, schFinance);
+            DataProvider<Contact>.Instance.ExcuteQuery(query_contact_repair);
+
+            DateTime SchUpdateDate;
+            if (string.IsNullOrEmpty(schUpdateDate) || !DateTime.TryParse(schUpdateDate, out SchUpdateDate))
+            {
+                SchUpdateDate = DateTime.Today;
+            }
+            // Chuyển đổi ngày sang chuỗi với định dạng yyyy-MM-dd
+            string SChUpdateDate = SchUpdateDate.ToString("yyyy-MM-dd");
+
+
+
+            return RedirectToAction("Suachua");
+        }
+        
         public IActionResult Suachua()
         {
             // Khởi tạo
@@ -272,6 +339,7 @@ namespace Hospital_Test.Controllers
         {
             return RedirectToAction("Suachua", new { sort = sortOrder, searchField = searchField, searchString = searchString, page = currentPage });
         }
+        //---------------------------------Kho-----------------------------------------------
         public IActionResult Kho()
         {
             // Khởi tạo
