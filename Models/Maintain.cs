@@ -27,16 +27,16 @@ namespace Hospital_Test.Models
                 maintain_date = (DateTime)row["maintain_date"];
             else
                 maintain_date = null;
-
             maintain_id = row["maintain_id"] != DBNull.Value ? row["maintain_id"].ToString() : "";
-            device_id = row["device_id"] != DBNull.Value ? row["device_id"].ToString() : null;
+            device_id = row.Table.Columns.Contains("device_id") && row["device_id"] != DBNull.Value ? row["device_id"].ToString() : "";
             FK_room_id = row["FK_room_id"] != DBNull.Value ? row["FK_room_id"].ToString() : null;
-            device_name = row["device_name"] != DBNull.Value ? row["device_name"].ToString() : "";
-            room_name = row["room_name"] != DBNull.Value ? row["room_name"].ToString() : "";
-            status_name = row["status_name"] != DBNull.Value ? row["status_name"].ToString() : "";
+            device_name = row.Table.Columns.Contains("device_name") && row["device_name"] != DBNull.Value ? row["device_name"].ToString() : "";
+            room_name = row.Table.Columns.Contains("room_name") && row["room_name"] != DBNull.Value ? row["room_name"].ToString() : "";
+            status_name = row.Table.Columns.Contains("status_name") && row["status_name"] != DBNull.Value ? row["status_name"].ToString() : "";
             maintain_maintenance = row["maintain_maintenance"] != DBNull.Value ? row["maintain_maintenance"].ToString() : "";
             maintain_maintenance_phone = row["maintain_maintenance_phone"] != DBNull.Value ? row["maintain_maintenance_phone"].ToString() : "";
-
+            maintain_delivery = row["maintain_delivery"] != DBNull.Value ? row["maintain_delivery"].ToString() : "";
+            maintain_delivery_phone = row["maintain_delivery_phone"] != DBNull.Value ? row["maintain_delivery_phone"].ToString() : "";
         }
 
     }

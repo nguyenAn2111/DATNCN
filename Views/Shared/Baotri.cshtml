@@ -41,14 +41,12 @@
                 <div class="surgery-table">
                     <div class="wrap-sreach">
                             <input name="searchString" id="searchInput" class="search" style="width: 21rem;" type="text" placeholder="🔍Điền thông tin">
-
                             <input type="month" id="filter-date">
-
                             <button class="searchingpatient" style="color: white;border: 1px #001F54 solid;font-size: 1.1rem; font-family: lato; padding: 0.5rem 1rem;background-color: #1282A2;border-radius: 8px;" type="submit">
                                 <i class="fa-solid fa-magnifying-glass"></i>
                                 Tìm Kiếm
                             </button>
-                        </div>
+                    </div>
                     <form asp-action="Baotri" method="post">
                         <table id="dataTable" style="width:100%;">
                             <thead>
@@ -76,81 +74,70 @@
                                             <td id="facility">@item.status_name</td>
                                             <td id="facility">
                                                 <div class="dropdown">
-                                                    <i class="bi bi-three-dots dropdown-toggle-icon" style="cursor: pointer;"></i>
+                                                    <a style="cursor: pointer;" id="detailMaintainLink" onclick="openMaintainDetail('@item.maintain_id')"> <i class="fa-solid fa-circle-info"></i> </a>
                                                 </div>
                                             </td>
                                         </tr>
-
-                                    <div id="floatingDropdown" class="floating-dropdown" style="display: none;">
-                                        @* <a onclick="" class="detailDeviceLink" style="cursor: pointer;" data-maintains="@item.maintain_id"> Chi tiết thông tin thiết bị</a> *@
-                                        <a href="javascript:void(0);" class="detailDeviceLink" style="cursor: pointer;" data-maintains="@item.maintain_id"> Chi tiết thông tin thiết bị</a>
-                                    </div>
                                     }
                                 }
                             </tbody>
                     </table>
                     </form>
-
+@* ------------------------------modal hiển thị chi tiết---------------------------------- *@
                     <div id="maintainDetailModal" class="modal" style="display:none;">
                         <div class="modal-content">
                             <span class="close" id="closeMaintainDetailModal">&times;</span>
                             <h3>Chi tiết thiết bị</h3>
-                        <form id="deviceDetailForm">
                             <div id="deviceDetailContent">
                                 <div class="form-group-title">Thông tin thiết bị</div>
                                 <div class="form-group">
                                     <div>
                                         <label for="deviceName">Tên thiết bị:</label>
-                                        <input type="text" id="deviceName" name="device_name" readonly>
+                                        <input type="text" id="device_name" readonly>
                                     </div>
                                     <div>
                                         <label for="deviceID">Mã ID của thiết bị:</label>
-                                        <input type="text" id="deviceID" readonly>
+                                        <input type="text" id="device_id" readonly>
                                     </div>
                                 </div><br>
                                 <div class="form-group-title">Trạng thái bảo trì</div>
                                 <div class="form-group">
                                     <div>
                                         <label for="manufacturer">Ngày bảo trì (dự kiến):</label>
-                                        <input type="datetime-local" id="manufacturer" name="maintenance_date" readonly>
+                                        <input type="date" id="maintain_date" >
                                     </div>
                                     <div>
                                         <label for="status-id">Cập nhật trạng thái:</label>
-                                        <select name="status_id" id="status-id" disabled>
-                                            <option value="02">Đang bảo trì</option>
-                                            <option value="03">Đã bảo trì xong</option>
-                                        </select>
+                                        <input type="type" id="status_name" readonly>
                                     </div>
                                 </div><br>
                                 <div class="form-group-title">Thông tin người phụ trách giao nhận</div>
                                 <div class="form-group">
                                     <div>
                                         <label for="deliveryPerson">Người phụ trách giao nhận thiết bị:</label>
-                                        <input type="text" id="deliveryPerson" readonly>
+                                    <input type="text" id="maintain_delivery" readonly>
                                     </div>
                                     <div>
                                         <label for="deliveryPhone">Số điện thoại liên hệ:</label>
-                                        <input type="tel" id="deliveryPhone" pattern="[0-9]{10}" placeholder="0123456789" readonly>
+                                    <input type="tel" id="maintain_delivery_phone" readonly>
                                     </div>
                                 </div><br>
                                 <div class="form-group-title">Thông tin người phụ trách bảo trì</div>
                                 <div class="form-group">
                                     <div>
                                         <label for="maintenancePerson">Người phụ trách bảo trì:</label>
-                                        <input type="text" id="maintenancePerson" readonly>
+                                    <input type="text" id="maintain_maintenance" readonly>
                                     </div>
                                     <div>
                                         <label for="maintenancePhone">Số điện thoại liên hệ:</label>
-                                        <input type="tel" id="maintenancePhone" pattern="[0-9]{10}" placeholder="0123456789" readonly>
+                                    <input type="tel" id="maintain_maintenance_phone" readonly>
                                     </div>
                                 </div><br>
                                 <button type="button" class="cancel-button" id="cancelMaintainDetailModal">Thoát</button>
                             </div>
-                        </form>
-
-                            
                         </div>
                     </div>
+                </div>
             </div>
         </div>
 
@@ -214,7 +201,6 @@
                 </form>
             </div>
         </div>
-
         <div class="maintain-data">
             <section class="maintain-title" id="thongbao">
                 3. Tiến độ - Thông báo
@@ -334,7 +320,7 @@
         @*---------vùng scripts------------------------------------------------------------------------- *@
 
         <script>
-            /* modal */
+            /* modal lập lại lịch */
             function openRescheduleModal(deviceName) {
                 document.getElementById("rescheduleModal").style.display = "flex";
                 document.getElementById("deviceName").value = deviceName;
@@ -353,7 +339,6 @@
                 closeRescheduleModal();
             });
         </script>
-
         <script>
             /* gửi nhắc nhở */
             function sendReminder(device, person, phone) {
@@ -361,40 +346,7 @@
             }
 
         </script>
-
         <script>
-            /* Dropdown */
-            document.addEventListener('DOMContentLoaded', function () {
-                const dropdown = document.getElementById('floatingDropdown');
-                let activeIcon = null;
-
-                document.querySelectorAll('.dropdown-toggle-icon').forEach(icon => {
-                    icon.addEventListener('click', function (e) {
-                        e.stopPropagation(); // Ngăn click lan ra ngoài
-                        const rect = icon.getBoundingClientRect();
-
-                        dropdown.style.top = rect.bottom + window.scrollY + 'px';
-                        dropdown.style.left = rect.left + window.scrollX + 'px';
-
-                        // Toggle hiển thị
-                        if (dropdown.style.display === 'block' && activeIcon === icon) {
-                            dropdown.style.display = 'none';
-                            activeIcon = null;
-                        } else {
-                            dropdown.style.display = 'block';
-                            activeIcon = icon;
-                        }
-                    });
-                });
-
-                // Ẩn dropdown nếu click ngoài
-                document.addEventListener('click', function (e) {
-                    if (!dropdown.contains(e.target)) {
-                        dropdown.style.display = 'none';
-                        activeIcon = null;
-                    }
-                });
-            });
             // tìm kiếm 
             document.getElementById("searchInput").addEventListener("keyup", function () {
                 const filter = this.value.toUpperCase();
@@ -422,44 +374,64 @@
             }
         </script>
 
-        <script>
-            $(document).ready(function () {
-                // Khi click vào link "Chi tiết thông tin thiết bị"
-                $('.detailDeviceLink').on('click', function () {
-                    var maintainId = $(this).data('maintains'); // Lấy maintain_id từ data attribute, đảm bảo là 'maintains'
-                    $.ajax({
-                        url: '/ManagementController/Baotri_Detail',  // Controller và action đã đúng
-                        type: 'GET',
-                        data: { maintain_id: maintainId },  // Gửi maintain_id qua request
-                        success: function (data) {
-                            console.log("Data received:", data);
-                            $('#deviceDetailContent').html(data);
-                            $('#maintainDetailModal').show();
-                        },
-                        error: function (xhr, status, error) {
-                            // Nếu có lỗi xảy ra khi gọi Ajax
-                            alert("Đã có lỗi xảy ra khi tải dữ liệu.");
-                        }
-                    });
-                });
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const floatingDropdown = document.getElementById('floatingDropdown');
+            const detailLink = document.getElementById('detailMaintainLink');
+            const maintainDetailModal = document.getElementById('maintainDetailModal');
+            const closeBtn = document.getElementById('closeMaintainDetailModal');
+            const cancelBtn = document.getElementById('cancelMaintainDetailModal');
 
-                // Đóng Modal khi nhấn nút đóng (x)
-                $('#closeMaintainDetailModal').on('click', function () {
-                    $('#maintainDetailModal').hide();  // Ẩn Modal
-                });
-
-                // Đóng Modal khi nhấn nút Thoát
-                $('#cancelMaintainDetailModal').on('click', function () {
-                    $('#maintainDetailModal').hide();  // Ẩn Modal
-                });
-
-                // Đóng Modal khi click ra ngoài vùng modal-content
-                $(window).on('click', function (event) {
-                    if (event.target === $('#maintainDetailModal')[0]) {
-                        $('#maintainDetailModal').hide();  // Ẩn Modal nếu click ra ngoài Modal
-                    }
-                });
+            // Mở modal khi click vào "Chi tiết thông tin thiết bị"
+            detailLink.addEventListener('click', function (event) {
+                event.preventDefault(); // Ngăn link chuyển trang
+                floatingDropdown.style.display = 'none'; // Ẩn dropdown
+                maintainDetailModal.style.display = 'flex';
             });
-        </script>
+
+            // Đóng modal khi nhấn nút đóng (x)
+            closeBtn.addEventListener('click', function () {
+                maintainDetailModal.style.display = 'none';
+            });
+
+            // Đóng modal khi nhấn nút Thoát
+            cancelBtn.addEventListener('click', function () {
+                maintainDetailModal.style.display = 'none';
+            });
+
+            // Đóng modal khi click ra ngoài vùng modal-content
+            window.addEventListener('click', function (event) {
+                if (event.target === maintainDetailModal) {
+                    maintainDetailModal.style.display = 'none';
+                }
+            });
+        });
+        function openMaintainDetail(id) {
+            fetch(`/Management/Baotri_GetById?id=${id}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log("DATA:", data);
+
+                    // Gán dữ liệu vào các input trong modal
+                    document.getElementById('device_id').value = data.device_id || '';
+                    document.getElementById('device_name').value = data.device_name || '';
+                    document.getElementById('status_name').value = data.status_name || '';
+                    document.getElementById('maintain_delivery').value = data.maintain_delivery || '';
+                    document.getElementById('maintain_delivery_phone').value = data.maintain_delivery_phone || '';
+                    document.getElementById('maintain_maintenance').value = data.maintain_maintenance || '';
+                    document.getElementById('maintain_maintenance_phone').value = data.maintain_maintenance_phone || '';
+                    document.getElementById('maintain_date').value = data.maintain_date?.split('T')[0] || '';
+                    // Hiển thị modal
+                    document.getElementById('maintainDetailModal').style.display = 'flex';
+                })
+                .catch(error => {
+                    console.error("Lỗi lấy dữ liệu thiết bị:", error);
+                    alert("Không thể tải dữ liệu thiết bị.");
+                });
+        }
+
+
+    </script>
+
 
 </body>

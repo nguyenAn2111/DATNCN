@@ -102,49 +102,5 @@ namespace Hospital_Test.DAO
             return items;
         }
 
-
-        /*public MemoryStream ExportToExcel<T>(List<T> items)
-        {
-            var memoryStream = new MemoryStream();
-            using (var excelPackage = new ExcelPackage(memoryStream))
-            {
-                var worksheet = excelPackage.Workbook.Worksheets.Add("Danh sách thành viên");
-                var currentRow = 1;
-                // trỏ đến dòng 1 và cột 1 thay giá trị bằng LabID các dòng dưới cx tương tự
-
-                var allAttr = typeof(T).GetProperties(); // Lấy danh sách attributes của class Member
-                int col = 1;
-
-
-                foreach (var attr in allAttr)
-                    if (attr.Name != "Avt")
-                        worksheet.Cells[currentRow, col++].Value = attr.Name;
-
-                // Lấy tất cả dữ liệu trong database theo thứ tự tăng dần labID
-
-                foreach (var item in items)
-                {
-                    // Dòng thứ 2 trở đi sẽ đổ dữ liệu từ database vào
-                    currentRow += 1;
-                    col = 1;
-                    foreach (var attr in allAttr)
-                    {
-                        if (attr.Name != "Avt")
-                        {
-                            object value = attr.GetValue(item);
-                            worksheet.Cells[currentRow, col++].Value = value == null ? "N/A" : value.ToString();
-                        }
-                    }
-
-                }
-                // Trả về dữ liệu dạng xlsx
-                using (var stream = new MemoryStream())
-                {
-                    excelPackage.SaveAs(stream);
-                    return stream;
-                }
-            }
-        }*/
-
     }
 }

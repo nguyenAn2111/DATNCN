@@ -6,6 +6,7 @@ using System.Data.SqlClient;
 using System.Data;
 using Microsoft.Data.SqlClient;
 using DocumentFormat.OpenXml.InkML;
+using Hospital_Test.Models;
 
 namespace Hospital_Test.DAO
 {
@@ -105,8 +106,6 @@ namespace Hospital_Test.DAO
             }
             return list;
         }
-
-
         public T GetItem(string col, string val, string tableName)
         {
             string query = String.Format("select * from dbo.{0} where [{1}] = N'{2}'", tableName, col, val);
@@ -121,6 +120,7 @@ namespace Hospital_Test.DAO
                 return default(T);
             }
         }
+
         public T GetItem(string col, int val, string tableName)
         {
             string query = String.Format("select * from dbo.{0} where [{1}] = {2}", tableName, col, val);
