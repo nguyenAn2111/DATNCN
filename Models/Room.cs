@@ -5,8 +5,8 @@ namespace Hospital_Test.Models
 {
     public class Room
     {
-        public string room_id { get; set; }
-        public string room_type { get; set; }
+        public string room_id { get; set; } //Tòa + số phòng
+        public string room_type { get; set; } //Loại phòng
         public string room_name { get; set; }
 
         public Room(DataRow row)
@@ -19,3 +19,4 @@ namespace Hospital_Test.Models
         public Room() { }
     }
 }
+

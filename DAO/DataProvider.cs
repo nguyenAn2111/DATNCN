@@ -6,6 +6,7 @@ using System.Data.SqlClient;
 using System.Data;
 using Microsoft.Data.SqlClient;
 using DocumentFormat.OpenXml.InkML;
+using Hospital_Test.Models;
 
 namespace Hospital_Test.DAO
 {
@@ -19,10 +20,11 @@ namespace Hospital_Test.DAO
         }
         private DataProvider() { }
 
+        private string connectionSTR = @"Data Source=ADMIN\SQLEXPRESS;Initial Catalog=HTQLTBYT;Integrated Security=True;Connect Timeout=30;Encrypt=True;Trust Server Certificate=True;Application Intent=ReadWrite;Multi Subnet Failover=False";
 
         //private string connectionSTR = @"Data Source=NGOXUANHINH2801;Initial Catalog=Hethongquanlylab;Integrated Security=True";
         //private string connectionSTR = @"Data Source=ADMIN\SQLEXPRESS;Initial Catalog=HTQLVTYT;Integrated Security=True;Connect Timeout=30;Encrypt=True;Trust Server Certificate=True;Application Intent=ReadWrite;Multi Subnet Failover=False";
-        private string connectionSTR = @"Data Source= WARMACHINE-2137;Initial Catalog=HTQLTBYT;Integrated Security=True;Connect Timeout=30;Encrypt=True;Trust Server Certificate=True;Application Intent=ReadWrite;Multi Subnet Failover=False";
+        //private string connectionSTR = @"Data Source= WARMACHINE-2137;Initial Catalog=HTQLTBYT;Integrated Security=True;Connect Timeout=30;Encrypt=True;Trust Server Certificate=True;Application Intent=ReadWrite;Multi Subnet Failover=False";
 
         public DataTable ExcuteQuery(string query, object[] parameter = null)
         {
@@ -124,6 +126,7 @@ namespace Hospital_Test.DAO
                 return default(T);
             }
         }
+
         public T GetItem(string col, int val, string tableName)
         {
             string query = String.Format("select * from dbo.{0} where [{1}] = {2}", tableName, col, val);

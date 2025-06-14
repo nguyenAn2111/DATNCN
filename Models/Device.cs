@@ -28,6 +28,7 @@ namespace Hospital_Test.Models
 		public string contact_finance { get; set; }
 		public string contact_type { get; set; }
 	
+
 		public Device(DataRow row)
         {
             this.device_id = row["device_id"] != DBNull.Value ? row["device_id"].ToString() : "";
@@ -76,5 +77,6 @@ namespace Hospital_Test.Models
 				: "";
 			
 		}
+        public Device() { }
     }
 }
