@@ -40,8 +40,6 @@ namespace Hospital_Test.Models
             maintain_delivery = row["maintain_delivery"] != DBNull.Value ? row["maintain_delivery"].ToString() : "";
             maintain_delivery_phone = row["maintain_delivery_phone"] != DBNull.Value ? row["maintain_delivery_phone"].ToString() : "";
         }
-
-        }
     }
 
 }

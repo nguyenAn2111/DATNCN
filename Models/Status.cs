@@ -6,6 +6,7 @@ namespace Hospital_Test.Models
     public class Status
     {
         public string status_id { get; set; }
+        public string status_name { get; set; }
 
         public Status(DataRow row)
         {

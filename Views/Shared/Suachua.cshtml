@@ -290,9 +290,9 @@
                 <form asp-action="Suachua_UpdateStatus" method="post">
                         <div class="form-group">
                             <div>
-                            <input type="hidden" name="repair_id" value="@(Model.RepairStatus != null ? Model.RepairStatus.repair_id : "")" />
+                                <input type="hidden" name="repair_id" value="@(Model.RepairStatus != null ? Model.RepairStatus.repair_id : "")" />
                                 <label for="description">Trạng thái sửa chữa:</label>
-                            <input type="text" id="modal_status" name="repair_update_status" value="@Model.RepairStatus.repair_update_status" style="width: 22rem;" required>
+                                <input type="text" id="modal_status" name="repair_update_status" value="@Model.RepairStatus.repair_update_status" style="width: 22rem;" required>
                             </div>
                         </div> <br>
                         <div class="form-group">

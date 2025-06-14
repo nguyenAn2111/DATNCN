@@ -40,7 +40,6 @@ namespace Hospital_Test.Controllers
 
             return View("~/Views/Shared/Trangchu.cshtml");
         }
-        public IActionResult Thietbi() {
 
         //Form them thiet bi
         public IActionResult Thietbi_Add()
@@ -104,8 +103,6 @@ namespace Hospital_Test.Controllers
                     if (currentId > max_contact)
                     {
                         max_contact = currentId;
-        public IActionResult Baotri_Suachua() {
-            return View("~/Views/Shared/Baotri_Suachua.cshtml");
                     }
                 }
             }
@@ -715,16 +712,15 @@ namespace Hospital_Test.Controllers
                 rooms_repair = DataProvider<Room>.Instance.GetListItem("tbl_room")
             };
 
-        }
-
             var viewModel = new RepairPageViewModel
             {
                 RepairList = repairList,
                 RepairForm = repairForm,
-                RepairStatus = repairStatus
+                //RepairStatus = repairStatus
             };
             return View("~/Views/Shared/Suachua.cshtml", viewModel);
         }
+        
         [HttpPost]
         public IActionResult Suachua(String sortOrder, String searchString, String searchField, int currentPage = 1)
         {
@@ -768,6 +764,10 @@ namespace Hospital_Test.Controllers
         public IActionResult Taichinh_Hopdong()
         {
             return View("~/Views/Shared/Taichinh_Hopdong.cshtml");
+        }
+        public IActionResult Baotri_Suachua()
+        {
+            return View("~/Views/Shared/Baotri_Suachua.cshtml");
         }
     }
 

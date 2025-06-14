@@ -24,7 +24,7 @@ namespace Hospital_Test.DAO
 
         //private string connectionSTR = @"Data Source=NGOXUANHINH2801;Initial Catalog=Hethongquanlylab;Integrated Security=True";
         //private string connectionSTR = @"Data Source=ADMIN\SQLEXPRESS;Initial Catalog=HTQLVTYT;Integrated Security=True;Connect Timeout=30;Encrypt=True;Trust Server Certificate=True;Application Intent=ReadWrite;Multi Subnet Failover=False";
-        private string connectionSTR = @"Data Source= WARMACHINE-2137;Initial Catalog=HTQLTBYT;Integrated Security=True;Connect Timeout=30;Encrypt=True;Trust Server Certificate=True;Application Intent=ReadWrite;Multi Subnet Failover=False";
+        //private string connectionSTR = @"Data Source= WARMACHINE-2137;Initial Catalog=HTQLTBYT;Integrated Security=True;Connect Timeout=30;Encrypt=True;Trust Server Certificate=True;Application Intent=ReadWrite;Multi Subnet Failover=False";
 
         public DataTable ExcuteQuery(string query, object[] parameter = null)
         {

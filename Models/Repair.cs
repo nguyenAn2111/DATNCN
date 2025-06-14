@@ -13,6 +13,7 @@ namespace Hospital_Test.Models
         public DateTime repair_update_date { get; set; }
         public string repair_update_status { get; set; }
         public string repair_note { get; set; }
+        public string repair_picture { get; set; }
         public string repair_update_note { get; set; }
         public string FK_contact_id { get; set; }
         public string FK_room_id { get; set; }
