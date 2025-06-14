@@ -1,0 +1,333 @@
+﻿@model ItemDisplay<Repair>
+
+<!DOCTYPE html>
+<html>
+<!--phần đầu-->
+<head>
+    <title>Suachua</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://kit.fontawesome.com/2f8895050a.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
+    <style>
+        .list-group.item3 {
+            background-color: #001F54;
+            color: #FEFCFB !important;
+        }
+    </style>
+</head>
+<body>
+    <form asp-action="Suachua" method="post">
+        <div class="surgery-schedule">
+            <div class="surgery-major">
+                <div class="surgery-title">
+                    SỬA CHỮA
+                </div>
+            </div>
+        </div>
+
+        <nav class="menu">
+            <a href="#thongtin">Thông tin thiết bị</a>
+            <a href="#yeucau">Tạo yêu cầu sửa chữa</a>
+            <a href="#thongbao">Thông báo sửa chữa</a>
+        </nav>
+
+        <div class="maintain-data">
+            <section class="maintain-title" id="thongtin">
+                1. Danh sách thiết bị sửa chữa
+            </section>
+            <div class="maintain-table">
+                <div class="surgery-table">
+                    <table id="surgery-table">
+                        <div class="wrap-sreach">
+                            <input name="searchString" id="searchInput" class="search" style="width: 21rem;" type="text" placeholder="Tìm kiếm">
+
+                            <input type="month" id="filter-date">
+
+                            <button class="searchingpatient" style="color: white;border: 1px #001F54 solid;font-size: 1.1rem; font-family: lato; padding: 0.5rem 1rem;background-color: #1282A2;border-radius: 8px;" type="submit">
+                                <i class="fa-solid fa-magnifying-glass"></i>
+                                Tìm Kiếm
+                            </button>
+                        </div>
+
+                        <table id="dataTable" style="width:100%;">
+                            <thead>
+                                <tr>
+                                    <th>Mã id</th>
+                                    <th>Tên thiết bị<br></th>
+                                    <th>Ngày hỏng</th>
+                                    <th>Ngày sửa chữa (dự kiến)</th>
+                                    <th>Vị trí hiện tại</th>
+                                    <th>Tình trạng</th>
+                                    <th> Xem thêm </th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                @if (Model.PageCount > 0) //chưa xử lí ngoại lệ, phải thêm database mới chạy bình thường được :) 
+                                    {
+                                        foreach (var item in Model.Items)
+                                        {
+                                            <tr>
+                                                <td id="facility"> @item.FK_device_id</td>
+                                                <td id="facility"> @item.device_name</td>
+                                                <td id="facility"> @item.repair_broken</td>
+                                                <td id="facility"> @item.repair_date</td>
+                                                <td id="facility"> @item.room_name</td>
+                                                <td id="facility"> @item.status_name</td>
+                                                <td id="facility">
+                                                    <div class="dropdown">
+                                                        <i class="bi bi-three-dots dropdown-toggle-icon" style="cursor: pointer;"></i>
+                                                    </div>
+                                                </td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td id="facility"> NOTHING FOUND </td>
+                                        <td id="facility"> NOTHING FOUND</td>
+                                        <td id="facility"> NOTHING FOUND</td>
+                                        <td id="facility"> NOTHING FOUND</td>
+                                        <td id="facility"> NOTHING FOUND </td>
+                                        <td id="facility">
+                                            <div class="dropdown">
+                                                <i class="bi bi-three-dots dropdown-toggle-icon" style="cursor: pointer;"></i>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+
+                        </table>
+                        <div id="floatingDropdown" class="floating-dropdown" style="display: none;">
+                            <a href="#">Chi tiết thông tin thiết bị</a>
+                            <a href="#">Chỉnh sửa lịch bảo trì</a>
+                        </div>
+
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="maintain-data">
+            <section class="maintain-title" id="yeucau">
+                2. Tạo yêu cầu sửa chữa
+            </section>
+            <div class="repair-request-form">
+                <div class="planer-form">
+                        <label for="device">Tên thiết bị:</label>
+                        <input type="text" placeholder="Nhập tên thiết bị cần sửa" style="margin-right: 1rem ;">
+
+                        <label for="priority">Mức độ ưu tiên:</label>
+                        <select id="priority" name="priority" required>
+                            <option value="">-- Chọn mức ưu tiên --</option>
+                            <option value="CAO">Cao</option>
+                            <option value="TRUNG BÌNH">Trung bình</option>
+                            <option value="THẤP">Thấp</option>
+                        </select>
+                </div><br/>
+                <div class="planer-form">
+                        <label for="repairNumber">Số lượng thiết bị cần sửa:</label>
+                        <input type="number" min="0" step="1" style="margin-right: 1rem ;">
+
+                        <label for="repairNumber">Đơn giá trên đơn vị sửa:</label>
+                        <input type="text" id="money" name="money" oninput="formatMoney(this)" required>
+                </div> <br/>
+                <div class="planer-form" >
+                        <!-- Mô tả lỗi -->
+                    <label for="description" style= "float: left; margin-right: 0.25rem;">Mô tả lỗi:</label>
+                    <textarea id="description" style="width: 45.5rem;" name="description" placeholder="Nhập mô tả lỗi..." required></textarea>
+                </div><br/>
+                <div class="planer-form">
+                        <label for="image" style="width: 14rem;">Đính kèm hình ảnh (nếu có):</label>
+                        <input style="width: 27rem;" type="file" id="image" name="image" accept="image/*">
+                </div><br/>
+                <div class="planer-form">
+                        <label for="kinked_file">Hóa đơn sửa chữa (nếu có):</label>
+                        <input type="file" id="fileInput" name="files[]" class="file-input" multiple onchange="displayFileNames()">
+                </div><br/>
+                    <!-- Gửi yêu cầu -->
+                    <button type="submit">Gửi yêu cầu</button>
+            </div>
+        </div>
+
+        <div class="maintain-data" id="thongbao">
+            <section class="maintain-title">
+                3. Thông báo sửa chữa
+            </section>
+            <div class="device-container">
+
+                <!-- Thiết bị 1 -->
+                <div class="device-card" onclick="toggleTimeline(this)">
+                    <div class="device-header">
+                        <div class="device-name">Máy thở PHILIP</div>
+                        <div class="device-status">Đang chờ linh kiện</div>
+                    </div>
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <div class="time">10/04/2025 - 08:30</div>
+                            <div class="title">Tiếp nhận yêu cầu</div>
+                            <div class="description">Yêu cầu sửa chữa được ghi nhận từ khoa hồi sức.</div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="time">12/04/2025 - 09:00</div>
+                            <div class="title">Kiểm tra thiết bị</div>
+                            <div class="description">Lỗi board nguồn, cần thay linh kiện.</div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="time">13/04/2025 - 14:20</div>
+                            <div class="title">Đặt linh kiện</div>
+                            <div class="description">Linh kiện đang được vận chuyển từ nhà cung cấp.</div>
+                        </div>
+                    </div>
+                    <div class="status-edit" style="display: flex; justify-content: flex-start; align-items: flex-start;">
+                        <button class="repair-btn" onclick="document.getElementById('repairStatusModal').style.display='flex'"> Cập nhật trạng thái </button>
+                    </div>
+                </div>
+
+                <!-- Thiết bị 2 -->
+                <div class="device-card" onclick="toggleTimeline(this)">
+                    <div class="device-header">
+                        <div class="device-name">Monitor theo dõi bệnh nhân</div>
+                        <div class="device-status">Đã sửa xong</div>
+                    </div>
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <div class="time">05/04/2025 - 13:10</div>
+                            <div class="title">Tiếp nhận yêu cầu</div>
+                            <div class="description">Monitor không hiển thị tín hiệu ECG.</div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="time">06/04/2025 - 09:00</div>
+                            <div class="title">Đã sửa xong</div>
+                            <div class="description">Thay dây cảm biến và hiệu chuẩn lại thiết bị.</div>
+                        </div>
+                    </div>
+                    <div class="status-edit" style="display: flex; justify-content: flex-start; align-items: flex-start;">
+                        <button class="repair-btn" onclick="document.getElementById('repairStatusModal').style.display='flex'"> Cập nhật trạng thái </button>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <!--modal cập nhật trạng thái -->
+        <div id="repairStatusModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <span class="close" onclick="document.getElementById('repairStatusModal').style.display='none'">&times;</span>
+                    <h3 class="deviceAddModal">Thêm thiết bị</h3>
+                </div>
+                <div class="modal-body">
+                    <form action="#" method="post">
+                        <div class="form-group">
+                            <div>
+                                <label for="description">Trạng thái sửa chữa:</label>
+                                <input type="text" style="width: 22rem ;">
+                            </div>
+                        </div> <br>
+                        <div class="form-group">
+                            <div style="display: flex; gap: 0.5rem;">
+                                <label for="description" style="width: 5rem;">Mô tả:</label>
+                                <textarea id="description" name="description" cols="50" style="width: auto;" required></textarea>
+                            </div><br>
+                        </div> <br>
+                        <div class="form-group">
+                            <div style="display: flex; gap: 0.5rem;">
+                                <label for="description">Thời gian cập nhật:</label>
+                                <input type="datetime-local">
+                            </div>
+                        </div> <br>
+                        <button class="submit-button">Cập nhật trạng thái</button>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const dropdown = document.getElementById('floatingDropdown');
+                let activeIcon = null;
+
+                document.querySelectorAll('.dropdown-toggle-icon').forEach(icon => {
+                    icon.addEventListener('click', function (e) {
+                        e.stopPropagation(); // Ngăn click lan ra ngoài
+                        const rect = icon.getBoundingClientRect();
+
+                        dropdown.style.top = rect.bottom + window.scrollY + 'px';
+                        dropdown.style.left = rect.left + window.scrollX + 'px';
+
+                        // Toggle hiển thị
+                        if (dropdown.style.display === 'block' && activeIcon === icon) {
+                            dropdown.style.display = 'none';
+                            activeIcon = null;
+                        } else {
+                            dropdown.style.display = 'block';
+                            activeIcon = icon;
+                        }
+                    });
+                });
+
+                // Ẩn dropdown nếu click ngoài
+                document.addEventListener('click', function (e) {
+                    if (!dropdown.contains(e.target)) {
+                        dropdown.style.display = 'none';
+                        activeIcon = null;
+                    }
+                });
+            });
+        </script>
+        <script>
+            function formatMoney(input) {
+                let value = input.value.replace(/\./g, '');
+
+                if (isNaN(value)) {
+                    input.value = '';
+                    return;
+                }
+                input.value = value.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+            }
+            function displayFileName() {
+                var fileInput = document.getElementById('fileInput');
+                var fileName = fileInput.files[0].name;
+            }
+            function toggleTimeline(card) {
+                const timeline = card.querySelector('.timeline');
+                const repairBtn = card.querySelector('.repair-btn');
+
+                const isTimelineVisible = timeline.style.display === 'block';
+
+                // Hiển thị/ẩn timeline và repair-btn đồng thời
+                timeline.style.display = isTimelineVisible ? 'none' : 'block';
+                repairBtn.style.display = isTimelineVisible ? 'none' : 'inline-block';
+            }
+        </script>
+        <script>
+            window.onclick = function (event) {
+                // Kiểm tra nếu người dùng bấm vào vùng ngoài modal (tức là phần nền mờ)
+                if (event.target === document.getElementById('repairStatusModal')
+                ) {
+                    event.target.style.display = "none";
+                }
+            }
+
+            document.getElementById("searchInput").addEventListener("keyup", function () {
+                const filter = this.value.toUpperCase();
+                const rows = document.querySelectorAll("#dataTable tbody tr");
+
+                rows.forEach(row => {
+                    const cell = row.querySelector("td");
+                    if (cell && cell.textContent.toUpperCase().indexOf(filter) > -1) {
+                        row.style.display = "";
+                    } else {
+                        row.style.display = "none";
+                    }
+                });
+            });
+        </script>
+    </form>
+</body>

@@ -1,0 +1,48 @@
+﻿<!DOCTYPE html>
+<html>
+<!--phần đầu-->
+<head>
+    <title>Thietbi</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="~/css/style.css">
+    <script src="https://kit.fontawesome.com/2f8895050a.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
+</head>
+<body>
+    <div class="Navigator">
+        <div id="title">
+            HỆ THỐNG QUẢN LÝ VẬT TƯ Y TẾ
+        </div>
+        <div class="list-group">
+            <a class="list-group item1" asp-action="Trangchu">
+                <i class="fa-solid fa-chart-simple"></i>
+                Tổng quan
+            </a>
+            <a class="list-group item2" asp-action="Thietbi">
+                <i class="fa-solid fa-bed"></i>
+                Thiết bị
+            </a>
+            <a class="list-group item3" asp-action="Baotri_Suachua">
+                <i class="fa-solid fa-screwdriver-wrench"></i>
+                Bảo trì - sửa chữa
+            </a>
+            <a class="list-group item4" asp-action="Kho">
+                <i class="fa-solid fa-warehouse"></i>
+                Kho - chuyển thiết bị
+            </a>
+            <a class="list-group item5" asp-action="Taichinh_Hopdong">
+                <i class="fa-solid fa-file-invoice-dollar"></i>
+                Tài chính - Hợp đồng
+            </a>
+            <a class="list-group item6" href="Phuluc.html">
+                <i class="fa-solid fa-rectangle-list"></i>
+                Phụ lục - Tra cứu mã
+            </a>
+        </div>
+    </div>
+    <div class="Main">
+        <div>
+            @RenderBody()
+        </div>
+    </div>
+</body>

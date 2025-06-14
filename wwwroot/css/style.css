@@ -1,0 +1,1498 @@
+﻿* {
+    padding: 0;
+    margin: 0;
+}
+
+:root {
+    --background-color: #f9f9f9;
+}
+/* Tổng quan */
+body {
+    height: 100vh;
+    overflow: hidden;
+    background-color: #f9f9f9;
+    background-size: 100%;
+    scroll-behavior: smooth;
+}
+
+#title {
+    color: #1282A2;
+    font-family: Lato;
+    padding-top: 2rem;
+    margin: 1rem;
+    font-weight: 800;
+    font-size: 1.5rem;
+    text-align: center;
+    height: fit-content;
+    background-color: #ffff;
+}
+
+.Navigator {
+    width: 15%;
+    background-color: #ffff;
+    position: fixed;
+    height: 100%;
+    overflow: auto;
+}
+
+.list-group a {
+    display: flex; /* Căn ngang icon và text */
+    align-items: center; /* Căn giữa theo chiều dọc */
+    gap: 10px; /* Điều chỉnh khoảng cách giữa icon và text */
+    font-family: Lato;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #034078;
+    padding: 20px;
+    text-decoration: none;
+}
+
+    .list-group a i {
+        font-size: 1.5rem; /* Điều chỉnh kích thước icon nếu cần */
+    }
+
+    .list-group a:hover:not(.active) {
+        background-color: #001F54;
+        color: #FEFCFB;
+    }
+
+.Main {
+    margin-left: 15%; /* Dịch sang phải theo độ rộng của Navigator */
+    padding-left: 2rem;
+    padding-right: 2rem;
+    height: 100vh;
+    overflow: auto;
+}
+
+.welcome {
+    height: 4rem;
+    padding-top: 2rem;
+    display: flex; /* Sử dụng Flexbox để căn ngang */
+    justify-content: space-between; /* Đẩy .hello sang trái, .user-info sang phải */
+    align-items: center; /* Căn giữa theo chiều dọc */
+}
+
+.hello {
+    width: auto;
+    font-family: Lato;
+    font-weight: 900;
+    font-size: 1.5rem;
+    color: #034078;
+    float: left;
+}
+
+.hello-user {
+    float: right;
+    padding-left: 0.4rem;
+}
+
+.Noti {
+    color: #034078
+}
+
+.Setting {
+    color: #034078;
+}
+
+.user-info {
+    display: flex; /* Sắp xếp các phần tử con theo hàng ngang */
+    align-items: center; /* Căn giữa theo chiều dọc */
+    gap: 1rem; /* Khoảng cách giữa các phần tử con */
+}
+
+.name {
+    flex-direction: column; /* Xếp doctor-name và doctor-position theo cột */
+    text-align: left; /* Canh chữ về bên phải */
+}
+
+.alarm {
+    float: left;
+    font-size: 2rem;
+    color: #034078;
+}
+
+.personal {
+    width: 3.5rem;
+    float: left;
+    color: #034078;
+}
+
+.alarm, .personal {
+    display: flex;
+    align-items: center;
+    gap: 1rem; /* Khoảng cách nhỏ giữa các icon/text trong từng nhóm */
+}
+
+.doctor-name {
+    color: #001F54;
+    font-size: 1.5rem;
+    font-family: Lato;
+    font-weight: 900;
+}
+
+.doctor-position {
+    font-size: 1.2rem;
+    color: #034078;
+    font-family: Lato;
+    font-weight: 500;
+}
+
+.bi-person-circle {
+    font-size: 3.5rem;
+}
+
+.main-part {
+    width: 100%;
+    height: 90%;
+    padding-top: 20px;
+}
+
+.statistical {
+    height: 8rem;
+    width: 100%;
+    display: flex;
+    justify-content: space-between; /* Chia đều các phần tử */
+    gap: 2rem; /* Khoảng cách giữa các phần */
+}
+
+    .statistical.part {
+        color: #FEFCFB;
+        border-radius: 12px;
+        height: 100%;
+        padding-left: 3rem;
+        float: left;
+    }
+
+        .statistical.part.one {
+            background-color: #118AB2;
+        }
+
+        .statistical.part.two {
+            background-color: #EF476F;
+        }
+
+        .statistical.part.three {
+            background-color: #fc9a2b
+        }
+
+.fa-bed-pulse {
+    font-size: 3rem;
+}
+
+.fa-hospital-user {
+    font-size: 3rem;
+}
+
+.fa-user-doctor {
+    font-size: 3rem;
+}
+
+.Iconly {
+    display: flex;
+    align-items: center; /* Căn icon và text theo chiều dọc */
+    gap: 1rem; /* Khoảng cách giữa icon và text */
+}
+
+.wrap-sreach {
+    display: flex;
+    gap: 0.5rem;
+    padding-bottom: 1rem;
+}
+
+.icon {
+    display: flex;
+    flex-direction: column; /* Xếp số và text theo chiều dọc */
+    align-items: center; /* Căn giữa nội dung */
+    width: fit-content;
+    float: left;
+}
+
+#title-number {
+    box-sizing: border-box;
+    font-family: Lato;
+    float: left;
+    width: fit-content;
+    font-size: 1rem;
+}
+
+#number {
+    font-family: Lato;
+    font-size: 1.7rem;
+}
+
+.statis {
+    font-family: Lato;
+    font-weight: 750;
+    font-size: 1.5rem;
+    color: #034078;
+    width: 40%;
+    height: 100%;
+    float: left;
+    padding-top: 1.5rem;
+}
+
+.box {
+    height: 15rem;
+    margin-bottom: 2.5rem;
+}
+
+    .box p {
+        display: inline-block;
+        margin-right: 0.5rem; /* Khoảng cách giữa văn bản và ô nhập */
+        font-weight: bold;
+    }
+
+.maintenance-statis, .fixing-statis {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    color: black;
+    border-width: 0.125rem;
+    border-style: solid;
+    background-color: #ffff;
+    border-radius: 12px;
+}
+
+p {
+    width: fit-content;
+    float: left;
+    font-size: 1.5rem;
+}
+
+.doctor.dropbox {
+    width: fit-content;
+    float: inline-end;
+}
+
+.dropbox.upcoming {
+    width: fit-content;
+    float: inline-end;
+}
+
+.view.all {
+    font-size: 1rem;
+    color: #001F54;
+    text-decoration: none;
+}
+
+    .view.all:hover {
+        color: #007ff6;
+    }
+
+.upcoming.statis {
+    height: fit-content;
+}
+
+.upcoming-table {
+    width: 100%;
+    height: 30rem;
+    padding-top: 0.5rem;
+    color: black;
+    border-width: 0.125rem;
+    border-style: solid;
+    background-color: #ffff;
+    border-radius: 12px;
+}
+
+.facility-static {
+    display: flex;
+    gap: 2rem;
+    justify-content: space-between;
+}
+
+.finace-statis {
+    width: 100%;
+    height: auto;
+    border-width: 0.125rem;
+    border-style: solid;
+    background-color: #ffff;
+    border-radius: 12px;
+    display: flex; /* Sử dụng flexbox để căn giữa */
+    justify-content: center; /* Căn giữa theo chiều ngang */
+    align-items: center;
+}
+
+.patient-statis {
+    width: 100%;
+    display: flex; /* Use flexbox */
+    justify-content: center; /* Center horizontally */
+    height: auto;
+    border-width: 0.125rem;
+    border-style: solid;
+    background-color: #ffff;
+    border-radius: 12px;
+}
+
+.surgery-schedule {
+    margin-top: 2.5rem;
+}
+
+.surgery-major {
+    width: 100%;
+    padding-bottom: 1rem;
+    height: fit-content;
+    display: flex;
+    align-items: center;
+}
+
+.surgery-title {
+    font-weight: 950;
+    width: 82rem;
+    float: left;
+    font-family: Lato;
+    font-size: 2rem;
+    color: #034078;
+}
+
+.dropbtn {
+    background-color: #001F54;
+    color: white;
+    padding: 0.5rem 1rem;
+    font-size: 1.2rem;
+    font-family: lato;
+    font-weight: 500;
+    border: none;
+    border-radius: 12px;
+    width: fit-content;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f1f1f1;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+    width: 13rem;
+    font-family: lato;
+    font-size: 1rem;
+    border-radius: 12px;
+}
+
+    .dropdown-content a {
+        color: black;
+        padding: 12px 16px;
+        text-decoration: none;
+        display: block;
+    }
+
+        .dropdown-content a:hover {
+            border-radius: 12px;
+            background-color: rgba(17,138,178,0.2);
+        }
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+.dropdown:hover .dropbtn {
+    background-color: #118AB2;
+}
+
+.searchingpatient {
+    color: white;
+    border: 0px;
+    font-size: 1.1rem;
+    font-family: lato;
+    padding: 0.5rem 1rem;
+    background-color: #1282A2;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+
+option {
+    text-transform: uppercase;
+}
+
+.searchingpatient:hover {
+    transform: scale(1.05); /* Hiệu ứng phóng to nhẹ */
+}
+/* Style for search input */
+#searchInput{
+    padding: 8px;
+    width: 16rem;
+    border-radius: 8px;
+    color: #001F54;
+    font-family: Lato;
+    font-size: 16PX;
+    border-width: 1px;
+}
+/* Style for table */
+#surgery-table {
+    border-collapse: collapse;
+    width: 90%;
+}
+/* Style for table headers */
+th {
+    background-color: #1282A2;
+    color: #FEFCFB;
+    font-size: 1.1rem;
+    text-transform: uppercase;
+}
+
+.delete-btn {
+    cursor: pointer; /* Bàn tay khi hover vào nút */
+    background-color: transparent;
+    border: none;
+}
+
+    .delete-btn i {
+        cursor: pointer; /* Bàn tay khi hover vào icon */
+        color: #d44c4c; /* Tuỳ chọn: màu đỏ cho icon */
+        font-size: 1.2rem;
+    }
+
+        .delete-btn i:hover {
+            transform: scale(1.1);
+            color: #ff6b6b;
+        }
+
+/* Đặt màu mặc định cho biểu tượng 'info' thành màu xanh lam mong muốn */
+.fa-solid.fa-circle-info {
+    color: #1282A2; /* Màu xanh của tiêu đề cột */
+    font-size: 1.2rem; /* Giảm kích thước xuống 1.2rem (hoặc giá trị bạn thấy phù hợp) */
+    text-decoration: none; /* Bỏ gạch chân */
+}
+
+    /* Đặt màu khi di chuột (hover) nếu bạn muốn nó thay đổi khi người dùng rê chuột qua */
+    .fa-solid.fa-circle-info:hover {
+        color: #007ff6; /* Một màu xanh sáng hơn khi di chuột */
+        transform: scale(1.1); /* Hiệu ứng phóng to nhẹ khi di chuột */
+        text-decoration: none; /* Đảm bảo vẫn không có gạch chân khi di chuột */
+    }
+
+/* Đảm bảo nút chứa biểu tượng không có nền hoặc đường viền không mong muốn */
+.detail-btn {
+    border: none;
+    background-color: transparent; /* Đảm bảo nền trong suốt */
+    padding: 0; /* Loại bỏ padding thừa */
+    cursor: pointer;
+}
+
+.fa-solid.fa-trash:hover {
+    transform: scale(1.1);
+}
+/* Style for table cells */
+
+td, th {
+    overflow-y: auto;
+    border: 1px solid #001F54;
+    padding: 0.5rem;
+    text-align: left;
+    font-family: lato;
+    font-size: 1.1rem;
+    text-transform: uppercase
+}
+
+    td#tinhtrangphong {
+        overflow-y: auto;
+        border: 1px solid #001F54;
+        padding: 0.5rem;
+        text-align: left;
+        font-family: lato;
+        font-size: 1.1rem;
+    }
+
+
+#confirmDelete {
+    background: red;
+    color: white;
+}
+
+#cancelDelete {
+    background: gray;
+    color: white;
+}
+/* Thêm thiết bị*/
+
+.surgery-major-title {
+    display: inline;
+    font-family: lato;
+    font-size: 2rem;
+    font-weight: 800;
+    color: #001F54;
+}
+
+.surgery-submit-form {
+    height: fit-content;
+    width: fit-content;
+}
+
+.fa-solid.fa-chevron-right {
+    padding-right: 0.5rem;
+}
+
+label {
+    align-content: center;
+    background-color: #001F54;
+    font-family: Lato;
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: #f1f1f1;
+    padding: 0.5rem;
+    border-radius: 8px;
+}
+
+.form-group {
+    display: flex;
+    gap: 1rem;
+    padding: 1rem;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
+}
+
+input, textarea {
+    font-family: Lato;
+    font-size: 1rem;
+    padding: 0.4rem;
+    border-radius: 8px;
+    border-width: 1px;
+    width: auto;
+}
+
+input {
+    text-transform: uppercase;
+}
+
+textarea {
+    width: 36rem
+}
+
+select {
+    font-family: Lato;
+    font-size: 1rem;
+    padding: 0.4rem;
+    border-radius: 8px;
+    border-width: 1px;
+    width: auto;
+}
+/* Chi tiết các ô input */
+.form-group-title {
+    display: flex;
+    align-items: flex-start;
+    flex-direction: column;
+    font-size: 1.3rem;
+    padding-bottom: 0.5rem;
+    padding-top: 0.5rem;
+    font-family: Lato;
+    font-weight: bold;
+    color: #1282A2;
+}
+
+#patient-name {
+    width: 30rem;
+}
+
+.surgery-form.linked {
+    width: 44rem;
+}
+
+.surgery-form.maindoctor {
+    width: 100%;
+}
+
+#maindoctor-name {
+    width: 33rem;
+}
+
+.surgery-form.roomtype {
+    width: 19.5rem;
+}
+
+.surgery-form.roomcode {
+    width: 30rem;
+}
+
+#medicalrecordLink {
+    width: 20rem;
+}
+/* nút lưu tìm kiếm làm lại */
+.submit-button {
+    width: fit-content;
+    display: inline;
+}
+
+.cancel-button {
+    color: white;
+    background-color: #00358f;
+    font-size: 1.2rem;
+    font-family: Lato;
+    font-weight: 800;
+    border-radius: 8px;
+    border-width: 0px;
+    box-sizing: border-box;
+    padding: 0.7rem 2.5rem 0.5rem 2.5rem;
+}
+
+    .cancel-button:hover {
+        background-color: #118AB2;
+        transform: scale(1.05);
+    }
+
+.submit-button {
+    color: white;
+    background-color: #001F54;
+    font-size: 1.2rem;
+    font-family: Lato;
+    font-weight: 800;
+    border-radius: 8px;
+    border-width: 0px;
+    box-sizing: border-box;
+    padding: 0.7rem 2.5rem 0.5rem 2.5rem;
+}
+
+    .submit-button:hover {
+        background-color: #118AB2;
+        transform: scale(1.05);
+    }
+
+#reset-button {
+    color: #034078;
+    background-color: #f8f6f6;
+    font-size: 1.2rem;
+    font-family: Lato;
+    font-weight: 800;
+    border-radius: 8px;
+    border-width: 1px;
+    border-color: #034078;
+    padding: 0.7rem 1.5rem 0.5rem 1.5rem;
+}
+
+    #reset-button:hover {
+        background-color: rgb(255, 255, 255);
+        color: #007ff6;
+    }
+
+.finding-button {
+    width: fit-content;
+    display: inline;
+}
+
+#finding-button {
+    color: white;
+    background-color: #034078;
+    font-size: 1.2rem;
+    font-family: Lato;
+    font-weight: 800;
+    border-radius: 8px;
+    border-width: 0px;
+    box-sizing: border-box;
+    padding: 0.7rem 2.5rem 0.5rem 2.5rem;
+}
+
+    #finding-button:hover {
+        background-color: #0069cb;
+    }
+/* Bệnh án */
+
+.row {
+    width: 100%;
+    float: left;
+    height: fit-content;
+}
+
+
+/*tiếp tục*/
+.maintain-fixing {
+    display: flex;
+    justify-content: space-between;
+    gap: 2rem;
+    font-family: Lato;
+    font-size: 1.5rem;
+    color: #f1f1f1;
+    font-weight: 800;
+    margin-top: 1.8rem;
+}
+
+.maintain-manage, .fixing-manage {
+    flex: 1; /* Chia đều không gian */
+    border-radius: 12px; /* Bo góc */
+    padding: 1rem;
+    text-align: center;
+    background-color: #118AB2;
+    font-family: Lato;
+    font-size: 1.5rem;
+    font-weight: 800;
+    text-decoration: none; /* Loại bỏ gạch chân */
+    color: inherit; /* Giữ nguyên màu chữ mặc định */
+    display: flex;
+    flex-direction: column; /* Sắp xếp icon trên text */
+    align-items: center; /* Căn giữa theo chiều ngang */
+    justify-content: center; /* Căn giữa theo chiều dọc */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    transition: transform 0.2s ease;
+}
+
+    .maintain-manage:hover, .fixing-manage:hover {
+        transform: scale(1.01);
+    }
+
+    .maintain-manage i, .fixing-manage i {
+        font-size: 3rem; /* Kích thước icon */
+        margin-bottom: 1rem; /* Khoảng cách giữa icon và text */
+    }
+
+.guide-box {
+    margin-top: 10px;
+    padding: 3rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 1);
+    border-radius: 10px;
+    background-color: white;
+    width: 80%;
+    font-weight: 500;
+    color: #034078;
+    text-align: left; /* Căn phải nội dung */
+    display: flex;
+}
+
+.maintain-title {
+    font-size: 1.5rem;
+    padding-bottom: 0.5rem;
+    padding-top: 0.5rem;
+    font-family: Lato;
+    text-transform: uppercase;
+    font-weight: 950;
+    color: #1282A2;
+}
+
+.maintain-data {
+    border-bottom: 1px solid #89A8B2;
+    margin-top: 1rem;
+    padding-bottom: 1rem;
+}
+
+.floating-dropdown {
+    position: absolute;
+    background-color: white;
+    min-width: 220px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    z-index: 9999;
+    font-family: 'Lato', sans-serif;
+}
+
+    .floating-dropdown a {
+        display: block;
+        padding: 12px 16px;
+        text-decoration: none;
+        color: black;
+        font-size: 0.95rem;
+    }
+
+        .floating-dropdown a:hover {
+            background-color: #f5f5f5;
+        }
+
+.maintenance-dashboard {
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.overdue {
+    background-color: #f55568;
+}
+
+.status-column {
+    font-family: Lato;
+    padding: 0.5rem 1rem;
+    border-radius: 12px;
+}
+
+.comingup {
+    background-color: #FF9B17;
+}
+
+.completed {
+    background-color: #3D8D7A;
+}
+
+.device-item {
+    background: rgba(255,255,255,0.2);
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-family: Lato;
+}
+
+h3 {
+    padding-top: 0.5rem;
+    color: white;
+    text-transform: uppercase;
+}
+
+.device-item strong {
+    display: block;
+    font-weight: 800;
+    text-decoration: underline;
+}
+
+#popup-button {
+    color: black;
+    background-color: #f1f1f1;
+    font-size: 0.8rem;
+    font-family: Lato;
+    font-weight: 500;
+    padding: 0.25rem 0.5rem 0.25rem 0.5rem;
+    border-radius: 4px;
+    border-width: 0px;
+}
+
+    #popup-button:hover {
+        background-color: #a8e9ff;
+        transform: scale(1.05);
+    }
+
+.modal {
+    display: none; /* Mặc định ẩn */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    pointer-events: auto; /* Đảm bảo nhận sự kiện click */
+    ;
+}
+
+.modal-content {
+    background: #fff;
+    padding: 1rem 2rem 2rem 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    max-height: 80%; /* Giới hạn chiều cao tối đa */
+    min-width: 300px; /* Đặt độ rộng tối thiểu */
+}
+
+.modal-header {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    font-size: larger;
+}
+
+    .modal-header .close {
+        font-size: 2rem;
+        cursor: pointer;
+    }
+
+.modal-body {
+    overflow-y: auto;
+    flex-grow: 1;
+}
+
+@keyframes popupFade {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+#popup-button-reschedule {
+    color: black;
+    background-color: #cbcbcb;
+    font-size: 1rem;
+    font-family: Lato;
+    font-weight: 500;
+    padding: 0.5rem;
+    border-radius: 4px;
+    border-width: 0px;
+}
+
+    #popup-button-reschedule:hover {
+        background-color: #bdeeff;
+        transform: scale(1.05);
+    }
+
+nav.menu {
+    position: sticky;
+    top: 0;
+    z-index: 1000; /* Đảm bảo nổi trên các thành phần khác */
+    background-color: #f0f4f8;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.menu a {
+    font-size: 1rem;
+    background-color: white;
+    padding: 8px 3rem;
+    border-radius: 6px;
+    text-decoration: none;
+    font-family: Lato;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: #034078;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.menu button {
+    font-size: 1rem;
+    border: 0px;
+    background-color: white;
+    padding: 8px 3rem;
+    border-radius: 6px;
+    text-decoration: none;
+    font-family: Lato;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: #034078;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    cursor: pointer;
+}
+
+.menu a:hover {
+    background-color: #c8ddf4;
+    color: #001F54;
+}
+
+.menu button:hover {
+    background-color: #c8ddf4;
+    color: #001F54;
+}
+
+/* Phần nội dung */
+section {
+    padding: 100px 20px;
+}
+/* request form */
+.repair-request-form {
+    background-color: #f7f9fb;
+    border: 1px solid #ccc;
+    padding: 2rem;
+    max-width: fit-content;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+}
+
+    .repair-request-form h2 {
+        font-family: Lato;
+        text-align: center;
+        color: #007B9E;
+        margin-bottom: 1.5rem;
+    }
+
+    .repair-request-form form {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .repair-request-form label {
+        font-weight: bold;
+        color: #ffffff;
+    }
+
+    .repair-request-form input[type="file"] {
+        padding: 0.5rem;
+        border: 1px solid #aaa;
+        border-radius: 6px;
+        font-size: 1rem;
+        background-color: #fff;
+    }
+
+    .repair-request-form button {
+        background-color: #007B9E;
+        font-family: Lato;
+        color: white;
+        border: none;
+        padding: 0.6rem 3rem;
+        font-size: 1rem;
+        font-weight: bold;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+
+        .repair-request-form button:hover {
+            background-color: #005f79;
+        }
+
+.device-container {
+    max-width: 800px;
+}
+
+.device-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-family: Lato;
+}
+
+    .device-card:hover {
+        background-color: #f0fbff;
+    }
+
+.device-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.device-name {
+    font-weight: bold;
+    font-size: 1.2rem;
+    color: #007B9E;
+}
+
+.device-status {
+    background-color: #e0f7fa;
+    color: #007B9E;
+    padding: 0.3rem 0.8rem;
+    border-radius: 1rem;
+    font-size: 0.9rem;
+}
+
+.timeline {
+    margin-top: 1rem;
+    padding-left: 2rem;
+    border-left: 3px solid #007B9E;
+    display: none; /* Ẩn mặc định */
+}
+
+.timeline-item {
+    position: relative;
+    margin-bottom: 1.2rem;
+}
+
+    .timeline-item::before {
+        content: '';
+        position: absolute;
+        left: -1.5rem;
+        top: 5px;
+        width: 14px;
+        height: 14px;
+        background-color: #007B9E;
+        border-radius: 50%;
+        border: 2px solid white;
+    }
+
+.time {
+    font-size: 0.8rem;
+    color: #666;
+}
+
+.title {
+    font-weight: bold;
+    color: #333;
+}
+
+.description {
+    color: #555;
+}
+
+.status.ok {
+    background-color: #e6f9f0;
+    color: #2e8b57;
+}
+
+.status.low {
+    background-color: #fff3cd;
+    color: #d39e00;
+}
+
+.status.out {
+    background-color: #f8d7da;
+    color: #b71c1c;
+}
+
+.status {
+    font-weight: bold;
+    padding: 8px 8px;
+    justify-content: center;
+    align-items: center;
+}
+
+.store button {
+    padding: 0.5rem 1rem;
+    margin-right: 0.5rem;
+}
+
+.store {
+    width: 100%;
+    border-bottom: 1px solid #89A8B2;
+    margin-top: 1rem;
+    padding-bottom: 1rem;
+}
+
+.container {
+    display: flex;
+    flex-direction: column; /* Xếp các phần tử con theo chiều dọc */
+    gap: 0.5px; /* Khoảng cách giữa các phần tử */
+}
+
+.function-card {
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 16px;
+    padding: 1rem;
+    margin: 0.5rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    transition: transform 0.2s ease;
+}
+
+    .function-card h3 {
+        font-size: 1.2rem;
+        font-family: Lato;
+        font-weight: 600;
+        color: #007B9E;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        text-transform: none;
+    }
+
+    .function-card ul {
+        display: flex;
+        list-style-type: none;
+        padding: 0;
+    }
+
+    .function-card li {
+        display: flex;
+        gap: 1rem;
+    }
+
+        .function-card li button {
+            background-color: #034078;
+            font-family: Lato;
+            font-size: 1rem;
+            color: white;
+            border: none;
+            padding: 1rem;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+            .function-card li button :last-child {
+                margin-bottom: 0rem;
+            }
+
+            .function-card li button:hover {
+                transform: scale(1.05);
+                background-color: #1282A2;
+            }
+
+/* Styling for modal */
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+    .close:hover,
+    .close:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+.modal h3 {
+    color: #001F54;
+    margin-bottom: 1rem;
+    font-family: Lato;
+    font-weight: 1000;
+    font-size: 1.5rem;
+}
+
+.filters {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.summary {
+    font-family: Lato;
+    font-size: 1rem;
+    color: #b71c1c;
+    background: white;
+    padding: 15px;
+    border-radius: 12px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 15px;
+}
+
+.card {
+    background: white;
+    padding: 15px;
+    border-left: 5px solid #0077b6;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+    .card h3 {
+        margin: 0 0 10px;
+        color: #023e8a;
+    }
+
+.store .chart {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+    width: 100%;
+}
+
+.store .chart-placeholder {
+    height: 20rem;
+    width: 47.5%;
+    background: #dbeefc;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    margin: 20px 0;
+    border-radius: 8px;
+    color: #0077b6;
+    padding: 10px; /* Thêm khoảng cách bên trong nếu cần */
+    text-align: center; /* Căn giữa nội dung */
+    border: 1px solid #ccc;
+}
+
+.chart-placeholder h3 {
+    color: #034078;
+    font-family: 'Times New Roman';
+}
+
+@media (max-width: 50rem) {
+    .store .chart {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .store .chart-placeholder {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 auto;
+    }
+}
+
+/*phần này lỏ*/
+.card-group {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+}
+
+    .card-group h2 {
+        font-size: 1.25rem;
+        margin-bottom: 0.5rem;
+        color: #1f3c88;
+        font-family: lato;
+        font-weight: 800;
+    }
+
+    .card-group .total {
+        font-size: 0.95rem;
+        color: #fc6161;
+        margin-bottom: 1rem;
+        font-family: lato;
+        font-weight: 500;
+    }
+
+    .card-group .device-card {
+        display: flex;
+        padding: 0;
+        background-color: #e9f3fd;
+        position: relative; /* Thêm thuộc tính position để chứa phần tử absolute */
+    }
+
+.device-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 500;
+    color: #222;
+}
+
+.device-main {
+    display: flex;
+    flex-direction: column;
+}
+
+.device-label {
+    font-size: 17px;
+    color: #0d3b66;
+    margin-bottom: 4px;
+}
+
+.device-meta {
+    font-size: 14px;
+    color: #444;
+    display: flex;
+    gap: 24px;
+}
+
+.edit-btn {
+    background-color: #0069cb;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    position: absolute; /* Đặt nút vào vị trí tuyệt đối */
+    bottom: 0.7rem; /* Lùi nút xuống dưới cùng */
+    right: 1rem; /* Căn nút về góc phải */
+    cursor: pointer;
+}
+
+    .edit-btn:hover {
+        background-color: #118AB2;
+        transform: scale(1.05);
+    }
+
+.btn-cards-group-action {
+    display: flex;
+    float: inline-end;
+}
+
+    .btn-cards-group-action button {
+        background-color: #007ff6;
+        color: #fff;
+        padding: 6px 14px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+    }
+
+        .btn-cards-group-action button:hover {
+            background-color: #007B9E;
+            transform: scale(1.05);
+        }
+
+.repair-btn {
+    display: none;
+    font-size: 1.2rem;
+    font-family: Lato;
+    font-weight: 700;
+    padding: 0.5rem;
+    margin-top: 0.5rem;
+    color: white;
+    background-color: #118AB2;
+    border-radius: 8px;
+    border-width: 0px;
+    cursor: pointer;
+}
+
+    .repair-btn:hover {
+        background-color: #0d3b66;
+        transform: scale(1.05);
+    }
+
+#addSeribtn {
+    height: max-content;
+    font-size: 1.2rem;
+    font-family: Lato;
+    font-weight: 700;
+    padding: 0.5rem;
+    margin-top: 0.2rem;
+    color: white;
+    background-color: #118AB2;
+    border-radius: 8px;
+    border-width: 0px;
+    cursor: pointer;
+}
+
+    #addSeribtn:hover {
+        background-color: #0d3b66;
+        transform: scale(1.05);
+    }
+
+.removeDeviceButton {
+    display: flex;
+    border-width: 0px;
+    font-size: 1rem;
+    font-family: Lato;
+    font-weight: 600;
+    background-color: white;
+    cursor: pointer;
+    text-align: center;
+}
+
+    .removeDeviceButton :hover {
+        transform: scale(1.05);
+        color: #0069cb;
+    }
+
+.readonly-input {
+    color: #f0f0f0 !important; /* Màu chữ sáng */
+    background-color: #9a9a9a !important; /* Nền xám sẫm */
+    border: 1px solid #666666 !important; /* Viền màu xám đậm */
+    border-radius: 8px !important;
+    padding: 6px 10px !important;
+    user-select: none !important; /* Ngăn chọn chữ */
+    pointer-events: none !important; /* Ngăn nhận sự kiện chuột */
+    outline: none !important; /* Không hiện viền khi focus */
+    cursor: default !important; /* Con trỏ mặc định */
+}
+.modal-body {
+    margin-bottom: 0.5rem; /* Tạo khoảng cách với nút */
+}
+.confirm-text {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #001F54;
+    font-family: Lato;
+    margin-bottom: 0.5rem; /* tạo khoảng cách với nút */
+}
+
+/* Khoảng cách nút với dòng trên */
+.modal-actions.spaced-buttons {
+    margin-top: 1.0rem;
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+}
+#deleteDeviceIdText {
+    text-transform: uppercase;
+    font-weight: 700;
+}

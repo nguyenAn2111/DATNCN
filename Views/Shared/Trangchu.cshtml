@@ -1,0 +1,134 @@
+﻿
+<!DOCTYPE html>
+<html>
+<!--phần đầu-->
+<head>
+    <title>Trang chủ</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://kit.fontawesome.com/2f8895050a.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
+    <style>
+        .list-group.item1 {
+            background-color: #001F54;
+            color: #FEFCFB !important;
+        }
+    </style>
+</head>
+<body>
+        <div class="welcome">
+            <div class=" hello">
+                Xin chào,
+                <div class="hello-user">
+                    Lê Minh Hà
+                </div>
+            </div>
+            <div class="user-info">
+                <div class="alarm">
+                    <a class="Noti" href="#!">
+                        <i class="fa-solid fa-gear"></i>
+                    </a>
+                    <a class="Setting" href="#!">
+                        <i class="fa-solid fa-bell"></i>
+                    </a>
+                </div>
+                <div class="personal">
+                    <a class="personal" href="#!">
+                        <i class="bi bi-person-circle"></i>
+                    </a>
+                </div>
+                <div class="name">
+                    <div class="doctor-name">
+                        LÊ MINH HÀ
+                    </div>
+                    <div class="doctor-position">
+                        Bác sĩ
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="main-part">
+            <div class="statistical">
+                <div class="statistical part one">
+                    <div class="Iconly">
+                        <div class="icon">
+                            <i class="fa-solid fa-bed-pulse"></i>
+                        </div>
+                        <div id="title-number">
+                            <div id="number">
+                                200
+                            </div>
+                            THIẾT BỊ TRONG KHO
+                        </div>
+                    </div>
+                </div>
+                <div class="statistical part two">
+                    <div class="Iconly">
+                        <div class="icon">
+                            <i class="fa-solid fa-hospital-user"></i>
+                        </div>
+                        <div id="title-number">
+                            <div id="number">
+                                300
+                            </div>
+                            THIẾT BỊ SỬ DỤNG
+                        </div>
+                    </div>
+                </div>
+                <div class="statistical part three">
+                    <div class="Iconly">
+                        <div class="icon">
+                            <i class="fa-solid fa-user-doctor"></i>
+                        </div>
+                        <div id="title-number">
+                            <div id="number">
+                                10
+                            </div>
+                            NHÂN VIÊN QUẢN LÝ
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="facility-static">
+                <div class="upcoming statis">
+                    Danh sách thiết bị trong kho
+                    <div class="upcoming dropbox">
+                        <a class="upcoming view all" asp-action="Patient">
+                            View all >
+                        </a>
+                    </div>
+                    <div class="upcoming-table">
+                    </div>
+                </div>
+                <div class="finace patient statis">
+                    <div class="maintenance box">
+                        <p>Danh sách bảo trì</p>
+                        <div class="finace-dropbox">
+                            <input type="date" id="finace" name="birthday">
+                        </div>
+                        <div class="maintenance-statis">
+                        </div>
+                    </div>
+                    <div class="fixing box">
+                        <p>Danh sách sửa chữa</p>
+                        <div class="patient-dropbox">
+                            <input type="date" id="patient" name="birthday">
+                        </div>
+                        <div class="fixing-statis">
+                        </div>
+                    </div>
+                </div>
+                <div class="doctor statis">
+                    Điều chuyển và thu hồi
+                    <div class="doctor dropbox">
+                        <a class="doctor view all" asp-action="Staff">
+                            View all >
+                        </a>
+                    </div>
+                    <div class="upcoming-table">
+                    </div>
+                </div>
+            </div>
+
+        </div>
+</body>
