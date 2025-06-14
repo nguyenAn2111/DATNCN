@@ -564,6 +564,8 @@ namespace Hospital_Test.Controllers
 
             return View("~/Views/Shared/Kho.cshtml", StorageList);
         }
+
+
         public IActionResult Taichinh_Hopdong()
         {
             return View("~/Views/Shared/Taichinh_Hopdong.cshtml");

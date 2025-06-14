@@ -1,7 +1,16 @@
 {
   "Version": 1,
   "WorkspaceRootPath": "C:\\Users\\Lenovo\\OneDrive\\Desktop\\\u0110ATNCN\\srcDATN\\",
-  "Documents": [],
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{BE7D7811-E103-4EC3-9FC5-D895B7C3E3BF}|Hospital_Test.csproj|c:\\users\\lenovo\\onedrive\\desktop\\\u0111atncn\\srcdatn\\models\\contact.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{BE7D7811-E103-4EC3-9FC5-D895B7C3E3BF}|Hospital_Test.csproj|solutionrelative:models\\contact.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{BE7D7811-E103-4EC3-9FC5-D895B7C3E3BF}|Hospital_Test.csproj|c:\\users\\lenovo\\onedrive\\desktop\\\u0111atncn\\srcdatn\\controllers\\managementcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{BE7D7811-E103-4EC3-9FC5-D895B7C3E3BF}|Hospital_Test.csproj|solutionrelative:controllers\\managementcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
   "DocumentGroupContainers": [
     {
       "Orientation": 1,
@@ -9,7 +18,7 @@
       "DocumentGroups": [
         {
           "DockedHeight": 268,
-          "SelectedChildIndex": -1,
+          "SelectedChildIndex": 2,
           "Children": [
             {
               "$type": "Bookmark",
@@ -18,6 +27,32 @@
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{b1e99781-ab81-11d0-b683-00aa00a3ee26}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Contact.cs",
+              "DocumentMoniker": "C:\\Users\\Lenovo\\OneDrive\\Desktop\\\u0110ATNCN\\srcDATN\\Models\\Contact.cs",
+              "RelativeDocumentMoniker": "Models\\Contact.cs",
+              "ToolTip": "C:\\Users\\Lenovo\\OneDrive\\Desktop\\\u0110ATNCN\\srcDATN\\Models\\Contact.cs",
+              "RelativeToolTip": "Models\\Contact.cs",
+              "ViewState": "AgIAAAUAAAAAAAAAAAAxwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-14T15:17:14.329Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "ManagementController.cs",
+              "DocumentMoniker": "C:\\Users\\Lenovo\\OneDrive\\Desktop\\\u0110ATNCN\\srcDATN\\Controllers\\ManagementController.cs",
+              "RelativeDocumentMoniker": "Controllers\\ManagementController.cs",
+              "ToolTip": "C:\\Users\\Lenovo\\OneDrive\\Desktop\\\u0110ATNCN\\srcDATN\\Controllers\\ManagementController.cs*",
+              "RelativeToolTip": "Controllers\\ManagementController.cs*",
+              "ViewState": "AgIAADgCAAAAAAAAAAAQwDcCAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-14T12:50:31.503Z",
+              "EditorCaption": ""
             }
           ]
         }

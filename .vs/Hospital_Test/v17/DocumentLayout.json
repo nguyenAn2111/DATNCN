@@ -1,20 +1,7 @@
 {
   "Version": 1,
   "WorkspaceRootPath": "C:\\Users\\Lenovo\\OneDrive\\Desktop\\\u0110ATNCN\\srcDATN\\",
-  "Documents": [
-    {
-      "AbsoluteMoniker": "D:0:0:{BE7D7811-E103-4EC3-9FC5-D895B7C3E3BF}|Hospital_Test.csproj|c:\\users\\lenovo\\onedrive\\desktop\\\u0111atncn\\srcdatn\\hospital_test.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
-      "RelativeMoniker": "D:0:0:{BE7D7811-E103-4EC3-9FC5-D895B7C3E3BF}|Hospital_Test.csproj|solutionrelative:hospital_test.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{BE7D7811-E103-4EC3-9FC5-D895B7C3E3BF}|Hospital_Test.csproj|c:\\users\\lenovo\\onedrive\\desktop\\\u0111atncn\\srcdatn\\controllers\\managementcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{BE7D7811-E103-4EC3-9FC5-D895B7C3E3BF}|Hospital_Test.csproj|solutionrelative:controllers\\managementcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{BE7D7811-E103-4EC3-9FC5-D895B7C3E3BF}|Hospital_Test.csproj|c:\\users\\lenovo\\onedrive\\desktop\\\u0111atncn\\srcdatn\\wwwroot\\css\\style.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
-      "RelativeMoniker": "D:0:0:{BE7D7811-E103-4EC3-9FC5-D895B7C3E3BF}|Hospital_Test.csproj|solutionrelative:wwwroot\\css\\style.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
-    }
-  ],
+  "Documents": [],
   "DocumentGroupContainers": [
     {
       "Orientation": 1,
@@ -22,21 +9,8 @@
       "DocumentGroups": [
         {
           "DockedHeight": 268,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": -1,
           "Children": [
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "Hospital_Test",
-              "DocumentMoniker": "C:\\Users\\Lenovo\\OneDrive\\Desktop\\\u0110ATNCN\\srcDATN\\Hospital_Test.csproj",
-              "RelativeDocumentMoniker": "Hospital_Test.csproj",
-              "ToolTip": "C:\\Users\\Lenovo\\OneDrive\\Desktop\\\u0110ATNCN\\srcDATN\\Hospital_Test.csproj",
-              "RelativeToolTip": "Hospital_Test.csproj",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABcAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2025-06-14T12:51:49.367Z",
-              "EditorCaption": ""
-            },
             {
               "$type": "Bookmark",
               "Name": "ST:128:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
@@ -46,30 +20,8 @@
               "Name": "ST:0:0:{b1e99781-ab81-11d0-b683-00aa00a3ee26}"
             },
             {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "ManagementController.cs",
-              "DocumentMoniker": "C:\\Users\\Lenovo\\OneDrive\\Desktop\\\u0110ATNCN\\srcDATN\\Controllers\\ManagementController.cs",
-              "RelativeDocumentMoniker": "Controllers\\ManagementController.cs",
-              "ToolTip": "C:\\Users\\Lenovo\\OneDrive\\Desktop\\\u0110ATNCN\\srcDATN\\Controllers\\ManagementController.cs",
-              "RelativeToolTip": "Controllers\\ManagementController.cs",
-              "ViewState": "AgIAABICAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-14T12:50:31.503Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "style.css",
-              "DocumentMoniker": "C:\\Users\\Lenovo\\OneDrive\\Desktop\\\u0110ATNCN\\srcDATN\\wwwroot\\css\\style.css",
-              "RelativeDocumentMoniker": "wwwroot\\css\\style.css",
-              "ToolTip": "C:\\Users\\Lenovo\\OneDrive\\Desktop\\\u0110ATNCN\\srcDATN\\wwwroot\\css\\style.css",
-              "RelativeToolTip": "wwwroot\\css\\style.css",
-              "ViewState": "AgIAAAgAAAAAAAAAAAAkwNkFAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
-              "WhenOpened": "2025-06-14T12:49:43.698Z",
-              "EditorCaption": ""
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
             }
           ]
         }
