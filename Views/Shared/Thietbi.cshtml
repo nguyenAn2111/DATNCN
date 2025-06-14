@@ -1,0 +1,739 @@
+﻿@model DevicePageViewModel
+
+<!DOCTYPE html>
+<html>
+<!--phần đầu-->
+<head>
+    <title>Thietbi</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://kit.fontawesome.com/2f8895050a.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
+    <style>
+        .list-group.item2 {
+            background-color: #001F54;
+            color: #FEFCFB !important;
+        }
+    </style>
+</head>
+<body>
+        <div class="surgery-schedule">  
+            <div class="surgery-major">
+                <div class="surgery-title">
+                    THIẾT BỊ
+                </div>
+            </div>
+            <div class="surgery-table">
+                <table id="surgery-table">
+                    <div class="wrap-sreach">
+                        <input name="searchString" id="searchInput" style="width: 21rem; margin-bottom: 0rem;" type="text" placeholder="🔍Tìm kiếm tên thiết bị">
+                        @* <select name="statusFilter" style="width: 13rem; padding: 0.5rem;" id="statusFilter">
+                            <option value="">TẤT CẢ</option>    
+                            <option value="MUA MỚI">Mua Mới</option>
+                            <option value="HOẠT ĐỘNG">Hoạt động</option>
+                            <option value="BẢO TRÌ">Bảo trì</option>
+                            <option value="SỬA CHỮA">Sửa chữa</option>
+                            <option value="DỪNG SỬ DỤNG - THANH LÝ">Dừng sử dụng - Thanh lý</option>
+                        </select> *@
+                        <div class="surgery-major-button">
+                            <!-- nghiệp vụ -->
+                            <div class="dropdown">
+                                <button class="dropbtn" onclick="document.getElementById('deviceAddModal').style.display='flex'">
+                                    <i class="fa-solid fa-square-plus" style="margin-right: 0.5rem;"></i>
+                                    Thêm thiết bị
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                   
+                    <table id="dataTable" style="width:100%;">
+                        <thead>
+                            <tr>
+                                <th>Mã ID thiết bị</th>
+                                <th>Mã series thiết bị </th>
+                                <th>Tên thiết bị</th>
+                                <th>Vị trí hiện tại</th>
+                                <th>Trạng thái hiện tại</th>
+                                <th>Ngày nhập về</th>
+                                <th>Chi tiết</th>
+                                <th>Xóa</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        @if (Model.DeviceList.PageCount > 0)
+                        {
+                            foreach (var item in Model.DeviceList.Items)
+                            {
+                                <tr>
+                            <td class="facility"> @item.device_id</td>
+                            <td class="facility"> @item.device_seri</td>
+                            <td class="facility"> @item.device_name</td>
+                            <td class="facility"> @item.room_name</td>
+                            <td class="facility"> @item.status_name</td>
+                            <td class="facility"> @item.device_received_date?.ToString("dd/MM/yyyy")</td>
+                                    <td class="detail">
+
+                                        <button class="detail-btn" data-device-id="@item.device_id">
+                                            <a href="#" class="fa-solid fa-circle-info" onclick="openDeviceDetail('@item.device_id')"></a>
+                                        </button>
+                                    </td>
+
+                                     <td class="delete">
+                                        <button type="button" class="delete-btn" data-device-id="@item.device_id">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </button>
+                                    </td>
+									<div id="confirmModal" class="modal">
+										<div class="modal-content">
+											<div class="modal-header">
+												<h3>XÁC NHẬN XÓA</h3>
+											</div>
+											<div class="modal-body">
+												<p class="confirm-text">
+													Bạn có chắc muốn xóa thiết bị <strong id="deleteDeviceIdText" style="color:#d44c4c;"></strong> không?
+												</p>
+											</div>
+											<div class="modal-actions spaced-buttons">
+												<button class="submit-button confirmDelete">Xóa</button>
+												<button class="cancel-button cancelDelete">Hủy</button>
+											</div>
+										</div>
+									</div>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td class="facility" colspan="8">NOTHING FOUND</td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                </table>
+            </div>
+        </div>
+        <!--modal xóa thiết bị-->
+        <div id="confirmModal" class="modal">
+            <div class="modal-content">
+                <p style="text-align: center; font-family: Lato; color: #001F54; font-size: 1.2rem; font-weight: 800; text-transform: uppercase;">Bạn có chắc chắn muốn xóa thiết bị này không?</p><br>
+                <div>
+                    <button id="popup-button-reschedule" class="confirmDelete">Xóa</button>
+                    <button id="popup-button-reschedule" class="cancelDelete">Quay lại</button>
+                </div>
+            </div>
+        </div>
+	<!-- Modal Chi tiết thiết bị -->
+	<div id="deviceDetailModal" class="modal">
+		<div class="modal-content">
+			<span class="close" onclick="document.getElementById('deviceDetailModal').style.display='none'">&times;</span>
+			<h3>Chi tiết thiết bị</h3>
+			<form method="post" asp-action="Thietbi_Update">
+				<div id="deviceDetailContent">
+					<div class="deviceAdd-form">
+						<div class="form-group-title">
+							Thông tin cơ bản
+						</div>
+						<div class="form-group">
+
+							<div>
+								<label>Mã ID:</label>
+								<input name="tbiID" type="text" id="ID" style="width: 8rem; margin-right: 1rem;" readonly tabindex="-1" class="readonly-input">
+							</div>
+
+							<div>
+								<label>Tên thiết bị:</label>
+								<input name="tbiName" type="text" id="name" style="width: 15rem; margin-right: 1rem;">
+							</div>
+
+							<div>
+								<label>Tên nhà sản xuất:</label>
+								<input name="tbiManufacturer" type="text" id="manufacturer" style="width: 12rem; margin-right: 1rem;">
+							</div>
+
+							<div>
+								<label>Mã seri:</label>
+								<input name="tbiSeri" type="text" id="seri" style="width: 5rem; margin-right: 1rem;">
+							</div>
+
+							<div>
+								<label>Loại thiết bị:</label>
+								<input name="tbiType" type="text" id="type" style="width: 12rem; margin-right: 1rem;">
+							</div>
+
+							<div>
+								<label>Nhóm thiết bị:</label>
+								<input name="tbiGroup" type="text" id="group" style="width: 15rem; margin-right: 1rem;">
+							</div>
+						</div>
+
+
+
+						<div class="form-group-title">
+							Tình trạng - Vị trí
+						</div>
+						<div class="form-group">
+							<div>
+								<label>Tình trạng:</label>
+								<input type="text" name="tbiStatus" id="status" style="width: 15rem; margin-right: 1rem;" readonly tabindex="-1" class="readonly-input">
+							</div>
+							<div>
+								<label>Khoa tiếp nhận:</label>
+								<input name="tbiRoom_type" type="text" id="room_type" style="width: 15rem; margin-right: 1rem;" readonly tabindex="-1" class="readonly-input">
+								@*  <select name="tbiRoom_type" id="room_type" type="text" style="width: 18rem; margin-right: 1rem;">
+								<option value="">-- Chọn khoa --</option>
+								@foreach (var item in ViewBag.DistinctRoomTypes)
+								{
+								<option value="@item.room_type">@item.room_type</option>
+								}
+								</select> *@
+							</div>
+							<div>
+								<label>Vị trí:</label>
+								<input name="tbiRoom_id" type="text" id="room" style="width: 8rem; margin-right: 1rem;" readonly tabindex="-1" class="readonly-input">
+								@*  <select name="tbiRoom" id="room" type="text" style="width: 18rem; margin-right: 1rem;">
+								<option value="">-- Vui lòng chọn khoa trước --</option>
+								</select> *@
+							</div>
+						</div> <br>
+
+						<div class="form-group-title">
+							Thông tin bảo trì
+						</div>
+						<div class="form-group">
+							<div>
+								<label>Thời hạn bảo trì:</label>
+								<input type="number" name="tbiMaintenance_cycle" id="maintain_cycle" style="width: 8rem; margin-right: 1rem;">
+							</div>
+							<div>
+								<label>Thời hạn bảo trì tính từ ngày:</label>
+								<input name="tbiMaintenance_start" type="date" id="maintain_start" style="width: 15rem; margin-right: 1rem;">
+							</div>
+						</div><br>
+
+						<div class="form-group-title">
+							<div>
+								<i class="fa-solid fa-warehouse" style="margin-right: 0.5rem;"></i>
+								Thông tin kho
+							</div>
+						</div>
+						<div class="form-group">
+							<div>
+								<label>Ngày nhập về:</label>
+								<input name="tbiReceived_date" type="date" id="received_date" />
+							</div>
+							<div>
+								<label>Tình trạng lúc nhập về</label>
+								<input name="tbiCondition" type="text" id="condition" style="width: 12rem; margin-right: 1rem;">
+							</div>
+							<div>
+								<label>Giá sản phẩm/đơn vị:</label>
+								<input type="text" name="tbiContact_finance" id="finance" style="width: 10rem; margin-right: 1rem;" readonly tabindex="-1" class="readonly-input">
+							</div>
+							<div>
+								<label>Ngày xuất kho:</label>
+								<input name="tbiStockout_date" type="date" id="stockoutdate">
+							</div>
+						</div><br>
+
+						<div class="form-group-title">
+							<div>
+								<i class="fa-solid fa-paperclip" style="margin-right: 0.5rem;"></i>
+								Các loại hợp đồng
+							</div>
+						</div>
+						<div class="form-group">
+							<input type="hidden" name="tbiContact_id" id="contact_id" />
+							<div>
+								<label>Loại hợp đồng, giấy tờ:</label>
+								<input type="text" name="tbiContact_type" id="contactType" style="width: 10rem; margin-right: 1rem;" readonly tabindex="-1" class="readonly-input" />
+							</div>
+							<div>
+								<label>File phương tiện:</label>
+								<input type="text" name="tbiContact_address" id="contactAddress" readonly tabindex="-1" class="readonly-input" />
+							</div>
+						</div>
+
+
+						@* <div class="form-group-title">
+						Lịch sử sử dụng
+						</div>
+						<div class="form-group">
+						<table id="dataTable" style="width:100%;">
+						<thead>
+						<tr>
+						<th>STT</th>
+						<th>Ngày xuất kho</th>
+						<th>Vị trí sau khi xuất kho</th>
+						<th>Tình trạng</th>
+						</tr>
+						</thead>
+
+						<tbody>
+						<tr>
+						<td id="facility">1</td>
+						<td id="facility"> 2/3/2025 </td>
+						<td id="facility"> ICU</td>
+						<td id="facility"> hoạt động </td>
+						</tr>
+						</tbody>
+						</table>
+						</div> *@
+
+
+						<div>
+							<label>Mô tả:</label>
+							<input type="text" name="tbiNote" id="devicenote" style="width: 50rem; margin-right: 1rem;" />
+						</div><br>
+
+						<button type="submit" class="submit-button">Cập nhật</button>
+						<button class="cancel-button" onclick="document.getElementById('deviceDetailModal').style.display='none'">Thoát</button>
+
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+
+
+	<!--modal thêm thiết bị -->
+	<div id="deviceAddModal" class="modal">
+		<div class="modal-content">
+			<div class="modal-header">
+				<span class="close" onclick="document.getElementById('deviceAddModal').style.display='none'">&times;</span>
+				<h3 class="deviceAddModal">Thêm thiết bị</h3>
+			</div>
+			<div class="modal-body">
+				<form method="post" asp-action="Thietbi_Add">
+					<div class="deviceAdd-form">
+						<div>
+							<i class="fa-solid fa-info-circle" style="margin-right: 0.5rem;"></i>
+							Thông tin chung
+						</div>
+					</div>
+					<div class="form-group">
+						<div>
+							<label>Tên thiết bị:</label>
+							<input name="tbiName" type="text" style="width: 18rem; margin-right: 1rem;">
+						</div>
+
+						<div>
+							<label>Tên nhà sản xuất:</label>
+							<input name="tbiManufacturer" type="text" style="width: 18rem; margin-right: 1rem;">
+						</div>
+
+						<div>
+							<label>Loại thiết bị:</label>
+							<input name="tbiType" type="text" style="width: 18rem; margin-right: 1rem;">
+						</div>
+
+						<div>
+							<label>Thuộc nhóm:</label>
+							<select name="tbiGroup">
+								<option value="">----- Chọn nhóm thiết bị -----</option>
+								<option value="Chẩn đoán">Thiết bị chẩn đoán</option>
+								<option value="Điều trị">Thiết bị điều trị</option>
+								<option value="Phẫu thuật & Nội soi">Dụng cụ phẫu thuật và nội soi</option>
+								<option value="Xét nghiệm">Thiết bị xét nghiệm</option>
+								<option value="Hỗ trợ bệnh nhân">Thiết bị hỗ trợ bệnh nhân</option>
+								<option value="Kiểm soát môi trường & Khử khuẩn">Thiết bị kiểm soát môi trường & khử khuẩn</option>
+								<option value="CNTT y tế">Thiết bị công nghệ và CNTT y tế</option>
+							</select>
+						</div>
+					</div>
+
+					<div class="deviceAdd-form">
+						<div>
+							<i class="fa-solid fa-list-ul" style="margin-right: 0.5rem;"></i>
+							Các mã series
+						</div>
+					</div>
+
+					<div class="form-group d-flex align-items-center gap-2" style="gap: 1rem;">
+						<label for="seriCount" class="mb-0">Số lượng mã series cần thêm:</label>
+						<input type="number" id="seriCount" min="1" value="1" class="form-control" style="width: 120px;" >
+
+						<button type="button" onclick="generateSeries()" id="addSeribtn" style="margin-right: 0.2rem">
+							Tạo series
+						</button>
+					</div>
+
+					<div class="form-group mt-3">
+						<table class="table" id="deviceTable">
+							<thead>
+								<tr>
+									<th style="width: 10">STT</th>
+									<th style="width: 70">Mã series</th>
+									<th style="width: 20">Xóa</th>
+								</tr>
+							</thead>
+							<tbody id="seriesBody">
+							</tbody>
+						</table>
+					</div>
+
+					<div class="form-group-title">
+						<div>
+							<i class="fa-solid fa-warehouse" style="margin-right: 0.5rem;"></i>
+							Thông tin kho
+						</div>
+					</div>
+					<div class="form-group">
+						<div>
+							<label>Ngày nhập về:</label>
+							<input name="tbiReceived_date" type="date" />
+						</div>
+						<div>
+							<label>Tình trạng lúc nhập về</label>
+							<select name="tbiCondition">
+								<option value="Mua mới">Mua Mới</option>
+								<option value="Mua cũ">Mua cũ</option>
+							</select>
+						</div>
+						<div>
+							<label for="deviceType">Giá sản phẩm/đơn vị:</label>
+							<input type="text" name="tbiContact_finance" style="width: 18rem; margin-right: 1rem;">
+						</div>
+						<div>
+							<label for="maintenancePeriod">Ngày xuất kho:</label>
+							<input name="tbiStockout_date" type="date" />
+						</div>
+					</div><br>
+
+					<div class="form-group-title">
+						<div>
+							<i class="fa-solid fa-clipboard-list" style="margin-right: 0.5rem;"></i> Thông tin sử dụng
+						</div>
+					</div>
+					<div class="form-group">
+						<div>
+							<label>Khoa tiếp nhận:</label>
+							<select name="tbiRoom_type" id="tbiRoom_type" type="text" style="width: 18rem; margin-right: 1rem;">
+								<option value="">-- Chọn khoa --</option>
+								@foreach (var item in ViewBag.DistinctRoomTypes)
+								{
+									<option value="@item.room_type">@item.room_type</option>
+								}
+							</select>
+						</div>
+						<div>
+							<label>Vị trí:</label>
+							<select name="tbiRoom" id="tbiRoom" type="text" style="width: 18rem; margin-right: 1rem;">
+								<option value="">-- Vui lòng chọn khoa trước --</option>
+							</select>
+						</div>
+					</div> <br>
+
+					<div class="form-group-title">
+						<div>
+							<i class="fa-solid fa-wrench" style="margin-right: 0.5rem;"></i>
+							Thông tin bảo trì
+						</div>
+					</div>
+					<div class="form-group">
+						<div>
+							<label>Thời hạn bảo trì:</label>
+							<input type="number" name="tbiMaintenance_cycle" min="0" step="1" placeholder="Tháng bảo trì / lần">
+						</div>
+						<div>
+							<label>Thời hạn bảo trì tính từ ngày:</label>
+							<input type="date" name="tbiMaintenance_start">
+						</div>
+					</div><br>
+
+					<div class="form-group-title">
+						<div>
+							<i class="fa-solid fa-paperclip" style="margin-right: 0.5rem;"></i>
+							Các loại hợp đồng
+						</div>
+					</div>
+
+					<div class="form-group">
+						<div>
+							<label>Loại hợp đồng:</label>
+							<select name="tbiContact_type">
+								<option value="Mua bán">Mua bán</option>
+								<option value="Bảo trì">Bảo trì</option>
+								<option value="Sửa chữa">Sửa chữa</option>
+							</select>
+						</div>
+						<div>
+							<label>Chọn tệp đính kèm:</label>
+							<input type="file" name="tbiContact_address">
+						</div>
+					</div> <br>
+
+					<div class="form-group">
+						<div style="display: flex; gap: 0.5rem;">
+							<label>Mô tả:</label>
+							<textarea id="description" name="tbiNote" cols="50" style="width: auto;" required></textarea>
+						</div><br>
+					</div> <br>
+					<button class="submit-button">
+						Thêm thiết bị
+					</button>
+				</form>
+			</div>
+		</div>
+	</div>
+
+	@* //Xóa thiết bị theo ID *@
+	<script>
+		let selectedDeviceId = "";
+
+		document.querySelectorAll(".delete-btn").forEach(function (btn) {
+			btn.addEventListener("click", function () {
+				selectedDeviceId = this.getAttribute("data-device-id");
+				document.getElementById("deleteDeviceIdText").innerText = selectedDeviceId;
+				document.getElementById("confirmModal").style.display = "flex";
+			});
+		});
+
+		document.querySelectorAll(".cancelDelete").forEach(function (btn) {
+			btn.addEventListener("click", function () {
+				document.getElementById("confirmModal").style.display = "none";
+			});
+		});
+
+		document.querySelectorAll(".confirmDelete").forEach(function (btn) {
+			btn.addEventListener("click", function () {
+				fetch('/Management/Thietbi_Delete', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded'
+					},
+					body: `id=${encodeURIComponent(selectedDeviceId)}`
+				})
+					.then(response => response.json())
+					.then(data => {
+						if (data.success) {
+							alert("Đã xóa thành công!");
+							document.querySelector(`[data-device-id='${selectedDeviceId}']`).closest("tr").remove();
+						} else {
+							alert("Không thể xóa thiết bị!");
+						}
+						document.getElementById("confirmModal").style.display = "none";
+					})
+					.catch(error => {
+						alert("Đã xảy ra lỗi!");
+						document.getElementById("confirmModal").style.display = "none";
+					});
+			});
+		});
+	</script>
+
+
+
+		<script>
+		// Tìm kiếm theo tên thiết bị trong bảng thống kê
+		document.getElementById("searchInput").addEventListener("keyup", function () {
+			const filter = this.value.toUpperCase();
+			const rows = document.querySelectorAll("#dataTable tbody tr");
+
+			rows.forEach(row => {
+				const cell = row.querySelector("td");
+				if (cell && cell.textContent.toUpperCase().indexOf(filter) > -1) {
+					row.style.display = "";
+				} else {
+					row.style.display = "none";
+				}
+			});
+		});
+
+		//filter lọc "Trang thái hoạt động"
+		document.getElementById("statusFilter").addEventListener("change", function () {
+			var selectedStatus = this.value.toUpperCase();
+			var rows = document.querySelectorAll("#dataTable tbody tr");
+
+			rows.forEach(row => {
+				var statusCell = row.querySelector("td:nth-child(5)").textContent.toUpperCase();
+
+				if (selectedStatus === "" || statusCell.indexOf(selectedStatus) > -1) {
+					row.style.display = "";
+				} else {
+					row.style.display = "none";
+				}
+			});
+		});
+
+		//Modal chi tiết thiết bị
+		document.querySelectorAll("#dataTable tbody tr").forEach(function (row) {
+			row.querySelector("td:nth-child(7) button").addEventListener("click", function () {
+				// Hiển thị modal
+				document.getElementById("deviceDetailModal").style.display = "flex";
+			});
+		});
+		document.querySelector(".close").addEventListener("click", function () {
+			document.getElementById("deviceDetailModal").style.display = "none";
+		});
+		
+        function openDeviceDetail(id) {
+            fetch(`/Management/Thietbi_GetById?id=${id}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log("DATA:", data); 
+
+                    // Gán dữ liệu vào các input trong modal
+                    document.getElementById('ID').value = data.device_id || '';
+                    document.getElementById('name').value = data.device_name || '';
+                    document.getElementById('manufacturer').value = data.device_manufacturer || '';
+                    document.getElementById('seri').value = data.device_seri || '';
+                    document.getElementById('type').value = data.device_type || '';
+                    document.getElementById('group').value = data.device_group || '';
+                    document.getElementById('status').value = data.status_name || '';
+                    document.getElementById('room_type').value = data.room_type || '';
+                    document.getElementById('room').value = data.room_name || '';
+
+                    document.getElementById('maintain_cycle').value = data.device_maintenance_cycle || '';
+                    document.getElementById('maintain_start').value = data.device_maintenance_start?.split('T')[0] || '';
+                    document.getElementById('received_date').value = data.device_received_date?.split('T')[0] || '';
+                    document.getElementById('condition').value = data.device_condition || '';
+                    document.getElementById('finance').value = data.contact_finance || '';
+                    document.getElementById('stockoutdate').value = data.device_stockout_date?.split('T')[0] || '';
+					document.getElementById('contact_id').value = data.FK_contact_id || '';
+                    document.getElementById('contactType').value = data.contact_type || '';
+					document.getElementById('devicenote').value = data.device_note || '';
+                    document.getElementById('contactAddress').value = data.contact_address || '';
+             
+                    // Hiển thị modal
+                    document.getElementById('deviceDetailModal').style.display = 'block';
+                })
+                .catch(error => {
+                    console.error("Lỗi lấy dữ liệu thiết bị:", error);
+                    alert("Không thể tải dữ liệu thiết bị.");
+                });
+        }
+
+	</script>
+
+
+    
+        <script>
+            // Định dạng tiền 
+            function formatMoney(input) {
+                let value = input.value.replace(/\./g, '');
+                
+                if (isNaN(value)) {
+                    input.value = '';
+                    return;
+                }
+                input.value = value.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+            }
+            //đính kèm file
+            function displayFileName() {
+                var fileInput = document.getElementById('fileInput');
+                var fileName = fileInput.files[0].name;
+            } </script>
+
+        <script>
+            window.onclick = function(event) {
+                // Kiểm tra nếu người dùng bấm vào vùng ngoài modal (tức là phần nền mờ)
+                if (event.target === document.getElementById('confirmModal') || 
+                    event.target === document.getElementById('deviceAddModal') ||
+                    event.target === document.getElementById('deviceDetailModal')
+                ) {
+                    event.target.style.display = "none";
+                }
+                }
+        </script>
+
+       @*  //********Mapping cho Room_type và room_id *@
+        <script>
+        // 1. Lấy dữ liệu mapping được gửi từ Controller
+        const roomMapping = @Html.Raw(ViewBag.RoomMappingJson ?? "{}");
+
+        // 2. Lấy các thẻ select bằng ID
+        const khoaSelect = document.getElementById('tbiRoom_type');
+        const viTriSelect = document.getElementById('tbiRoom');
+
+        // 3. Viết hàm để cập nhật dropdown "Vị trí"
+        function updateViTriDropdown() {
+            const selectedKhoa = khoaSelect.value; // Lấy mã khoa đã chọn (ví dụ: "PK")
+            viTriSelect.innerHTML = ''; // Xóa các lựa chọn cũ
+
+            if (selectedKhoa && roomMapping[selectedKhoa]) {
+                const locations = roomMapping[selectedKhoa]; // Lấy danh sách các vị trí tương ứng
+
+                // Tạo và thêm các option vị trí mới
+                locations.forEach(function(location) {
+                    const option = document.createElement('option');
+                    option.value = location;
+                    option.textContent = location;
+                    viTriSelect.appendChild(option);
+                });
+            } else {
+                // Nếu không có khoa nào được chọn, hiển thị thông báo
+                const defaultOption = document.createElement('option');
+                defaultOption.value = "";
+                defaultOption.textContent = "-- Vui lòng chọn khoa trước --";
+                viTriSelect.appendChild(defaultOption);
+            }
+        }
+
+        // 4. Gắn sự kiện "change": mỗi khi người dùng đổi khoa, gọi hàm cập nhật
+        khoaSelect.addEventListener('change', updateViTriDropdown);
+    </script>
+
+
+    @*     //Script thêm series để get input  *@
+	<script>
+		const tbody = document.getElementById("seriesBody");
+		const seriCountInput = document.getElementById("seriCount");
+
+		
+		function createSeriesRow(stt, value = '') {
+			const row = document.createElement("tr");
+			row.innerHTML = `
+					<td class="seri-stt">${stt}</td>
+					<td>
+						<input name="tbiSeri" type="text" class="form-control" required value="${value}" />
+					</td>
+					<td>
+						<button type="button" class="btn btn-outline-danger btn-sm remove-row" title="Xóa dòng">
+							<i class="fa-solid fa-trash-can"></i>
+						</button>
+					</td>
+				`;
+			tbody.appendChild(row);
+		}
+
+		function generateSeries() {
+			const count = parseInt(seriCountInput.value) || 1;
+
+			tbody.innerHTML = "";
+
+			for (let i = 1; i <= count; i++) {
+				createSeriesRow(i); // Gọi hàm với tên mới
+			}
+
+			seriCountInput.value = count;
+		}
+
+		function updateSTT() {
+			const rows = tbody.querySelectorAll("tr");
+			rows.forEach((row, index) => {
+				row.querySelector(".seri-stt").textContent = index + 1;
+			});
+			seriCountInput.value = rows.length;
+		}
+
+		document.addEventListener("click", function (e) {
+			if (e.target.closest(".remove-row")) {
+				const row = e.target.closest("tr");
+				if (row && tbody.childElementCount > 1) {
+					row.remove();
+					updateSTT();
+				} else {
+					alert("Phải có ít nhất 1 dòng mã series.");
+				}
+			}
+		});
+
+		window.addEventListener("DOMContentLoaded", () => {
+			generateSeries();
+		});
+	</script>
+
+
+</body>

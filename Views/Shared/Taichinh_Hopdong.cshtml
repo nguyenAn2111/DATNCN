@@ -1,0 +1,449 @@
+﻿@{
+}
+
+<!DOCTYPE html>
+<html>
+<!--phần đầu-->
+<head>
+    <title>Taichinh_hopdong</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://kit.fontawesome.com/2f8895050a.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
+    <style>
+        .list-group.item5 {
+            background-color: #001F54;
+            color: #FEFCFB !important;
+        }
+    </style>
+</head>
+<body>
+        <div class="surgery-schedule">
+            <div class="surgery-major">
+                <div class="surgery-title">
+                    💵 TÀI CHÍNH - HỢP ĐỒNG
+                </div>
+            </div>
+        </div>
+
+        <nav class="menu">
+            <div class="dropdown">
+                <button class="taichinh-dropbtn">Tài chính</button>
+                <div class="dropdown-content">
+                    <a href="#muasam"> Chi phí mua sắm </a>
+                    <a href="#baotri"> Chi phí bảo trì và sửa chữa </a>
+                </div>
+            </div>
+            <a href="#hopdong">Hợp đồng - Giấy tờ</a>
+        </nav>
+
+        <div class="group-container">
+            <!--nhóm 1-->
+            <div class="store">
+                <section class="maintain-title" id="Taichinh">
+                    📦Tài chính
+                </section>
+
+                <div class="filters">
+                    <input type="month" id="filter-date" placeholder="Chọn tháng/năm">
+                    <select>
+                        <option>Chọn thiết bị</option>
+                        <option>Máy X-Quang</option>
+                        <option>Máy siêu âm</option>
+                    </select>
+                    <button class="searchingpatient">Xuất báo cáo</button>
+                </div>
+
+                <div class="summary">
+                    <strong>Tổng chi phí tháng này:</strong> 45.000.000đ
+                </div>
+
+                <div class="chart">
+                    <div class="chart-placeholder">
+                        <canvas id="pieChart"></canvas>
+                    </div>
+                    <div class="chart-placeholder">
+                        <canvas id="barChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="cards">
+                    <div class="card-group-container">
+                        <!--Phí mua mới -->
+                        <div class="card-group" id="muasam">
+                            <div>
+                                <h2>
+                                    <i class="fa-solid fa-cart-shopping" style="margin-right: 0.2rem;"></i>
+                                    Chi phí mua sắm
+                                    <div class="btn-cards-group-action">
+                                        <button onclick="document.getElementById('shoppingDetail').style.display='flex'">Xem chi tiết</button>
+                                        <button onclick="document.getElementById('shoppingForm').style.display='flex'"> Thêm đơn mua thiết bị</button>
+                                    </div>
+                                </h2>
+                            </div>
+                            <div class="total">Tổng: 66.000.000đ</div>
+                            <!--thiết bị 1 -->
+                            <div class="device-card" onclick="toggleTimeline(this)">
+                                <div class="device-info">
+                                    <div class="device-main">
+                                        <div class="device-label">
+                                            <strong>Máy SPO2</strong>
+                                        </div>
+                                        <div class="device-meta">
+                                            <span><strong>Giá:</strong> 44.000.000đ</span>
+                                            <span><strong>Ngày:</strong> 18/02/2025</span>
+                                            <span><strong>Người phục trách:</strong> Lê Minh Hà</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button class="edit-btn">Sửa</button>
+                            </div>
+                            <!--thiết bị 2 -->
+                            <div class="device-card">
+                                <div class="device-info">
+                                    <div class="device-main">
+                                        <div class="device-label">
+                                            <strong>Máy siêu âm Doopler</strong>
+                                        </div>
+                                        <div class="device-meta">
+                                            <span><strong>Giá:</strong> 22.000.000đ</span>
+                                            <span><strong>Ngày:</strong> 18/02/2025</span>
+                                            <span><strong>Người phục trách:</strong> Nguyễn Trường An</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button class="edit-btn">Sửa</button>
+                            </div>
+                            <!--thiết bị 3 -->
+                            <div class="device-card">
+                                <div class="device-info">
+                                    <div class="device-main">
+                                        <div class="device-label">
+                                            <strong>Máy siêu âm Doopler</strong>
+                                        </div>
+                                        <div class="device-meta">
+                                            <span><strong>Giá:</strong> 22.000.000đ</span>
+                                            <span><strong>Ngày:</strong> 18/02/2025</span>
+                                            <span><strong>Người phục trách:</strong> Nguyễn Trường An</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button class="edit-btn">Sửa</button>
+                            </div>
+                        </div>
+
+                        <!-- Phí bảo trì-->
+                        <div class="card-group" id="baotri">
+                            <div>
+                                <h2>
+                                    <i class="fa-solid fa-screwdriver-wrench" style="margin-right: 0.2rem;"></i>
+                                    Chi phí bảo trì & sửa chữa
+                                    <div class="btn-cards-group-action">
+                                        <button onclick="document.getElementById('insuranceDetail').style.display='flex'">Xem chi tiết</button>
+                                    </div>
+                                </h2>
+                            </div>
+                            <div class="total">Tổng: 12.000.000đ</div>
+
+                            <div class="device-card">
+                                <div class="device-info">
+                                    <div class="device-main">
+                                        <div class="device-label">
+                                            <strong>Máy SPO2</strong>
+                                        </div>
+                                        <div class="device-meta">
+                                            <span><strong>Giá:</strong> 7.000.000đ</span>
+                                            <span><strong>Ngày:</strong> 8/04/2025</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button class="edit-btn">Sửa</button>
+                            </div>
+
+                            <div class="device-card">
+                                <div class="device-info">
+                                    <div class="device-main">
+                                        <div class="device-label">
+                                            <strong>Máy siêu âm Doopler</strong>
+                                        </div>
+                                        <div class="device-meta">
+                                            <span><strong>Giá:</strong> 5.000.000đ</span>
+                                            <span><strong>Ngày:</strong> 20/04/2025</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button class="edit-btn">Sửa</button>
+                            </div>
+
+                        </div>
+
+                        <!--shoppingDetail modal-->
+                        <div id="shoppingDetail" class="modal">
+                            <div class="modal-content">
+                                <span class="close" onclick="document.getElementById('shoppingDetail').style.display='none'">&times;</span>
+                                <h3>Chi tiết thiết bị đã mua</h3>
+                                <div>
+                                    <input type="text" id="searchInput" placeholder="🔍 Tìm kiếm tên thiết bị">
+                                </div>
+
+                                <table id="dataTable" style="width:100%;">
+                                    <thead>
+                                        <tr>
+                                            <th>Tên thiết bị</th>
+                                            <th>Ngày giao dịch</th>
+                                            <th>Đơn giá/chiếc</th>
+                                            <th>Số lượng</th>
+                                            <th>Tổng giá</th>
+                                            <th>Người phụ trách</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    <td>Máy siêu âm Doopler</td>
+                                    <td>23/4/2025</td>
+                                    <td>20.000.000</td>
+                                    <td>2</td>
+                                    <td>40.000.000</td>
+                                    <td>Lê Minh Hà</td>
+                                    </tbody>
+                                    <tbody>
+                                    <td>Máy SPO2</td>
+                                    <td>18/4/2025</td>
+                                    <td>11.000.000</td>
+                                    <td>2</td>
+                                    <td>22.000.000</td>
+                                    <td>Nguyễn Trường An</td>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!--insuranceDetail modal-->
+                        <div id="insuranceDetail" class="modal">
+                            <div class="modal-content">
+                                <span class="close" onclick="document.getElementById('insuranceDetail').style.display='none'">&times;</span>
+                                <h3>Chi tiết giá tiền bảo trì - Sửa chữa</h3>
+                                <div>
+                                    <input type="text" id="searchInputInsuracnce" placeholder="🔍 Tìm kiếm tên thiết bị">
+                                </div>
+
+                                <table id="dataTable" style="width:100%;">
+                                    <thead>
+                                        <tr>
+                                            <th>Tên thiết bị</th>
+                                            <th>Loại</th>
+                                            <th>Ngày giao dịch</th>
+                                            <th>Đơn giá/chiếc</th>
+                                            <th>Số lượng</th>
+                                            <th>Tổng giá</th>
+                                            <th>Người phụ trách</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    <td>Máy siêu âm Doopler</td>
+                                    <td>Sửa chữa</td>
+                                    <td>23/4/2025</td>
+                                    <td>20.000.000</td>
+                                    <td>2</td>
+                                    <td>40.000.000</td>
+                                    <td>Lê Minh Hà</td>
+                                    </tbody>
+                                    <tbody>
+                                    <td>Máy SPO2</td>
+                                    <td> Bảo trì</td>
+                                    <td>18/4/2025</td>
+                                    <td>11.000.000</td>
+                                    <td>2</td>
+                                    <td>22.000.000</td>
+                                    <td>Nguyễn Trường An</td>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!--shoppingform modal-->
+                        <div id="shoppingForm" class="modal">
+                            <div class="modal-content">
+                                <span class="close" onclick="document.getElementById('shoppingForm').style.display='none'">&times;</span>
+                                <h3>Hóa đơn mua thiết bị</h3>
+                                <form>
+                                    <div class="input-field">
+                                        <label for="device-name">Tên thiết bị:</label>
+                                        <input type="text" id="device-name" placeholder="Nhập tên thiết bị">
+                                    </div><br>
+
+                                    <div class="input-field">
+                                        <label for="dvt">Đơn vị tính:</label>
+                                        <select name="dvt">
+                                            <option value="1">Cái</option>
+                                            <option value="2">Chiếc</option>
+                                            <option value="3">Máy</option>
+                                        </select>
+                                    </div><br>
+
+                                    <div class="input-field">
+                                        <label for="quantity">Số lượng:</label>
+                                        <input type="number" id="quantity" placeholder="Nhập số lượng thiết bị">
+                                    </div><br>
+
+                                    <div class="input-field">
+                                        <label for="priceUnit"> Đơn giá:</label>
+                                        <input type="number" id="price" placeholder="Nhập giá tiền" step="0.01" min="0" required>
+                                    </div><br>
+                                    <button type="submit">Gửi yêu cầu</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+
+            <!--nhóm 2-->
+            <div class="store">
+                <section class="maintain-title" id="hopdong">
+                    🚛 Hợp đồng - Giấy tờ
+                </section>
+
+                <div id="hopdongTable">
+                    <div>
+                        <input type="text" id="searchInputhopdong" placeholder="🔍 Tìm kiếm tên hợp đồng...">
+                    </div>
+                    <table id="dataTable" style="width:100%;">
+                        <thead>
+                            <tr>
+                                <th>Tên Hợp đồng</th>
+                                <th>Loại Giao dịch</th>
+                                <th>Ngày ký</th>
+                                <th>Trạng thái</th>
+                                <th>Tập tin</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        <td>Hợp đồng mua bán máy siêu doopler</td>
+                        <td>Mua bán</td>
+                        <td>23/4/2025</td>
+                        <td>Hiệu lực</td>
+                        <td>
+                            <button type="button" id="deleteBtn">
+                                <i class="fa-solid fa-file-word"></i>
+                            </button>
+                        </td>
+                        </tbody>
+                        <tbody>
+                        <td>Hợp đồng bảo trì máy thở phillip</td>
+                        <td>Bảo trì</td>
+                        <td>1/4/2025</td>
+                        <td>Hiệu lực</td>
+                        <td>
+                            <button type="button" id="deleteBtn">
+                                <i class="fa-solid fa-file-word"></i>
+                            </button>
+                        </td>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    <!--sờ cờ ríp-->
+    <script>
+        window.onclick = function (event) {
+            // Kiểm tra nếu người dùng bấm vào vùng ngoài modal (tức là phần nền mờ)
+            if (event.target === document.getElementById('shoppingDetail') ||
+                event.target === document.getElementById('insuranceDetail')
+            ) {
+                event.target.style.display = "none";
+            }
+        }
+
+        // Tìm kiếm theo tên thiết bị
+        document.getElementById("searchInput").addEventListener("keyup", function () {
+            const filter = this.value.toUpperCase();
+            const rows = document.querySelectorAll("#shoppingDetail tbody tr");
+
+            rows.forEach(row => {
+                const cell = row.querySelector("td");
+                if (cell && cell.textContent.toUpperCase().indexOf(filter) > -1) {
+                    row.style.display = "";
+                } else {
+                    row.style.display = "none";
+                }
+            });
+        });
+
+        //Tìm kiếm chi phí sửa chữa / bảo trì
+        document.getElementById("searchInputInsuracnce").addEventListener("keyup", function () {
+            const filter = this.value.toUpperCase();
+            const rows = document.querySelectorAll("#insuranceDetail tbody tr");
+
+            rows.forEach(row => {
+                const cell = row.querySelector("td");
+                if (cell && cell.textContent.toUpperCase().indexOf(filter) > -1) {
+                    row.style.display = "";
+                } else {
+                    row.style.display = "none";
+                }
+            });
+        });
+
+        // Tìm kiếm hợp đồng
+        document.getElementById("searchInputhopdong").addEventListener("keyup", function () {
+            const filter = this.value.toUpperCase();
+            const rows = document.querySelectorAll("#hopdongTable tbody tr");
+
+            rows.forEach(row => {
+                const cell = row.querySelector("td");
+                if (cell && cell.textContent.toUpperCase().indexOf(filter) > -1) {
+                    row.style.display = "";
+                } else {
+                    row.style.display = "none";
+                }
+            });
+        });
+
+        // Biểu đồ tròn - Tỉ lệ chi phí
+        const pieCtx = document.getElementById('pieChart').getContext('2d');
+        const pieChart = new Chart(pieCtx, {
+            type: 'pie',
+            data: {
+                labels: ['Mua sắm', 'Bảo trì', 'Khác'],
+                datasets: [{
+                    label: 'Tỉ lệ chi phí',
+                    data: [60, 30, 10], // Dữ liệu chi phí
+                    backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'],
+                    hoverOffset: 4
+                }]
+            },
+            options: {
+                responsive: true
+            }
+        });
+
+        // Biểu đồ cột - Chi phí theo tháng
+        const barCtx = document.getElementById('barChart').getContext('2d');
+        const barChart = new Chart(barCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5'],
+                datasets: [{
+                    label: 'Chi phí (VND)',
+                    data: [12000000, 15000000, 14000000, 17000000, 16000000], // Dữ liệu chi phí theo tháng
+                    backgroundColor: '#36A2EB',
+                    borderColor: '#36A2EB',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
+
+</body>
