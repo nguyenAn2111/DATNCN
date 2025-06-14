@@ -15,6 +15,7 @@ namespace Hospital_Test.Models
         public string FK_device_id { get; set; }
         public string FK_status_id { get; set; }
         public string FK_room_id { get; set; }
+        public string FK_finace_id { get; set; }
         public string FK_contact_id { get; set; }
         public string device_id { get; set; }
         public string device_name { get; set; }
@@ -27,6 +28,7 @@ namespace Hospital_Test.Models
                 maintain_date = (DateTime)row["maintain_date"];
             else
                 maintain_date = null;
+
             maintain_id = row["maintain_id"] != DBNull.Value ? row["maintain_id"].ToString() : "";
             device_id = row.Table.Columns.Contains("device_id") && row["device_id"] != DBNull.Value ? row["device_id"].ToString() : "";
             FK_room_id = row["FK_room_id"] != DBNull.Value ? row["FK_room_id"].ToString() : null;
@@ -39,6 +41,7 @@ namespace Hospital_Test.Models
             maintain_delivery_phone = row["maintain_delivery_phone"] != DBNull.Value ? row["maintain_delivery_phone"].ToString() : "";
         }
 
+        }
     }
 
 }

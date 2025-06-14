@@ -252,6 +252,13 @@ body {
     background-color: #ffff;
     border-radius: 12px;
 }
+
+p {
+    width: fit-content;
+    float: left;
+    font-size: 1.5rem;
+}
+
 .doctor.dropbox {
     width: fit-content;
     float: inline-end;
@@ -440,11 +447,11 @@ td#delete {
 #deleteBtn {
     border-width: 0px;
     font-size: 1rem;
-}
+    }
 
     #deleteBtn:hover {
         color: #EF476F;
-    }
+        }
 
 td#detail {
     border: 1px solid #001F54;
@@ -1456,4 +1463,19 @@ section {
 .device-item p {
     font-size: 1rem;
     font-weight: 600;
+    color: #001F54;
+    font-family: Lato;
+    margin-bottom: 0.5rem; /* tạo khoảng cách với nút */
+}
+
+/* Khoảng cách nút với dòng trên */
+.modal-actions.spaced-buttons {
+    margin-top: 1.0rem;
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+}
+#deleteDeviceIdText {
+    text-transform: uppercase;
+    font-weight: 700;
 }

@@ -39,14 +39,17 @@
             </section>
             <div class="maintain-table">
                 <div class="surgery-table">
-                    <div class="wrap-sreach">
+                    <table id="surgery-table">
+                        <div class="wrap-sreach">
                             <input name="searchString" id="searchInput" class="search" style="width: 21rem;" type="text" placeholder="🔍Điền thông tin">
+
                             <input type="month" id="filter-date">
+
                             <button class="searchingpatient" style="color: white;border: 1px #001F54 solid;font-size: 1.1rem; font-family: lato; padding: 0.5rem 1rem;background-color: #1282A2;border-radius: 8px;" type="submit">
                                 <i class="fa-solid fa-magnifying-glass"></i>
                                 Tìm Kiếm
                             </button>
-                    </div>
+                        </div>
                     <form asp-action="Baotri" method="post">
                         <table id="dataTable" style="width:100%;">
                             <thead>
@@ -80,7 +83,30 @@
                                         </tr>
                                     }
                                 }
+                                else
+                                {
+                                    <tr>
+                                        <td id="facility">NOT FOUND </td>
+                                        <td id="facility">NOT FOUND </td>
+                                        <td id="facility">NOT FOUND </td>
+                                        <td id="facility">NOT FOUND </td>
+                                        <td id="facility">NOT FOUND </td>
+                                        <td id="facility">NOT FOUND </td>
+                                        <td id="facility">
+                                            <div class="dropdown">
+                                                <i class="bi bi-three-dots dropdown-toggle-icon" style="cursor: pointer;"></i>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                                
                             </tbody>
+
+                        <div id="floatingDropdown" class="floating-dropdown" style="display: none;">
+                            <a href="#">Chi tiết thông tin thiết bị</a>
+                            <a href="#">Chỉnh sửa lịch bảo trì</a>
+                        </div>
+
                     </table>
                     </form>
 @* ------------------------------modal hiển thị chi tiết---------------------------------- *@
@@ -94,18 +120,18 @@
                                     <div>
                                         <label for="deviceName">Tên thiết bị:</label>
                                         <input type="text" id="device_name" readonly>
-                                    </div>
+                </div>
                                     <div>
                                         <label for="deviceID">Mã ID của thiết bị:</label>
                                         <input type="text" id="device_id" readonly>
-                                    </div>
+            </div>
                                 </div><br>
                                 <div class="form-group-title">Trạng thái bảo trì</div>
                                 <div class="form-group">
                                     <div>
                                         <label for="manufacturer">Ngày bảo trì (dự kiến):</label>
                                         <input type="date" id="maintain_date" >
-                                    </div>
+        </div>
                                     <div>
                                         <label for="status-id">Cập nhật trạng thái:</label>
                                         <input type="type" id="status_name" readonly>
@@ -200,7 +226,8 @@
                     <button type="submit">Lưu</button>
                 </form>
             </div>
-        </div>
+        </div> 
+
         <div class="maintain-data">
             <section class="maintain-title" id="thongbao">
                 3. Tiến độ - Thông báo
@@ -339,6 +366,7 @@
                 closeRescheduleModal();
             });
         </script>
+
         <script>
             /* gửi nhắc nhở */
             function sendReminder(device, person, phone) {
@@ -346,7 +374,40 @@
             }
 
         </script>
+
         <script>
+            /* Dropdown */
+            document.addEventListener('DOMContentLoaded', function () {
+                const dropdown = document.getElementById('floatingDropdown');
+                let activeIcon = null;
+
+                document.querySelectorAll('.dropdown-toggle-icon').forEach(icon => {
+                    icon.addEventListener('click', function (e) {
+                        e.stopPropagation(); // Ngăn click lan ra ngoài
+                        const rect = icon.getBoundingClientRect();
+
+                        dropdown.style.top = rect.bottom + window.scrollY + 'px';
+                        dropdown.style.left = rect.left + window.scrollX + 'px';
+
+                        // Toggle hiển thị
+                        if (dropdown.style.display === 'block' && activeIcon === icon) {
+                            dropdown.style.display = 'none';
+                            activeIcon = null;
+                        } else {
+                            dropdown.style.display = 'block';
+                            activeIcon = icon;
+                        }
+                    });
+                });
+
+                // Ẩn dropdown nếu click ngoài
+                document.addEventListener('click', function (e) {
+                    if (!dropdown.contains(e.target)) {
+                        dropdown.style.display = 'none';
+                        activeIcon = null;
+                    }
+                });
+            });
             // tìm kiếm 
             document.getElementById("searchInput").addEventListener("keyup", function () {
                 const filter = this.value.toUpperCase();
@@ -431,7 +492,7 @@
         }
 
 
-    </script>
-
+        </script>
+     
 
 </body>

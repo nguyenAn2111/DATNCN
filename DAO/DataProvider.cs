@@ -22,6 +22,10 @@ namespace Hospital_Test.DAO
 
         private string connectionSTR = @"Data Source=ADMIN\SQLEXPRESS;Initial Catalog=HTQLTBYT;Integrated Security=True;Connect Timeout=30;Encrypt=True;Trust Server Certificate=True;Application Intent=ReadWrite;Multi Subnet Failover=False";
 
+        //private string connectionSTR = @"Data Source=NGOXUANHINH2801;Initial Catalog=Hethongquanlylab;Integrated Security=True";
+        //private string connectionSTR = @"Data Source=ADMIN\SQLEXPRESS;Initial Catalog=HTQLVTYT;Integrated Security=True;Connect Timeout=30;Encrypt=True;Trust Server Certificate=True;Application Intent=ReadWrite;Multi Subnet Failover=False";
+        private string connectionSTR = @"Data Source= WARMACHINE-2137;Initial Catalog=HTQLTBYT;Integrated Security=True;Connect Timeout=30;Encrypt=True;Trust Server Certificate=True;Application Intent=ReadWrite;Multi Subnet Failover=False";
+
         public DataTable ExcuteQuery(string query, object[] parameter = null)
         {
             DataTable data = new DataTable();
@@ -66,7 +70,7 @@ namespace Hospital_Test.DAO
             return list;
         }
         public List<T> GetListItemQuery(string query)
-        { 
+        {
             DataTable data = ExcuteQuery(query);
 
             var list = new List<T>();
@@ -106,6 +110,8 @@ namespace Hospital_Test.DAO
             }
             return list;
         }
+
+
         public T GetItem(string col, string val, string tableName)
         {
             string query = String.Format("select * from dbo.{0} where [{1}] = N'{2}'", tableName, col, val);
@@ -136,7 +142,7 @@ namespace Hospital_Test.DAO
             }
         }
 
-
+        
         public DataTable LoadData(string tableName = "")
         {
             if (tableName == "") tableName = typeof(T).Name;
