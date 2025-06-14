@@ -314,6 +314,7 @@ namespace Hospital_Test.Controllers
 
             return RedirectToAction("Suachua");
         }
+        
         [HttpGet]
         public JsonResult Suachua_GetById(string id)
         {
@@ -335,6 +336,53 @@ namespace Hospital_Test.Controllers
             var repair = DataProvider<Repair>.Instance.GetListItemQuery(query).FirstOrDefault();
             return Json(repair);
         }
+
+        [HttpGet]
+        public IActionResult Suachua_UpdateStatus(string repair_id)
+        {
+            var repair = DataProvider<Repair>.Instance.GetListItem("tbl_repair")
+                         .FirstOrDefault(x => x.repair_id == repair_id);
+
+            if (repair == null)
+                return NotFound();
+
+            var viewModel = new RepairPageViewModel
+            {
+                RepairStatus = repair,
+                // Gán các thuộc tính khác nếu cần
+            };
+
+            return View(viewModel);
+        }
+
+        [HttpPost]
+        public IActionResult Suachua_UpdateStatus(string repair_id, string repair_update_status, string repair_update_note, DateTime repair_update_date)
+        {
+
+            Repair repairs_update = DataProvider<Repair>.Instance.GetListItem("tbl_repair").FirstOrDefault(x => x.repair_id == repair_id);
+
+            if (repairs_update == null)
+            {
+                return NotFound();
+            }
+
+            // Cập nhật thông tin
+            repairs_update.repair_update_status = repair_update_status;
+            repairs_update.repair_update_note = repair_update_note;
+            repairs_update.repair_update_date = repair_update_date;
+
+            string repair_update = String.Format(
+                "UPDATE dbo.tbl_repair SET repair_update_date = '{0}', repair_update_note = N'{1}', repair_update_status = N'{2}' WHERE repair_id = '{3}'",
+                repair_update_date.ToString("yyyy-MM-dd HH:mm:ss"),
+                repair_update_note.Replace("'", "''"),
+                repair_update_status.Replace("'", "''"),
+                repair_id.Replace("'", "''")
+            );
+            DataProvider<Repair>.Instance.ExcuteQuery(repair_update);
+
+            return RedirectToAction("Suachua"); 
+        }
+
         public IActionResult Suachua()
         {
             // Khởi tạo
@@ -391,10 +439,19 @@ namespace Hospital_Test.Controllers
                 rooms_repair = DataProvider<Room>.Instance.GetListItem("tbl_room")
             };
 
+            string repair_id = urlQuery["repair_id"];
+            Repair repairStatus = null;
+            if (!string.IsNullOrEmpty(repair_id))
+            {
+                repairStatus = DataProvider<Repair>.Instance.GetListItem("tbl_repair")
+                    .FirstOrDefault(x => x.repair_id == repair_id);
+            }
+
             var viewModel = new RepairPageViewModel
             {
                 RepairList = repairList,
-                RepairForm = repairForm
+                RepairForm = repairForm,
+                RepairStatus = repairStatus
             };
             return View("~/Views/Shared/Suachua.cshtml", viewModel);
         }
