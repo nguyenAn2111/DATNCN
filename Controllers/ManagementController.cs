@@ -27,6 +27,7 @@ using DocumentFormat.OpenXml.Wordprocessing;
 using DocumentFormat.OpenXml.Vml;
 using Humanizer;
 using System.Globalization;
+using DocumentFormat.OpenXml.InkML;
 namespace Hospital_Test.Controllers
 {
     public class ManagementController : Controller
@@ -312,8 +313,7 @@ namespace Hospital_Test.Controllers
 			}
 		}
 
-		/// //////////////////////////////////////////////////////////////
-        //---------------------------------------Bảo trì--------------------------------
+        //---------------------------------------Bảo trì----------------------------------------------------------------------------
 		public IActionResult Baotri_Add()
         {
             List<Maintain> maintains;
@@ -610,51 +610,38 @@ namespace Hospital_Test.Controllers
             return Json(repair);
         }
 
-        [HttpGet]
-        public IActionResult Suachua_UpdateStatus(string repair_id)
-        {
-            var repair = DataProvider<Repair>.Instance.GetListItem("tbl_repair")
-                         .FirstOrDefault(x => x.repair_id == repair_id);
-
-            if (repair == null)
-                return NotFound();
-
-            var viewModel = new RepairPageViewModel
-            {
-                RepairStatus = repair,
-                // Gán các thuộc tính khác nếu cần
-            };
-
-            return View(viewModel);
-        }
-
         [HttpPost]
-        public IActionResult Suachua_UpdateStatus(string repair_id, string repair_update_status, string repair_update_note, DateTime repair_update_date)
+        public IActionResult Suachua_UpdateStatus(string schID, string schnote, string schdate, string schstatus)
         {
-
-            Repair repairs_update = DataProvider<Repair>.Instance.GetListItem("tbl_repair").FirstOrDefault(x => x.repair_id == repair_id);
-
-            if (repairs_update == null)
+            DateTime parsedDate;
+            // Parse theo định dạng bạn truyền lên (ví dụ dd/MM/yyyy HH:mm:ss)
+            if (DateTime.TryParseExact(
+                    schdate,
+                    "dd/MM/yyyy HH:mm:ss",
+                    System.Globalization.CultureInfo.InvariantCulture,
+                    System.Globalization.DateTimeStyles.None,
+                    out parsedDate))
             {
-                return NotFound();
+                // Chuyển về đúng định dạng yyyy-MM-dd HH:mm:ss
+                schdate = parsedDate.ToString("yyyy-MM-dd HH:mm:ss");
+            }
+            else
+            {
+                // Xử lý khi parse lỗi, có thể trả về lỗi hoặc đặt giá trị mặc định
+                schdate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
             }
 
-            // Cập nhật thông tin
-            repairs_update.repair_update_status = repair_update_status;
-            repairs_update.repair_update_note = repair_update_note;
-            repairs_update.repair_update_date = repair_update_date;
-
-            string repair_update = String.Format(
-                "UPDATE dbo.tbl_repair SET repair_update_date = '{0}', repair_update_note = N'{1}', repair_update_status = N'{2}' WHERE repair_id = '{3}'",
-                repair_update_date.ToString("yyyy-MM-dd HH:mm:ss"),
-                repair_update_note.Replace("'", "''"),
-                repair_update_status.Replace("'", "''"),
-                repair_id.Replace("'", "''")
-            );
-            DataProvider<Repair>.Instance.ExcuteQuery(repair_update);
-
-            return RedirectToAction("Suachua"); 
+            string query = $@"
+                UPDATE dbo.tbl_repair
+                SET 
+                    repair_update_note = N'{schnote}',
+                    repair_update_date = '{schdate}',
+                    repair_update_status = N'{schstatus}'
+                WHERE repair_id = '{schID}'";
+            DataProvider<Repair>.Instance.ExcuteQuery(query);
+            return RedirectToAction("Suachua");
         }
+
 
         public IActionResult Suachua()
         {
