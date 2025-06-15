@@ -56,6 +56,7 @@
                                 <th>Vị trí hiện tại</th>
                                 <th>Trạng thái hiện tại</th>
                                 <th>Ngày nhập về</th>
+                                <th>Trạng thái hiện tại</th>
                                 <th>Chi tiết</th>
                                 <th>Xóa</th>
                             </tr>
@@ -264,6 +265,7 @@
 						<thead>
 						<tr>
 						<th>STT</th>
+                                    <th>Ngày nhập kho</th>
 						<th>Ngày xuất kho</th>
 						<th>Vị trí sau khi xuất kho</th>
 						<th>Tình trạng</th>
@@ -273,6 +275,7 @@
 						<tbody>
 						<tr>
 						<td id="facility">1</td>
+                                    <td id="facility"> 12/3/2024 </td>
 						<td id="facility"> 2/3/2025 </td>
 						<td id="facility"> ICU</td>
 						<td id="facility"> hoạt động </td>
@@ -327,7 +330,9 @@
 							<label>Loại thiết bị:</label>
 							<input name="tbiType" type="text" style="width: 18rem; margin-right: 1rem;">
 						</div>
+                        </div><br>
 
+                        <div class="form-group-title"> 
 						<div>
 							<label>Thuộc nhóm:</label>
 							<select name="tbiGroup">
@@ -371,6 +376,9 @@
 							<tbody id="seriesBody">
 							</tbody>
 						</table>
+                            <button type="button" id="addSeribtn">
+                                <i class="fa-solid fa-circle-plus" style="margin-right: 0.2rem;"></i>
+                                Thêm mã series</button>
 					</div>
 
 					<div class="form-group-title">
@@ -681,6 +689,8 @@
 		const tbody = document.getElementById("seriesBody");
 		const seriCountInput = document.getElementById("seriCount");
 
+                // Tính số thứ tự cho hàng mới
+                const rowCount = tableBody.rows.length + 1;  // Tăng thêm 1 cho số thứ tự mới
 		
 		function createSeriesRow(stt, value = '') {
 			const row = document.createElement("tr");

@@ -1,4 +1,4 @@
-﻿@model ItemDisplay<Repair>
+﻿@model RepairPageViewModel
 
 <!DOCTYPE html>
 <html>
@@ -17,7 +17,7 @@
     </style>
 </head>
 <body>
-    <form asp-action="Suachua" method="post">
+   
         <div class="surgery-schedule">
             <div class="surgery-major">
                 <div class="surgery-title">
@@ -38,7 +38,7 @@
             </section>
             <div class="maintain-table">
                 <div class="surgery-table">
-                    <table id="surgery-table">
+                    <div id="surgery-table">
                         <div class="wrap-sreach">
                             <input name="searchString" id="searchInput" class="search" style="width: 21rem;" type="text" placeholder="Tìm kiếm">
 
@@ -49,7 +49,7 @@
                                 Tìm Kiếm
                             </button>
                         </div>
-
+                    <form asp-action="Suachua" method="post">
                         <table id="dataTable" style="width:100%;">
                             <thead>
                                 <tr>
@@ -64,20 +64,20 @@
                             </thead>
 
                             <tbody>
-                                @if (Model.PageCount > 0) //chưa xử lí ngoại lệ, phải thêm database mới chạy bình thường được :) 
+                                @if (Model.RepairList.PageCount > 0) 
                                     {
-                                        foreach (var item in Model.Items)
+                                    foreach (var item in Model.RepairList.Items)
                                         {
                                             <tr>
                                                 <td id="facility"> @item.FK_device_id</td>
                                                 <td id="facility"> @item.device_name</td>
-                                                <td id="facility"> @item.repair_broken</td>
-                                                <td id="facility"> @item.repair_date</td>
+                                            <td id="facility"> @item.repair_broken.ToString("dd-MM-yyyy")</td>
+                                            <td id="facility"> @item.repair_date.ToString("dd-MM-yyyy")</td>
                                                 <td id="facility"> @item.room_name</td>
                                                 <td id="facility"> @item.status_name</td>
                                                 <td id="facility">
                                                     <div class="dropdown">
-                                                        <i class="bi bi-three-dots dropdown-toggle-icon" style="cursor: pointer;"></i>
+                                                    <a style="cursor: pointer;" class="detailRepairLink" onclick="openRepairDetail('@item.repair_id')"> <i class="fa-solid fa-circle-info"></i> </a>
                                                     </div>
                                                 </td>
                                         </tr>
@@ -101,9 +101,7 @@
                             </tbody>
 
                         </table>
-                        <div id="floatingDropdown" class="floating-dropdown" style="display: none;">
-                            <a href="#">Chi tiết thông tin thiết bị</a>
-                            <a href="#">Chỉnh sửa lịch bảo trì</a>
+                    </form>
                         </div>
 
                     </table>
@@ -115,133 +113,201 @@
             <section class="maintain-title" id="yeucau">
                 2. Tạo yêu cầu sửa chữa
             </section>
+            <form asp-action="Suachua_Add" method="post">
             <div class="repair-request-form">
                 <div class="planer-form">
                         <label for="device">Tên thiết bị:</label>
-                        <input type="text" placeholder="Nhập tên thiết bị cần sửa" style="margin-right: 1rem ;">
+                    <select id="schDevicename" onchange="updateDeviceOptions()" style="margin-right: 1rem ;">
+                        @foreach (var item in Model.RepairForm.devices_repair)
+                        {
+                            <option value="@item.device_id">@item.device_name</option>
+                        }
+                    </select>
 
-                        <label for="priority">Mức độ ưu tiên:</label>
-                        <select id="priority" name="priority" required>
-                            <option value="">-- Chọn mức ưu tiên --</option>
-                            <option value="CAO">Cao</option>
-                            <option value="TRUNG BÌNH">Trung bình</option>
-                            <option value="THẤP">Thấp</option>
+                    <label for="device">Mã ID thiết bị:</label>
+                    <select id="schDevice" name="schDevice" style="margin-right: 1rem ;">
+                        @foreach (var item in Model.RepairForm.devices_repair)
+                        {
+                            <option value="@item.device_id">@item.device_id</option>
+                        }
                         </select>
                 </div><br/>
-                <div class="planer-form">
-                        <label for="repairNumber">Số lượng thiết bị cần sửa:</label>
-                        <input type="number" min="0" step="1" style="margin-right: 1rem ;">
 
-                        <label for="repairNumber">Đơn giá trên đơn vị sửa:</label>
-                        <input type="text" id="money" name="money" oninput="formatMoney(this)" required>
+                <div class="planer-form">
+                    <label for="priority">Mức độ ưu tiên:</label>
+                    <select id="priority" name="schPriority" required>
+                        <option value="1">Cao</option>
+                        <option value="2">Trung bình</option>
+                        <option value="3">Thấp</option>
+                    </select>
+
+                    <label for="repairNumber">Đơn giá:</label>
+                    <input type="number" name="schFinance">
                 </div> <br/>
+                <div class="planer-form">
+                    <label>Ngày phát hiện hỏng:</label>
+                    <input type="date" name="schBroken"/>
+
+                    <label>Ngày sửa chữa (dự kiến):</label>
+                    <input type="date" name="schDate"/>
+                </div><br/>
                 <div class="planer-form" >
                         <!-- Mô tả lỗi -->
                     <label for="description" style= "float: left; margin-right: 0.25rem;">Mô tả lỗi:</label>
-                    <textarea id="description" style="width: 45.5rem;" name="description" placeholder="Nhập mô tả lỗi..." required></textarea>
+                    <textarea id="description" style="width: 45.5rem;" name="schNote" placeholder="Nhập mô tả lỗi..." ></textarea>
                 </div><br/>
                 <div class="planer-form">
                         <label for="image" style="width: 14rem;">Đính kèm hình ảnh (nếu có):</label>
-                        <input style="width: 27rem;" type="file" id="image" name="image" accept="image/*">
+                        <input style="width: 27rem;" type="text" id="image" name="schImage">
                 </div><br/>
                 <div class="planer-form">
                         <label for="kinked_file">Hóa đơn sửa chữa (nếu có):</label>
-                        <input type="file" id="fileInput" name="files[]" class="file-input" multiple onchange="displayFileNames()">
+                        <input type="text" id="fileInput" name="schContact" class="file-input" multiple onchange="displayFileNames()">
                 </div><br/>
                     <!-- Gửi yêu cầu -->
                     <button type="submit">Gửi yêu cầu</button>
             </div>
+            </form>
         </div>
 
-        <div class="maintain-data" id="thongbao">
-            <section class="maintain-title">
+        <div class="maintain-data">
+            <section class="maintain-title" id="thongbao">
                 3. Thông báo sửa chữa
             </section>
             <div class="device-container">
-
-                <!-- Thiết bị 1 -->
+                @foreach (var item in Model.RepairList.Items)
+                    {
                 <div class="device-card" onclick="toggleTimeline(this)">
                     <div class="device-header">
-                        <div class="device-name">Máy thở PHILIP</div>
-                        <div class="device-status">Đang chờ linh kiện</div>
+                            <div class="device-name">@item.repair_id - @item.device_name - @item.FK_device_id</div>
+                            <div class="device-status">@item.repair_update_status</div>
                     </div>
                     <div class="timeline">
                         <div class="timeline-item">
-                            <div class="time">10/04/2025 - 08:30</div>
-                            <div class="title">Tiếp nhận yêu cầu</div>
-                            <div class="description">Yêu cầu sửa chữa được ghi nhận từ khoa hồi sức.</div>
+                                <div class="time">
+                                    <p>@item.repair_update_date.ToString("dd/MM/yyyy - HH:mm")</p>
                         </div>
-                        <div class="timeline-item">
-                            <div class="time">12/04/2025 - 09:00</div>
-                            <div class="title">Kiểm tra thiết bị</div>
-                            <div class="description">Lỗi board nguồn, cần thay linh kiện.</div>
+                                <div class="title">
+                                    <p>Status: @item.repair_update_status</p>
                         </div>
-                        <div class="timeline-item">
-                            <div class="time">13/04/2025 - 14:20</div>
-                            <div class="title">Đặt linh kiện</div>
-                            <div class="description">Linh kiện đang được vận chuyển từ nhà cung cấp.</div>
+                                <div class="description">
+                                    <p>Note: @item.repair_update_note</p>
                         </div>
                     </div>
+                        </div>
                     <div class="status-edit" style="display: flex; justify-content: flex-start; align-items: flex-start;">
-                        <button class="repair-btn" onclick="document.getElementById('repairStatusModal').style.display='flex'"> Cập nhật trạng thái </button>
+                        <button class="repair-btn" data-device-id="@item.FK_device_id" onclick="openRepairModal(this, '@item.FK_device_id', '@item.repair_update_status', '@item.repair_update_note', '@item.repair_update_date.ToString("yyyy-MM-dd HH:mm")')">
+                            Cập nhật trạng thái
+                        </button>
                     </div>
                 </div>
-
-                <!-- Thiết bị 2 -->
-                <div class="device-card" onclick="toggleTimeline(this)">
-                    <div class="device-header">
-                        <div class="device-name">Monitor theo dõi bệnh nhân</div>
-                        <div class="device-status">Đã sửa xong</div>
-                    </div>
-                    <div class="timeline">
-                        <div class="timeline-item">
-                            <div class="time">05/04/2025 - 13:10</div>
-                            <div class="title">Tiếp nhận yêu cầu</div>
-                            <div class="description">Monitor không hiển thị tín hiệu ECG.</div>
-                        </div>
-                        <div class="timeline-item">
-                            <div class="time">06/04/2025 - 09:00</div>
-                            <div class="title">Đã sửa xong</div>
-                            <div class="description">Thay dây cảm biến và hiệu chuẩn lại thiết bị.</div>
-                        </div>
-                    </div>
-                    <div class="status-edit" style="display: flex; justify-content: flex-start; align-items: flex-start;">
-                        <button class="repair-btn" onclick="document.getElementById('repairStatusModal').style.display='flex'"> Cập nhật trạng thái </button>
-                    </div>
-                </div>
-
+                    }
             </div>
-
         </div>
 
-        <!--modal cập nhật trạng thái -->
+        <div id="repairDetailModal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <span class="close" id="closeRepairDetailModal">&times;</span>
+            <h3>Chi tiết thiết bị</h3>
+            <div id="deviceDetailContent" style="overflow-y: auto; height: fit-content">
+                <div class="form-group-title">Thông tin thiết bị</div>
+                <div class="form-group">
+                    <div>
+                        <label for="deviceName">Tên thiết bị:</label>
+                        <input type="text" id="device_name" readonly>
+                    </div>
+                    <div>
+                        <label for="deviceID">Mã ID của thiết bị:</label>
+                        <input type="text" id="schid" readonly>
+                        </div>
+                </div><br>
+
+                <div class="form-group-title">Mức độ & Đơn giá</div>
+                <div class="form-group">
+                    <div>
+                        <label for="priority">Mức độ ưu tiên:</label>
+                        <input type="number" id="priority">
+                        </div>
+                    <div>
+                        <label for="repairNumber">Đơn giá:</label>
+                        <input type="number" id="finance">
+                    </div>
+                </div><br>
+
+                <div class="form-group-title">Thông tin thời gian</div>
+                <div class="form-group">
+                    <div>
+                        <label>Ngày phát hiện hỏng:</label>
+                        <input type="date" id="broken">
+                    </div>
+                    <div>
+                        <label>Ngày sửa chữa (dự kiến):</label>
+                        <input type="date" id="date">
+                    </div>
+                </div><br>
+
+                <div class="form-group-title">Thông tin trạng thái hiện tại</div>
+                <div class="form-group">
+                    <div>
+                        <label for="description">Trạng thái sửa chữa:</label>
+                        <input type="text" id="updateStatus" style="width: 22rem;">
+                    </div>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <label for="description">Thời gian cập nhật:</label>
+                        <input id="updateDate" type="datetime-local">
+                </div>
+                </div><br>
+
+                <div class="form-group-title">Mô tả & Hóa đơn</div>
+                <div class="form-group">
+                    <div>
+                        <label for="description" style="float: left; margin-right: 0.25rem;">Mô tả lỗi:</label>
+                        <textarea id="description" style="width: 45.5rem;"></textarea>
+                    </div>
+                    <div>
+                        <label for="image" style="width: 14rem;">Đính kèm hình ảnh (nếu có):</label>
+                        <input type="text" id="image">
+                    </div>
+                    <div>
+                        <label for="kinked_file">Hóa đơn sửa chữa (nếu có):</label>
+                        <input type="text" id="contact">
+            </div>
+                </div><br>
+
+                <button type="button" class="cancel-button" id="cancelMaintainDetailModal">Thoát</button>
+            </div>
+        </div>
+        </div>
+
+
         <div id="repairStatusModal" class="modal">
             <div class="modal-content">
                 <div class="modal-header">
                     <span class="close" onclick="document.getElementById('repairStatusModal').style.display='none'">&times;</span>
-                    <h3 class="deviceAddModal">Thêm thiết bị</h3>
+                    <h3 class="deviceAddModal">Cập nhật trạng thái</h3>
                 </div>
                 <div class="modal-body">
-                    <form action="#" method="post">
+                <form asp-action="Suachua_UpdateStatus" method="post">
                         <div class="form-group">
                             <div>
+                                <input type="hidden" name="repair_id" value="@(Model.RepairStatus != null ? Model.RepairStatus.repair_id : "")" />
                                 <label for="description">Trạng thái sửa chữa:</label>
-                                <input type="text" style="width: 22rem ;">
+                                <input type="text" id="modal_status" name="repair_update_status" value="@Model.RepairStatus.repair_update_status" style="width: 22rem;" required>
                             </div>
                         </div> <br>
                         <div class="form-group">
                             <div style="display: flex; gap: 0.5rem;">
                                 <label for="description" style="width: 5rem;">Mô tả:</label>
-                                <textarea id="description" name="description" cols="50" style="width: auto;" required></textarea>
+                            <textarea id="modal_note" name="repair_update_note" cols="50" style="width: auto;" required>@Model.RepairStatus.repair_update_note</textarea>
                             </div><br>
                         </div> <br>
                         <div class="form-group">
                             <div style="display: flex; gap: 0.5rem;">
                                 <label for="description">Thời gian cập nhật:</label>
-                                <input type="datetime-local">
+                            <input type="datetime-local" id="modal_date" name="repair_update_date" value="@(Model.RepairStatus.repair_update_date.ToString("yyyy-MM-ddTHH:mm"))" required>
                             </div>
                         </div> <br>
-                        <button class="submit-button">Cập nhật trạng thái</button>
+                        <button type="submit" class="submit-button">Cập nhật trạng thái</button>
                     </form>
                 </div>
 
@@ -305,6 +371,14 @@
                 timeline.style.display = isTimelineVisible ? 'none' : 'block';
                 repairBtn.style.display = isTimelineVisible ? 'none' : 'inline-block';
             }
+
+        function openRepairModal(btn, deviceId, status, note, date) {
+            document.getElementById('repairStatusModal').style.display = 'flex';
+            document.getElementById('modal_device_id').value = deviceId;
+            document.getElementById('modal_status').value = status;
+            document.getElementById('modal_note').value = note;
+            document.getElementById('modal_date').value = date;
+        }
         </script>
         <script>
             window.onclick = function (event) {
@@ -314,7 +388,7 @@
                     event.target.style.display = "none";
                 }
             }
-
+            //tìm kiếm theo tên thiết bị
             document.getElementById("searchInput").addEventListener("keyup", function () {
                 const filter = this.value.toUpperCase();
                 const rows = document.querySelectorAll("#dataTable tbody tr");
@@ -329,5 +403,94 @@
                 });
             });
         </script>
-    </form>
+        <script>
+        function updateDeviceOptions() {
+            // Lấy giá trị tên thiết bị đã chọn
+            var selectedDeviceName = document.getElementById("schDevicename").value;
+
+            // Lấy các option trong dropdown Mã ID thiết bị
+            var deviceOptions = document.getElementById("schDevice").options;
+
+            // Duyệt qua tất cả các option và ẩn hoặc hiển thị dựa trên tên thiết bị
+            for (var i = 0; i < deviceOptions.length; i++) {
+                var option = deviceOptions[i];
+                var deviceName = option.text; // Tên thiết bị tương ứng với device_id
+
+                // Nếu tên thiết bị trùng với lựa chọn, hiển thị option, ngược lại ẩn
+                if (selectedDeviceName === "" || deviceName === selectedDeviceName) {
+                    option.style.display = "block"; // Hiển thị option
+                } else {
+                    option.style.display = "none"; // Ẩn option
+                }
+            }
+        }
+        </script>
+        <script>
+            // Gọi hàm lọc ngay sau khi trang được tải xong
+            window.onload = function () {
+                updateDeviceOptions();
+            }
+        </script>
+        <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const repairDetailModal = document.getElementById('repairDetailModal');
+            const closeBtn = document.getElementById('closeRepairDetailModal');
+            const cancelBtn = document.getElementById('cancelMaintainDetailModal');
+
+            // Gán sự kiện click cho tất cả các thẻ có class 'detailRepairLink'
+            document.querySelectorAll('.detailRepairLink').forEach(link => {
+                link.addEventListener('click', function (event) {
+                    event.preventDefault();
+                    const id = this.getAttribute('data-id'); // Lấy id thiết bị từ attribute data-id
+                    openRepairDetail(id);
+                });
+            });
+
+            // Đóng modal khi nhấn nút đóng (x)
+            if (closeBtn) {
+                closeBtn.addEventListener('click', () => {
+                    repairDetailModal.style.display = 'none';
+                });
+            }
+
+            // Đóng modal khi nhấn nút Thoát (nếu có)
+            if (cancelBtn) {
+                cancelBtn.addEventListener('click', () => {
+                    repairDetailModal.style.display = 'none';
+                });
+            }
+
+            // Đóng modal khi click ra ngoài vùng modal-content
+            window.addEventListener('click', event => {
+                if (event.target === repairDetailModal) {
+                    repairDetailModal.style.display = 'none';
+                }
+            });
+        });
+
+        function openRepairDetail(id) {
+            fetch(`/Management/Suachua_GetById?id=${id}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log("DATA:", data);
+                    document.getElementById('schid').value = data.FK_device_id || '';
+                    document.getElementById('device_name').value = data.device_name || '';
+                    document.getElementById('priority').value = data.repair_priority || '';
+                    document.getElementById('finance').value = data.contact_finance || '';
+                    document.getElementById('updateStatus').value = data.repair_update_status || '';
+                    document.getElementById('description').value = data.repair_note || '';
+                    document.getElementById('image').value = data.repair_picture || '';
+                    document.getElementById('contact').value = data.contact_address || '';
+
+                    document.getElementById('broken').value = data.repair_broken?.split('T')[0] || '';
+                    document.getElementById('date').value = data.repair_date?.split('T')[0] || '';
+                    document.getElementById('updateDate').value = data.repair_update_date?.split('T')[0] || '';
+
+                    repairDetailModal.style.display = 'flex';
+                })
+        }
+
+        </script>
+
+
 </body>
