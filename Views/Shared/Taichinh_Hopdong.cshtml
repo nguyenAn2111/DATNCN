@@ -31,7 +31,7 @@
 			<button class="taichinh-dropbtn">Tài chính</button>
 			<div class="dropdown-content">
 				<a href="#muasam"> Chi phí mua sắm </a>
-				<a href="#baotri"> Chi phí bảo trì và sửa chữa </a>
+				<a href="#baotri"> Chi phí bảo trì  </a>
 				<a href="#suachua"> Chi phí sửa chữa </a>
 			</div>
 		</div>
@@ -68,25 +68,25 @@
 							</h2>
 						</div>
 						@{
-							long totalCost = 0;
-							var sortedItems = Model.DeviceList.Items
+							long totalCost1 = 0;
+							var sortedItems1 = Model.DeviceList.Items
 							.Where(x => x.device_received_date != null)
 							.OrderBy(x => x.device_received_date)
 							.ToList();
 
-							int stt = 1;
+							int stt1 = 1;
 
-							foreach (var item in sortedItems)
+							foreach (var item in sortedItems1)
 							{
 								if (long.TryParse(item.contact_finance, out long cost))
 								{
-									totalCost += cost;
+									totalCost1 += cost;
 								}
 							}
 						}
 						
 						<p style="color: red; font-size:20px; font-weight:bold ; margin-bottom: 1rem;">
-							Tổng chi phí mua sắm: @totalCost.ToString("#,##0")đ
+							Tổng chi phí mua sắm: @totalCost1.ToString("#,##0")đ
 						</p>
 
 						<table id="dataTable" style="width:100%;">
@@ -107,7 +107,7 @@
 									foreach (var item in Model.DeviceList.Items)
 									{
 										<tr>
-											<td>@stt</td>
+											<td>@stt1</td>
 											<td class="facility">@item?.device_id</td>
 											<td class="facility">@item?.device_name</td>
 											<td class="facility">@item?.device_condition</td>
@@ -115,7 +115,7 @@
 											<td class="facility">@item?.contact_finance</td>
 											<td class="facility">@item?.room_name</td>
 										</tr>
-										stt++;
+										stt1++;
 									}
 								}
 								else
@@ -138,12 +138,150 @@
 						<div>
 							<h2>
 								<i class="fa-solid fa-screwdriver-wrench" style="margin-right: 0.2rem;"></i>
-								Chi phí bảo trì & sửa chữa
+								Chi phí bảo trì 
 							</h2>
 						</div>
-						<div class="total">Tổng: 12.000.000đ</div>
+						@{
+							long totalCost2 = 0;
+							var sortedItems2 = Model.MaintainList.Items
+							.Where(x => x.maintain_date != null)
+							.OrderBy(x => x.maintain_date)
+							.ToList();
+
+							int stt2 = 1;
+
+							foreach (var item in sortedItems2)
+							{
+								if (long.TryParse(item.contact_finance, out long cost))
+								{
+									totalCost2 += cost;
+								}
+							}
+						}
+						<p style="color: red; font-size:20px; font-weight:bold ; margin-bottom: 1rem;">
+							Tổng chi phí bảo trì: @totalCost2.ToString("#,##0")đ
+						</p>
+
+						<table id="dataTable" style="width:100%;">
+							<thead>
+								<tr>
+									<th>STT</th>
+									<th>Mã ID</th>
+									<th>Tên thiết bị<br></th>
+									<th>Tình trạng hiện tại</th>
+									<th>Ngày giao dịch</th>
+									<th>Chi phí giao dịch</th>
+									<th>Vị trí hiện tại</th>
+								</tr>
+							</thead>
+							<tbody>
+								@if (Model.MaintainList.PageCount > 0)
+								{
+									foreach (var item in Model.MaintainList.Items)
+									{
+										<tr>
+											<td>@stt2</td>
+											<td class="facility">@item.device_id</td>
+											<td class="facility">@item.device_name</td>
+											<td class="facility">@item.status_name</td>
+											<td class="facility">@item.maintain_date?.ToString("dd/MM/yyyy")</td>
+											<td class="facility">@item.contact_finance</td>
+											<td class="facility">@item.room_name</td>
+										</tr>
+										stt2++;
+									}
+								}
+								else
+								{
+									<tr>
+										<td id="facility">NOT FOUND </td>
+										<td id="facility">NOT FOUND </td>
+										<td id="facility">NOT FOUND </td>
+										<td id="facility">NOT FOUND </td>
+										<td id="facility">NOT FOUND </td>
+										<td id="facility">NOT FOUND </td>
+										<td id="facility">NOT FOUND </td>
+									</tr>
+								}
+
+							</tbody>
+						</table>
 					</div>
-				</div>
+					 <!-- Phí sua chua-->
+					<div class="card-group" id="suachua">
+						<div>
+							<h2>
+								<i class="fa-solid fa-screwdriver-wrench" style="margin-right: 0.2rem;"></i>
+								Chi phí sửa chữa
+							</h2>
+						</div>
+						@{
+							long totalCost3 = 0;
+							var sortedItems3 = Model.RepairList.Items
+							.Where(x => x.repair_date != null)
+							.OrderBy(x => x.repair_date)
+							.ToList();
+
+							int stt3 = 1;
+
+							foreach (var item in sortedItems3)
+							{
+								if (long.TryParse(item.contact_finance, out long cost))
+								{
+									totalCost3 += cost;
+								}
+							}
+						}
+						<p style="color: red; font-size:20px; font-weight:bold ; margin-bottom: 1rem;">
+							Tổng chi phí sửa chữa: @totalCost3.ToString("#,##0")đ
+						</p>
+
+						<table id="dataTable" style="width:100%;">
+							<thead>
+								<tr>
+									<th>STT</th>
+									<th>Mã ID</th>
+									<th>Tên thiết bị<br></th>
+									<th>Tình trạng hiện tại</th>
+									<th>Ngày giao dịch</th>
+									<th>Chi phí giao dịch</th>
+									<th>Vị trí hiện tại</th>
+								</tr>
+							</thead>
+							<tbody>
+								@if (Model.RepairList.PageCount > 0)
+								{
+									foreach (var item in Model.RepairList.Items)
+									{
+										<tr>
+											<td>@stt3</td>
+											<td class="facility">@item.FK_device_id</td>
+											<td class="facility">@item.device_name</td>
+											<td class="facility">@item.status_name</td>
+											<td class="facility">@item.repair_date.ToString("dd/MM/yyyy")</td>
+											<td class="facility">@item.contact_finance</td>
+											<td class="facility">@item.room_name</td>
+										</tr>
+										stt3++;
+									}
+								}
+								else
+								{
+									<tr>
+										<td id="facility">NOT FOUND </td>
+										<td id="facility">NOT FOUND </td>
+										<td id="facility">NOT FOUND </td>
+										<td id="facility">NOT FOUND </td>
+										<td id="facility">NOT FOUND </td>
+										<td id="facility">NOT FOUND </td>
+										<td id="facility">NOT FOUND </td>
+									</tr>
+								}
+
+							</tbody>
+						</table>
+					</div>
+				</div> 
 				<!--shoppingDetail modal-->
 				<div id="shoppingDetail" class="modal">
 					<div class="modal-content">
@@ -236,14 +374,14 @@
 
 	<!--sờ cờ ríp-->
 	<script>
-		window.onclick = function (event) {
-			// Kiểm tra nếu người dùng bấm vào vùng ngoài modal (tức là phần nền mờ)
-			if (event.target === document.getElementById('shoppingDetail') ||
-				event.target === document.getElementById('insuranceDetail')
-			) {
-				event.target.style.display = "none";
-			}
-		}
+		// window.onclick = function (event) {
+		// 	// Kiểm tra nếu người dùng bấm vào vùng ngoài modal (tức là phần nền mờ)
+		// 	if (event.target === document.getElementById('shoppingDetail') ||
+		// 		event.target === document.getElementById('insuranceDetail')
+		// 	) {
+		// 		event.target.style.display = "none";
+		// 	}
+		// }
 
 		// Tìm kiếm theo tên thiết bị
 		document.getElementById("searchInput").addEventListener("keyup", function () {
@@ -294,46 +432,40 @@
 	
 	<script>
 		// Biểu đồ tròn - Tỉ lệ chi phí
+		// Biểu đồ tròn - Tỉ lệ chi phí
 		const pieCtx = document.getElementById('pieChart').getContext('2d');
 		const pieChart = new Chart(pieCtx, {
 			type: 'pie',
 			data: {
-				labels: ['Mua sắm', 'Bảo trì', 'Khác'],
+				labels: ['Mua sắm', 'Bảo trì', 'Sửa chữa'],
 				datasets: [{
 					label: 'Tỉ lệ chi phí',
-					data: [60, 30, 10], // Dữ liệu chi phí
+					data: [@totalCost1, @totalCost2, @totalCost3], // Sử dụng biến từ Model
 					backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'],
 					hoverOffset: 4
 				}]
 			},
 			options: {
-				responsive: true
-			}
-		});
-
-		// Biểu đồ cột - Chi phí theo tháng
-		const barCtx = document.getElementById('barChart').getContext('2d');
-		const barChart = new Chart(barCtx, {
-			type: 'bar',
-			data: {
-				labels: ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5'],
-				datasets: [{
-					label: 'Chi phí (VND)',
-					data: [12000000, 15000000, 14000000, 17000000, 16000000], // Dữ liệu chi phí theo tháng
-					backgroundColor: '#36A2EB',
-					borderColor: '#36A2EB',
-					borderWidth: 1
-				}]
-			},
-			options: {
 				responsive: true,
-				scales: {
-					y: {
-						beginAtZero: true
+				plugins: {
+					legend: {
+						position: 'top',
+					},
+					tooltip: {
+						callbacks: {
+							label: function (context) {
+								let label = context.label || '';
+								let value = context.raw || 0;
+								return label + ': ' + value.toLocaleString() + ' VND';
+							}
+						}
 					}
 				}
 			}
 		});
+
+		// Biểu đồ cột - Chi phí theo tháng
+		
 	</script>
 
 </body>

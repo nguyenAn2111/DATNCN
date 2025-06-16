@@ -1,11 +1,10 @@
+C:\Users\Lenovo\OneDrive\Desktop\ĐATNCN\srcDATN\bin\Debug\net8.0\Hospital_Test.dll
 C:\Users\Lenovo\OneDrive\Desktop\ĐATNCN\srcDATN\bin\Debug\net8.0\appsettings.Development.json
 C:\Users\Lenovo\OneDrive\Desktop\ĐATNCN\srcDATN\bin\Debug\net8.0\appsettings.json
 C:\Users\Lenovo\OneDrive\Desktop\ĐATNCN\srcDATN\bin\Debug\net8.0\Hospital_Test.staticwebassets.runtime.json
 C:\Users\Lenovo\OneDrive\Desktop\ĐATNCN\srcDATN\bin\Debug\net8.0\Hospital_Test.exe
 C:\Users\Lenovo\OneDrive\Desktop\ĐATNCN\srcDATN\bin\Debug\net8.0\Hospital_Test.deps.json
 C:\Users\Lenovo\OneDrive\Desktop\ĐATNCN\srcDATN\bin\Debug\net8.0\Hospital_Test.runtimeconfig.json
-C:\Users\Lenovo\OneDrive\Desktop\ĐATNCN\srcDATN\bin\Debug\net8.0\Hospital_Test.dll
-C:\Users\Lenovo\OneDrive\Desktop\ĐATNCN\srcDATN\bin\Debug\net8.0\Hospital_Test.pdb
 C:\Users\Lenovo\OneDrive\Desktop\ĐATNCN\srcDATN\bin\Debug\net8.0\Azure.Core.dll
 C:\Users\Lenovo\OneDrive\Desktop\ĐATNCN\srcDATN\bin\Debug\net8.0\Azure.Identity.dll
 C:\Users\Lenovo\OneDrive\Desktop\ĐATNCN\srcDATN\bin\Debug\net8.0\DocumentFormat.OpenXml.dll
@@ -259,4 +258,5 @@ C:\Users\Lenovo\OneDrive\Desktop\ĐATNCN\srcDATN\obj\Debug\net8.0\Hospital_Test.
 C:\Users\Lenovo\OneDrive\Desktop\ĐATNCN\srcDATN\obj\Debug\net8.0\refint\Hospital_Test.dll
 C:\Users\Lenovo\OneDrive\Desktop\ĐATNCN\srcDATN\obj\Debug\net8.0\Hospital_Test.pdb
 C:\Users\Lenovo\OneDrive\Desktop\ĐATNCN\srcDATN\obj\Debug\net8.0\Hospital_Test.genruntimeconfig.cache
+C:\Users\Lenovo\OneDrive\Desktop\ĐATNCN\srcDATN\bin\Debug\net8.0\Hospital_Test.pdb
 C:\Users\Lenovo\OneDrive\Desktop\ĐATNCN\srcDATN\obj\Debug\net8.0\ref\Hospital_Test.dll

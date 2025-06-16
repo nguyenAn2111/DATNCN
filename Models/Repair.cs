@@ -19,11 +19,10 @@ namespace Hospital_Test.Models
         public string FK_room_id { get; set; }
         public string FK_device_id { get; set; }
         public string FK_status_id { get; set; }
-        public string FK_finance_id { get; set; }
         public string device_name { get; set; }
         public string room_name { get; set; }
         public string status_name { get; set; }
-        public int contact_finance { get; set; }
+        public string contact_finance { get; set; } // sửa int thành string
         public string contact_address { get; set; }
 
         public Repair(DataRow row)
@@ -43,7 +42,7 @@ namespace Hospital_Test.Models
             this.FK_device_id = row.Table.Columns.Contains("FK_device_id") && row["FK_device_id"] != DBNull.Value ? row["FK_device_id"].ToString() : "";
 
             this.repair_priority = row.Table.Columns.Contains("repair_priority") && row["repair_priority"] != DBNull.Value ? Convert.ToInt32(row["repair_priority"]) : 0;
-            this.contact_finance = row.Table.Columns.Contains("contact_finance") && row["contact_finance"] != DBNull.Value ? Convert.ToInt32(row["contact_finance"]) : 0;
+            this.contact_finance = row.Table.Columns.Contains("contact_finance") && row["contact_finance"] != DBNull.Value ? row["contact_finance"].ToString() : "";
 
             this.device_name = row.Table.Columns.Contains("device_name") && row["device_name"] != DBNull.Value ? row["device_name"].ToString() : "";
             this.room_name = row.Table.Columns.Contains("room_name") && row["room_name"] != DBNull.Value ? row["room_name"].ToString() : "";
