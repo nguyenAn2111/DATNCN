@@ -109,7 +109,7 @@ namespace Hospital_Test.Controllers
             string tbiContact_id = (max_contact + 1).ToString();
 
 					//4. Thêm vào bảng dbo.tbl_contact khi đã có contact_id và địa chỉ, lưu file với contact_type  là "Hợp đồng bảo trì" 
-			string query_contact_device = String.Format("Insert into dbo.tbl_contact (contact_id, contact_type, contact_address, contact_finance)" + "Values ('{0}' , N'{1}' , N'{2}', {3} )", tbiContact_id, tbiContact_type, tbiContact_address, tbiContact_finance);
+			string query_contact_device = String.Format("Insert into dbo.tbl_contact (contact_id, contact_type, contact_address, contact_finance, contact_date)" + "Values ({0} , {1} , N'{2}', {3}, '{4}' )", tbiContact_id, tbiContact_type, tbiContact_address, tbiContact_finance, tbiReceived_date);
 			DataProvider<Contact>.Instance.ExcuteQuery(query_contact_device);
 			
 			tbiStatus = "20";
@@ -138,8 +138,7 @@ namespace Hospital_Test.Controllers
             return RedirectToAction("Baotri");
         }
 	
-		
-		//Hien thi danh sach thiet bi
+	
 		public IActionResult Thietbi()
         {
             //khởi tạo
@@ -157,7 +156,7 @@ namespace Hospital_Test.Controllers
             page = urlQuery["page"];
 
             field = field == null ? "All" : field;
-            sortOrder = sortOrder == null ? "Name" : sortOrder;
+            sortOrder = sortOrder == null ? "device_received_date" : sortOrder;
             searchField = searchField == null ? "device_name" : searchField;
             searchString = searchString == null ? "" : searchString;
             page = page == null ? "1" : page;
@@ -190,8 +189,7 @@ namespace Hospital_Test.Controllers
                 .ToList();
             ViewBag.DistinctRoomTypes = distinctRoomTypes;
 
-
-            string query = @"
+			string query = @"
                SELECT
                     de.*,
                     r.room_name,
@@ -202,8 +200,7 @@ namespace Hospital_Test.Controllers
                 LEFT JOIN dbo.tbl_room r ON de.FK_room_id = r.room_id
                 LEFT JOIN dbo.tbl_status s ON de.FK_status_id = s.status_id";
 
-
-            List<Device> devices;
+			List<Device> devices;
             devices = DataProvider<Device>.Instance.GetListItemQuery(query);
             devices = Function.Instance.searchItems(devices, deviceList);
             devices = Function.Instance.sortItems(devices, deviceList.SortOrder);
@@ -762,12 +759,72 @@ namespace Hospital_Test.Controllers
             return View("~/Views/Shared/Kho.cshtml", StorageList);
         }
 
+		public IActionResult Taichinh_Hopdong()
+		{
+			string field, sortOrder, searchField, searchString, page;
+			var urlQuery = Request.HttpContext.Request.Query;
 
-        public IActionResult Taichinh_Hopdong()
-        {
-            return View("~/Views/Shared/Taichinh_Hopdong.cshtml");
-        }
-        public IActionResult Baotri_Suachua()
+			field = urlQuery["field"];
+			sortOrder = urlQuery["sort"];
+			searchField = urlQuery["searchField"];
+			searchString = urlQuery["SearchString"];
+			page = urlQuery["page"];
+
+			field ??= "All";
+			sortOrder ??= "device_received_date";
+			searchField ??= "device_name";
+			searchString ??= "";
+			page ??= "1";
+			int currentPage = Convert.ToInt32(page);
+
+			var deviceList = new ItemDisplay<Device>
+			{
+				SortOrder = sortOrder,
+				CurrentSearchField = searchField,
+				CurrentSearchString = searchString,
+				CurrentPage = currentPage
+			};
+
+			string query = @"
+        SELECT
+            de.*,
+            r.room_name,
+            s.status_name,
+            c.contact_address,
+            cf.contact_finance,
+            ct.contact_type
+        FROM dbo.tbl_device de 
+        LEFT JOIN dbo.tbl_room r ON de.FK_room_id = r.room_id
+        LEFT JOIN dbo.tbl_status s ON de.FK_status_id = s.status_id
+        LEFT JOIN dbo.tbl_contact c ON de.FK_contact_id = c.contact_id
+        LEFT JOIN dbo.tbl_contact cf ON de.FK_contact_id = cf.contact_id
+        LEFT JOIN dbo.tbl_contact ct ON de.FK_contact_id = ct.contact_id
+        WHERE ct.contact_type LIKE '1%'";
+
+			var devices = DataProvider<Device>.Instance.GetListItemQuery(query);
+			devices = Function.Instance.searchItems(devices, deviceList);
+			devices = Function.Instance.sortItems(devices, deviceList.SortOrder);
+			deviceList.Paging(devices, 10);
+
+			var deviceForm = new DeviceDetail
+			{
+				statuses_device = DataProvider<Status>.Instance.GetListItem("tbl_status"),
+				rooms_device = DataProvider<Room>.Instance.GetListItem("tbl_room"),
+				contacts_device = DataProvider<Contact>.Instance.GetListItem("tbl_contact")
+			};
+
+			var viewModel = new ContactPageViewModel
+			{
+				DeviceList = deviceList,
+				DeviceForm = deviceForm
+			};
+
+			return View("~/Views/Shared/Taichinh_Hopdong.cshtml", viewModel);
+		}
+
+
+
+		public IActionResult Baotri_Suachua()
         {
             return View("~/Views/Shared/Baotri_Suachua.cshtml");
         }

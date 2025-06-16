@@ -469,13 +469,13 @@ td#detail {
         color: #EF476F;
     }
 
-.fa-solid.fa-circle-info:hover {
+/*.fa-solid.fa-circle-info:hover {
     transform: scale(1.1);
 }
 
 .fa-solid.fa-trash:hover {
     transform: scale(1.1);
-}
+}*/
 /* Style for table cells */
 
 td, th {
@@ -1475,7 +1475,69 @@ section {
     justify-content: center;
     gap: 1rem;
 }
-#deleteDeviceIdText {
+#delDeviceIdText {
     text-transform: uppercase;
     font-weight: 700;
+}
+
+.del-btn {
+    cursor: pointer; /* Bàn tay khi hover vào nút */
+    background-color: transparent;
+    border: none;
+}
+
+    .del-btn i {
+        cursor: pointer; /* Bàn tay khi hover vào icon */
+        color: #d44c4c; /* Tuỳ chọn: màu đỏ cho icon */
+        font-size: 1.2rem;
+    }
+
+        .del-btn i:hover {
+            transform: scale(1.1);
+            color: #ff6b6b;
+        }
+
+/* Đặt màu mặc định cho biểu tượng 'info' thành màu xanh lam mong muốn */
+.fa-solid.fa-circle-info {
+    color: #1282A2; /* Màu xanh của tiêu đề cột */
+    font-size: 1.2rem; /* Giảm kích thước xuống 1.2rem (hoặc giá trị bạn thấy phù hợp) */
+    text-decoration: none; /* Bỏ gạch chân */
+}
+
+    /* Đặt màu khi di chuột (hover) nếu bạn muốn nó thay đổi khi người dùng rê chuột qua */
+    .fa-solid.fa-circle-info:hover {
+        color: #007ff6; /* Một màu xanh sáng hơn khi di chuột */
+        transform: scale(1.1); /* Hiệu ứng phóng to nhẹ khi di chuột */
+        text-decoration: none; /* Đảm bảo vẫn không có gạch chân khi di chuột */
+    }
+
+/* Đảm bảo nút chứa biểu tượng không có nền hoặc đường viền không mong muốn */
+.detaiil-btn {
+    border: none;
+    background-color: transparent; /* Đảm bảo nền trong suốt */
+    padding: 0; /* Loại bỏ padding thừa */
+    cursor: pointer;
+}
+.readonly-input {
+    color: #f0f0f0 !important; /* Màu chữ sáng */
+    background-color: #9a9a9a !important; /* Nền xám sẫm */
+    border: 1px solid #666666 !important; /* Viền màu xám đậm */
+    border-radius: 8px !important;
+    padding: 6px 10px !important;
+    user-select: none !important; /* Ngăn chọn chữ */
+    pointer-events: none !important; /* Ngăn nhận sự kiện chuột */
+    outline: none !important; /* Không hiện viền khi focus */
+    cursor: default !important; /* Con trỏ mặc định */
+}
+
+.modaal-body {
+    margin-bottom: 0.5rem; /* Tạo khoảng cách với nút */
+}
+
+.confirm-text {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #001F54;
+    font-family: Lato;
+    margin-bottom: 0.5rem; /* tạo khoảng cách với nút */
 }
