@@ -780,8 +780,9 @@ namespace Hospital_Test.Controllers
                 }
             }
 
-
             List<Device> allDevices = DataProvider<Device>.Instance.GetListItem("tbl_device");
+            List<Room> allRooms = DataProvider<Room>.Instance.GetListItem("tbl_room");
+
             // Lọc thiết bị để nhập kho (chưa ở kho)
             var devices_import = allDevices
                 .Where(d => !string.Equals(d.FK_room_id ?? "", "KHO", StringComparison.OrdinalIgnoreCase))
@@ -795,7 +796,8 @@ namespace Hospital_Test.Controllers
             {
                 devices_import = devices_import,
                 devices_export = devices_export,
-                rooms_str = DataProvider<Room>.Instance.GetListItem("tbl_room")
+                devices_all = allDevices,
+                rooms_str = allRooms
             };
 
             var model = new StoragePageViewModel
@@ -871,6 +873,37 @@ namespace Hospital_Test.Controllers
             string updateQuery_device = String.Format("UPDATE dbo.tbl_device SET FK_room_id = '{0}' WHERE device_id = '{1}' ", estrRoom_to, estrDevice);
             DataProvider<Device>.Instance.ExcuteQuery(updateQuery_device);
 
+            return RedirectToAction("Kho");
+        }
+        [HttpPost]
+        public IActionResult Kho_Transfer(string strDevice, string strRoom_to ,string strDate)
+        {
+            // Lấy vị trí hiện tại của thiết bị
+            var allDevices = DataProvider<Device>.Instance.GetListItem("tbl_device");
+            var device = allDevices.FirstOrDefault(d => d.device_id == strDevice);
+            string room_from = device?.FK_room_id ?? "";
+
+            // Cập nhật thiết bị sang vị trí mới
+            string updateQuery = String.Format(
+                "UPDATE dbo.tbl_device SET FK_room_id = '{0}' WHERE device_id = '{1}'",
+                strRoom_to, strDevice
+            );
+            DataProvider<Device>.Instance.ExcuteQuery(updateQuery);
+
+            // Lưu lịch sử vào tbl_storage
+            string insertHistory = String.Format(
+                "INSERT INTO dbo.tbl_storage (storage_date, FK_device_id, FK_room_id_from, FK_room_id_to) " +
+                "VALUES ('{0}', '{1}', '{2}', '{3}')", strDate, strDevice, room_from, strRoom_to
+            );
+            DataProvider<Storage>.Instance.ExcuteQuery(insertHistory);
+
+            return RedirectToAction("Kho");
+        }
+        public IActionResult Kho_Delete()
+        {
+            var urlQuery = Request.HttpContext.Request.Query;
+            string storage_id_del = urlQuery["storage_id"];
+            DataProvider<Storage>.Instance.ExcuteQuery(String.Format("DELETE FROM dbo.tbl_storage WHERE storage_id = {0}", storage_id_del));
             return RedirectToAction("Kho");
         }
         //-----------------------------Tài chính hợp đồng------------------------------

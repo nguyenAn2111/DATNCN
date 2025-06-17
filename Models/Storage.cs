@@ -16,6 +16,7 @@ namespace Hospital_Test.Models
         public Storage() { }
         public Storage(DataRow row)
         {
+            this.storage_id = row.Table.Columns.Contains("storage_id") && row["storage_id"] != DBNull.Value ? Convert.ToInt32(row["storage_id"]) : 0;
             this.str_quantity = row.Table.Columns.Contains("str_quantity") && row["str_quantity"] != DBNull.Value ? Convert.ToInt32(row["str_quantity"]) : 0;
             this.device_name = row.Table.Columns.Contains("device_name") && row["device_name"] != DBNull.Value ? row["device_name"].ToString() : "";
             this.FK_device_id = row.Table.Columns.Contains("FK_device_id") && row["FK_device_id"] != DBNull.Value ? row["FK_device_id"].ToString() : "";

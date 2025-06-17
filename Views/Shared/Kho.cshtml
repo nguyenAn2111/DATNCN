@@ -33,11 +33,11 @@
         </nav>
 
             <!--nhóm 1-->
-            <form asp-action="Kho" method="post">
             <div class="store">
                 <section class="maintain-title" id="thongtin">
                     📦Thông tin thiết bị trong kho
                 </section>
+            <form asp-action="Kho" method="post">
                 <input type="text" id="searchInput" placeholder="🔍 Tìm thiết bị...">
                 <table id="deviceTable">
                     <thead>
@@ -61,7 +61,6 @@
                 <button class="submit-button" onclick="exportToExcel()">📥 Xuất Excel </button><br>
             </form>
             </div>
-
 
             <!--nhóm 2-->
             <div class="store">
@@ -87,6 +86,9 @@
                                     <i class="fa-solid fa-truck-moving" style="margin-right:0.2rem;"></i>
                                     Ghi nhận thiết bị xuất kho
                                 </button>
+                            </li>
+                            <li>
+                                <button onclick="document.getElementById('transferModal').style.display='flex'">Tạo yêu cầu chuyển thiết bị</button>
                             </li>
                         </ul>
                     </div>
@@ -177,181 +179,97 @@
                         </div>
                     </div>
 
-                    <!--Ghi nhận xuất nhập kho-->
-                    <div class="function-card">
-                        <h3>
-                            <i class="fa-solid fa-clock" style="margin-right: 0.3rem;"></i>
-                            Lịch sử xuất nhập kho
-                        </h3>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Tên thiết bị</th>
-                                    <th>Mã ID</th>
-                                    <th>Ngày xuất/nhập kho</th>
-                                    <th>Vị trí nguồn</th>
-                                    <th>Vị trí đích</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                            @foreach (var item in Model.StorageList.Items)
-                                {
-                                    <tr>
-                                        <td>@item.device_name</td>
-                                        <td>@item.FK_device_id</td>
-                                        <td>@item.storage_date.ToString("dd/MM/yyyy")</td>
-                                        <td>@item.FK_room_id_from</td>
-                                        <td>@item.FK_room_id_to</td>
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
+                    <!-- Modal for Create Transfer Request -->
+                    <div id="transferModal" class="modal">
+                        <div class="modal-content">
+                            <span class="close" onclick="document.getElementById('transferModal').style.display='none'">&times;</span>
+                            <h3>Tạo yêu cầu chuyển thiết bị</h3>
+                            <form asp-action="Kho_Transfer" method="post">
+                                <div class="form-group">
+                                    <label for="transfer-device">Thiết bị:</label>
+                                    <select id="transfer-device" name="strDevice" required>
+                                        <option value="">-- Chọn thiết bị --</option>
+                                        @foreach (var item in Model.StorageForm.devices_all)
+                                        {
+                                        <option value="@item.device_id" data-room="@item.FK_room_id">
+                                                @item.device_id - @item.device_name
+                                            </option>
+                                        }
+                                    </select>
+                                </div><br>
+                                <div class="form-group">
+                                    <label for="room-from">Vị trí hiện tại:</label>
+                                    <input type="text" id="room-from" name="strRoom_from" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label for="room-to">Chuyển đến:</label>
+                                    <select id="room-to" name="strRoom_to" required>
+                                        <option value="">-- Chọn phòng đích --</option>
+                                        @foreach (var item in Model.StorageForm.rooms_str)
+                                        {
+                                            <option value="@item.room_id">@item.room_id</option>
+                                        }
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="transfer-date">Ngày chuyển:</label>
+                                    <input type="date" id="transfer-date" name="strDate" required />
+                                </div>
+                                <button type="submit">Ghi nhận chuyển thiết bị</button>
+                            </form>
+                        </div>
                     </div>
+
                 </div>
             </div>
 
             <!-- Nhóm 3 -->
             <div class="store">
                 <section class="maintain-title" id="dieuchuyen">
-                    🔁 Điều chuyển và thu hồi
+                    🔁 Lịch sử điều chuyển & xuất nhập kho 
                 </section>
 
-                <div class="container">
-                    <div class="function-card">
-                        <h3>
-                            <i class="fa-solid fa-paper-plane" style="margin-right: 0.3rem;"></i>
-                            Yêu cầu điều chuyển & thu hồi
-                        </h3>
-                        <ul>
-                            <li>
-                                <button onclick="document.getElementById('transferModal').style.display='flex'">Tạo yêu cầu chuyển thiết bị</button>
-                            </li>
-                            <li>
-                                <button onclick="document.getElementById('revokeModal').style.display='flex'">Thu hồi thiết bị</button>
-                            </li>
-                        </ul>
-
-                    </div>
-
-                    <!-- Modal for Create Transfer Request -->
-                    <div id="transferModal" class="modal">
-                        <div class="modal-content">
-                            <span class="close" onclick="document.getElementById('transferModal').style.display='none'">&times;</span>
-                            <h3>Tạo yêu cầu chuyển thiết bị</h3>
-
-                            <form>
-                                <div class="form-group">
-                                    <label for="device-name">Tên thiết bị:</label>
-                                    <input type="text" id="device-name" placeholder="Nhập tên thiết bị">
-                                </div><br>
-
-                                <div class="form-group">
-                                    <label for="source-warehouse">Kho nguồn:</label>
-                                    <select id="source-warehouse">
-                                        <option value="warehouse1">Kho 1</option>
-                                        <option value="warehouse2">Kho 2</option>
-                                        <option value="warehouse3">Kho 3</option>
-                                    </select>
-                                </div><br>
-
-                                <div class="form-group">
-                                    <label for="destination-warehouse">Kho đích:</label>
-                                    <select id="destination-warehouse">
-                                        <option value="warehouse1">Kho 1</option>
-                                        <option value="warehouse2">Kho 2</option>
-                                        <option value="warehouse3">Kho 3</option>
-                                    </select>
-                                </div><br>
-
-                                <div class="form-group">
-                                    <label for="quantity">Số lượng:</label>
-                                    <input type="number" id="quantity" placeholder="Nhập số lượng thiết bị">
-                                </div><br>
-
-                                <div class="form-group">
-                                    <label for="transfer-date">Ngày điều chuyển:</label>
-                                    <input type="date" id="transfer-date">
-                                </div><br>
-                                <button type="submit">Gửi yêu cầu</button>
-                            </form>
-                        </div>
-                    </div>
-
-                    <!-- Modal for Revoke Request -->
-                    <div id="revokeModal" class="modal">
-                        <div class="modal-content">
-                            <span class="close" onclick="document.getElementById('revokeModal').style.display='none'">&times;</span>
-                            <h3>Tạo yêu cầu thu hồi thiết bị</h3>
-
-                            <form>
-                                <div class="form-group">
-                                    <label for="device-name">Tên thiết bị:</label>
-                                    <input type="text" id="device-name" placeholder="Nhập tên thiết bị">
-                                </div><br>
-
-                                <div class="form-group">
-                                    <label for="source-warehouse">Vị trí hiện tại:</label>
-                                    <select id="source-warehouse">
-                                        <option value="warehouse1">Kho 1</option>
-                                        <option value="warehouse2">Kho 2</option>
-                                        <option value="warehouse3">Kho 3</option>
-                                    </select>
-                                </div><br>
-
-                                <div class="form-group">
-                                    <label for="destination-warehouse">Thu hồi về:</label>
-                                    <select id="destination-warehouse">
-                                        <option value="warehouse1">Kho 1</option>
-                                        <option value="warehouse2">Kho 2</option>
-                                        <option value="warehouse3">Kho 3</option>
-                                    </select>
-                                </div><br>
-
-                                <div class="form-group">
-                                    <label for="quantity">Số lượng:</label>
-                                    <input type="number" id="quantity" placeholder="Nhập số lượng thiết bị">
-                                </div><br>
-
-                                <div class="form-group">
-                                    <label for="transfer-date">Ngày Thu hồi:</label>
-                                    <input type="date" id="transfer-date">
-                                </div><br>
-                                <button type="submit">Gửi yêu cầu</button>
-                            </form>
-                        </div>
-                    </div>
-
-                    <!-- Ghi nhận quá trình điều chuyển -->
-                    <div class="function-card">
-                        <h3>
-                            <i class="fa-solid fa-clock" style="margin-right: 0.3rem;"></i>
-                            Lịch sử điều chuyển
-                        </h3>
-                        <table>
-                            <thead>
+                <!-- Ghi nhận quá trình điều chuyển -->
+                <div class="function-card">
+                    <h3>
+                        <i class="fa-solid fa-clock" style="margin-right: 0.3rem;"></i>
+                        Lịch sử xuất nhập kho
+                    </h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Số thứ tự</th>
+                                <th>Tên thiết bị</th>
+                                <th>Mã ID</th>
+                                <th>Ngày xuất/nhập kho</th>
+                                <th>Vị trí nguồn</th>
+                                <th>Vị trí đích (Vị trí hiện tại) </th>
+                                <th>Xóa lịch sử điều chuyển</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.StorageList.Items)
+                            {
                                 <tr>
-                                    <th>Thiết bị</th>
-                                    <th>Kho nguồn</th>
-                                    <th>Kho đích</th>
-                                    <th>Số lượng điều chuyển</th>
-                                    <th>Người quản lí</th>
+                                    <td>@item.storage_id</td>
+                                    <td>@item.device_name</td>
+                                    <td>@item.FK_device_id</td>
+                                    <td>@item.storage_date.ToString("dd/MM/yyyy")</td>
+                                    <td>@item.FK_room_id_from</td>
+                                    <td>@item.FK_room_id_to</td>
+                                    <td>
+                                        <a href="#" class="delete-btn" data-id="@item.storage_id">
+                                            <i class="fa-solid fa-trash-can"></i>
+                                        </a>
+                                    </td>
                                 </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>Máy thở PHILIPS</td>
-                                    <td>Kho 1</td>
-                                    <td>Kho 2</td>
-                                    <td>5</td>
-                                    <td>Lê Minh Hà</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                            }
+                        </tbody>
+                    </table>   
                 </div>
             </div>
-        </div>
-        <script>
+
+    <script>
         window.onclick = function (event) {
             // Kiểm tra nếu người dùng bấm vào vùng ngoài modal (tức là phần nền mờ)
             if (event.target === document.getElementById('exportModal') ||
@@ -406,4 +324,42 @@
             });
         });
     </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const deviceSelect = document.getElementById('transfer-device');
+            const roomFromInput = document.getElementById('room-from');
+
+            deviceSelect.addEventListener('change', function () {
+                // Lấy option đang chọn
+                const selectedOption = deviceSelect.options[deviceSelect.selectedIndex];
+                // Lấy data-room của option
+                const currentRoom = selectedOption.getAttribute('data-room') || '';
+                // Hiển thị vào input
+                roomFromInput.value = currentRoom;
+            });
+
+            // Nếu muốn hiện mặc định ngay khi trang vừa load (trường hợp đã chọn thiết bị từ trước)
+            if (deviceSelect.value) {
+                const selectedOption = deviceSelect.options[deviceSelect.selectedIndex];
+                roomFromInput.value = selectedOption.getAttribute('data-room') || '';
+            }
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Bắt sự kiện click vào nút xóa
+            document.querySelectorAll('.delete-btn').forEach(function (btn) {
+                btn.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const storageId = this.getAttribute('data-id');
+                    if (confirm('Bạn có chắc chắn muốn xóa bản ghi này không?')) {
+                        // Chuyển hướng đến action xóa (dùng GET)
+                        window.location.href = `/Management/Kho_Delete?storage_id=${storageId}`;
+                        // Thay YourController bằng tên controller thật sự (nếu khác)
+                    }
+                });
+            });
+        });
+    </script>
+
 </body>
