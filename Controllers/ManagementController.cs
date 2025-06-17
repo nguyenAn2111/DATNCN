@@ -642,7 +642,6 @@ namespace Hospital_Test.Controllers
             return RedirectToAction("Suachua");
         }
 
-
         public IActionResult Suachua()
         {
             // Khởi tạo
@@ -716,38 +715,32 @@ namespace Hospital_Test.Controllers
         //---------------------------------Kho-----------------------------------------------
         public IActionResult Kho()
         {
-            // Khởi tạo
-            string field;
-            string sortOrder;
-            string searchField;
-            string searchString;
-            string page;
+            string query = @"SELECT device_name AS str_device_name, COUNT(device_id) AS str_quantity
+                FROM tbl_device
+                WHERE FK_room_id = 'KHO'
+                GROUP BY device_name";
+            var dt = DataProvider<System.Data.DataTable>.Instance.ExcuteQuery(query);
 
-            /// Lấy query, không có => đặt mặc định
-            var urlQuery = Request.HttpContext.Request.Query;
-            field = urlQuery["field"];
-            sortOrder = urlQuery["sort"];
-            searchField = urlQuery["searchField"];
-            searchString = urlQuery["SearchString"];
-            page = urlQuery["page"];
-            field = field == null ? "All" : field;
-
-            sortOrder = sortOrder == null ? "Name" : sortOrder; ;
-            searchField = searchField == null ? "device_name" : searchField;
-            searchString = searchString == null ? "" : searchString;
-            page = page == null ? "1" : page;
-            int currentPage = Convert.ToInt32(page);
-
-            ItemDisplay<Storage> StorageList = new ItemDisplay<Storage>();
-            StorageList.SortOrder = sortOrder;
-            StorageList.CurrentSearchField = searchField;
-            StorageList.CurrentSearchString = searchString;
-            StorageList.CurrentPage = currentPage;
-
-
-
-            return View("~/Views/Shared/Kho.cshtml", StorageList);
+            var list = new List<Storage>();
+            if (dt != null && dt.Rows.Count > 0)
+            {
+                foreach (System.Data.DataRow row in dt.Rows)
+                {
+                    list.Add(new Storage
+                    {
+                        device_name = row["str_device_name"].ToString(),
+                        str_quantity = Convert.ToInt32(row["str_quantity"])
+                    });
+                }
+            }
+            return View("~/Views/Shared/Kho.cshtml", list);
         }
+        [HttpPost]
+        public IActionResult Kho(String sortOrder, String searchString, String searchField, int currentPage = 1)
+        {
+            return RedirectToAction("Kho", new { sort = sortOrder, searchField = searchField, searchString = searchString, page = currentPage });
+        }
+        //-----------------------------Tài chính hợp đồng------------------------------
         public IActionResult Taichinh_Hopdong()
         {
             return View("~/Views/Shared/Taichinh_Hopdong.cshtml");
