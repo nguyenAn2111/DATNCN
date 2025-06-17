@@ -759,10 +759,12 @@ namespace Hospital_Test.Controllers
             storage = Function.Instance.sortItems(storage, storageList.SortOrder);
             storageList.Paging(storage, 10);
 
-            string query = @"SELECT device_name AS str_device_name, COUNT(device_id) AS str_quantity
-            FROM tbl_device
-            WHERE FK_room_id = 'KHO'
-            GROUP BY device_name";
+            string query = @"
+            SELECT 
+                d.device_name AS str_device_name,
+                COUNT(CASE WHEN d.FK_room_id = 'KHO' THEN 1 END) AS str_quantity
+            FROM tbl_device d
+            GROUP BY d.device_name";
             var dt = DataProvider<System.Data.DataTable>.Instance.ExcuteQuery(query);
 
             var list = new List<Storage>();
@@ -780,17 +782,21 @@ namespace Hospital_Test.Controllers
 
 
             List<Device> allDevices = DataProvider<Device>.Instance.GetListItem("tbl_device");
-            List<Device> devicesNotInKho = allDevices
+            // Lọc thiết bị để nhập kho (chưa ở kho)
+            var devices_import = allDevices
                 .Where(d => !string.Equals(d.FK_room_id ?? "", "KHO", StringComparison.OrdinalIgnoreCase))
+                .ToList();
+            // Lọc thiết bị để xuất kho (đang ở kho)
+            var devices_export = allDevices
+                .Where(d => string.Equals(d.FK_room_id ?? "", "KHO", StringComparison.OrdinalIgnoreCase))
                 .ToList();
 
             var storageforms = new StorageDetail
             {
-                devices_str = devicesNotInKho,
+                devices_import = devices_import,
+                devices_export = devices_export,
                 rooms_str = DataProvider<Room>.Instance.GetListItem("tbl_room")
             };
-
-
 
             var model = new StoragePageViewModel
             {
@@ -798,6 +804,7 @@ namespace Hospital_Test.Controllers
                 StorageForm = storageforms,
                 DeviceInStockList = list
             };
+
 
             return View("~/Views/Shared/Kho.cshtml", model);
         }
@@ -832,6 +839,36 @@ namespace Hospital_Test.Controllers
                 DataProvider<Storage>.Instance.ExcuteQuery(query);
 
             string updateQuery_device = String.Format("UPDATE dbo.tbl_device SET FK_room_id = '{0}' WHERE device_id = '{1}' ", strRoom_to, strDevice);
+            DataProvider<Device>.Instance.ExcuteQuery(updateQuery_device);
+
+            return RedirectToAction("Kho");
+        }
+
+        [HttpPost]
+        public IActionResult Kho_Export(int estrID, string estrDate, string estrRoom_from, string estrRoom_to, string estrDevice)
+        {
+            List<Storage> storages = DataProvider<Storage>.Instance.GetListItem("tbl_storage");
+            int maxID = 0;
+            foreach (var item in storages)
+            {
+                int id;
+                if (int.TryParse(item.storage_id.ToString(), out id))
+                {
+                    if (id > maxID)
+                        maxID = id;
+                }
+            }
+            // storage_id mới = maxID + 1
+            int newstrID = maxID + 1;
+
+            estrRoom_from = "KHO";
+
+            string query = String.Format(
+                "INSERT INTO dbo.tbl_storage (storage_date, FK_device_id, FK_room_id_from, FK_room_id_to) " +
+                    "VALUES ('{0}', '{1}', '{2}', '{3}')", estrDate, estrDevice, estrRoom_from, estrRoom_to);
+            DataProvider<Storage>.Instance.ExcuteQuery(query);
+
+            string updateQuery_device = String.Format("UPDATE dbo.tbl_device SET FK_room_id = '{0}' WHERE device_id = '{1}' ", estrRoom_to, estrDevice);
             DataProvider<Device>.Instance.ExcuteQuery(updateQuery_device);
 
             return RedirectToAction("Kho");

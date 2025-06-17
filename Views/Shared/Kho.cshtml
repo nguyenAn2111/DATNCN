@@ -102,7 +102,7 @@
                                     <label for="import-device">Thiết bị:</label>
                                     <select id="import-device" name="strDevice" required>
                                         <option value="">-- Chọn thiết bị --</option>
-                                        @foreach (var item in Model.StorageForm.devices_str)
+                                        @foreach (var item in Model.StorageForm.devices_import)
                                         {
                                             <option value="@item.device_id">
                                                 @item.device_name (@item.device_id)
@@ -139,33 +139,41 @@
                         <div class="modal-content">
                             <span class="close" onclick="document.getElementById('exportModal').style.display='none'">&times;</span>
                             <h3>Ghi nhận thiết bị xuất kho</h3>
+                            <form asp-action="Kho_Export">
                                 <div class="form-group-title">Thông tin thiết bị</div>
                                 <div class="form-group">
-                                    <div>
-                                        <label for="import-device-name">Tên thiết bị:</label>
-                                        <input type="text" id="import-device-name" placeholder="Nhập tên thiết bị">
-                                    </div>
-                                    <div>
-                                        <label>Mã ID thiết bị:</label>
-                                        <select>
-                                            <option value="">devcie_id</option>
-                                        </select>
-                                    </div>
-                                </div><br>
+                                    <label for="import-device">Thiết bị:</label>
+                                    <select id="import-device" name="estrDevice" required>
+                                        <option value="">-- Chọn thiết bị --</option>
+                                        @foreach (var item in Model.StorageForm.devices_export)
+                                        {
+                                            <option value="@item.device_id">
+                                                @item.device_name (@item.device_id)
+                                            </option>
+                                        }
+                                    </select>
+                                </div>
+                                <br />
                                 <div class="form-group-title">Thông tin nhập kho</div>
                                 <div class="form-group">
                                     <div>
-                                        <label for="import-warehouse">Vị trí sau khi xuất khỏi KHO:</label>
-                                        <select id="import-warehouse">
-                                            <option value="">room_id</option>
+                                        <label for="import-warehouse">Vị trí trước khi nhập về KHO:</label>
+                                        <select id="import-warehouse" name="estrRoom_to">
+                                            <option value="">-- Chọn phòng --</option>
+                                            @foreach (var item in Model.StorageForm.rooms_str)
+                                            {
+                                                <option value="@item.room_id">@item.room_id </option>
+                                            }
                                         </select>
                                     </div>
                                     <div>
-                                        <label for="import-date">Ngày xuất kho:</label>
-                                        <input type="date" id="import-date" placeholder="KHO">
+                                        <label for="import-date">Ngày nhập kho:</label>
+                                        <input type="date" id="export-date" name="estrDate" required>
                                     </div>
-                                </div><br>
+                                </div>
+                                <br />
                                 <button id="popup-button-reschedule" type="submit">Ghi nhận</button>
+                            </form>
                         </div>
                     </div>
 
@@ -191,7 +199,7 @@
                                     <tr>
                                         <td>@item.device_name</td>
                                         <td>@item.FK_device_id</td>
-                                    <td>@item.storage_date.ToString("dd/MM/yyyy")</td>
+                                        <td>@item.storage_date.ToString("dd/MM/yyyy")</td>
                                         <td>@item.FK_room_id_from</td>
                                         <td>@item.FK_room_id_to</td>
                                     </tr>
