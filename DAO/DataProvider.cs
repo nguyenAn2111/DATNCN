@@ -182,5 +182,30 @@ namespace Hospital_Test.DAO
                 connection.Close();
             }
         }
-    }
+
+		public List<Dictionary<string, object>> GetListItemQueryRaw(string query)
+		{
+			var result = new List<Dictionary<string, object>>();
+			using (var connection = new SqlConnection(connectionSTR))
+			{
+				connection.Open();
+				using (var command = new SqlCommand(query, connection))
+				{
+					using (var reader = command.ExecuteReader())
+					{
+						while (reader.Read())
+						{
+							var dict = new Dictionary<string, object>();
+							for (int i = 0; i < reader.FieldCount; i++)
+							{
+								dict[reader.GetName(i)] = reader.GetValue(i);
+							}
+							result.Add(dict);
+						}
+					}
+				}
+			}
+			return result;
+		}
+	}
 }

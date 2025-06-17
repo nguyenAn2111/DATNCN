@@ -16,8 +16,7 @@ namespace Hospital_Test.Models
             this.contact_id = row["contact_id"] != DBNull.Value ? row["contact_id"].ToString() : "";
             contact_address = row["contact_address"] != DBNull.Value ? row["contact_address"].ToString() : "";
 			//contact_type = row["contact_type"] != DBNull.Value ? row["room_type"].ToString() : "";
-			this.contact_date = row["contact_date"] != DBNull.Value ? (DateTime?)Convert.ToDateTime(row["contact_date"]) : null;
-
+			
 		}
 
 		public Contact() { }

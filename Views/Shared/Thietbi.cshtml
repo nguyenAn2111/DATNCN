@@ -594,7 +594,11 @@
                     document.getElementById('received_date').value = data.device_received_date?.split('T')[0] || '';
                     document.getElementById('condition').value = data.device_condition || '';
                     document.getElementById('finance').value = data.contact_finance || '';
-                    document.getElementById('stockoutdate').value = data.device_stockout_date?.split('T')[0] || '';
+
+                    const stockoutRaw = data.device_stockout_date;
+document.getElementById('stockoutdate').value =stockoutRaw && !stockoutRaw.includes("1900-01-01")
+        ? stockoutRaw.split('T')[0]
+        : '';
 					document.getElementById('contact_id').value = data.FK_contact_id || '';
                     // document.getElementById('contactType').value = data.contact_type || '';
 					document.getElementById('devicenote').value = data.device_note || '';

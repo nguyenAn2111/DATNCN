@@ -49,10 +49,11 @@
 				<div class="chart-placeholder">
 					<canvas id="pieChart"></canvas>
 				</div>
-				<div class="chart-placeholder">
-					<canvas id="barChart"></canvas>
+				<div style="width: 50%; margin-top: 0px;">
+					<canvas id="financeChart"></canvas>
 				</div>
 			</div>
+
 
 
 			<div class="cards">
@@ -281,95 +282,181 @@
 							</tbody>
 						</table>
 					</div>
-				</div> 
-				<!--shoppingDetail modal-->
-				<div id="shoppingDetail" class="modal">
-					<div class="modal-content">
-						<span class="close" onclick="document.getElementById('shoppingDetail').style.display='none'">&times;</span>
-						<h3>Chi tiết thiết bị đã mua</h3>
-						<div>
-							<input type="text" id="searchInput" placeholder="🔍 Tìm kiếm tên thiết bị">
-						</div>
-
-						<table id="dataTable" style="width:100%;">
-							<thead>
-								<tr>
-									<th>Tên thiết bị</th>
-									<th>Ngày giao dịch</th>
-									<th>Đơn giá/chiếc</th>
-									<th>Số lượng</th>
-									<th>Tổng giá</th>
-									<th>Người phụ trách</th>
-								</tr>
-							</thead>
-							<tbody>
-							<td>Máy siêu âm Doopler</td>
-							<td>23/4/2025</td>
-							<td>20.000.000</td>
-							<td>2</td>
-							<td>40.000.000</td>
-							<td>Lê Minh Hà</td>
-							</tbody>
-							<tbody>
-							<td>Máy SPO2</td>
-							<td>18/4/2025</td>
-							<td>11.000.000</td>
-							<td>2</td>
-							<td>22.000.000</td>
-							<td>Nguyễn Trường An</td>
-							</tbody>
-						</table>
-					</div>
 				</div>
 			</div>
 		</div>
 	</div>
-
 	<!--Hợp đồng-->
 	<div class="store">
 		<section class="maintain-title" id="hopdong">
 			🚛 Hợp đồng - Giấy tờ
 		</section>
-
+		<div>
+			<input type="text" id="searchInputhopdong" placeholder="🔍Tìm kiếm hợp đồng">
+		</div>
 		<div id="hopdongTable">
-			<div>
-				<input type="text" id="searchInputhopdong" placeholder="🔍 Tìm kiếm tên hợp đồng...">
+
+			<!--Hợp đồng mua sắm -->
+			<div style="margin-top: 40px;">
+				<h2 style="color: red; text-align: center; font-weight: bold;">
+					<i class="fa-solid fa-cart-shopping" style="margin-right: 0.2rem;"></i>
+					DANH SÁCH HỢP ĐỔNG MUA SẮM
+				</h2>
 			</div>
-			<table id="dataTable" style="width:100%;">
+			
+			<table id="purchaseTable" style="width:100%; margin-bottom: 70px;">
 				<thead>
 					<tr>
-						<th>Tên Hợp đồng</th>
-						<th>Loại Giao dịch</th>
+						<th>STT</th>
+						<th>Mã ID</th>
+						<th>Tên thiết bị<br></th>
+						<th>Tên hợp đồng</th>
 						<th>Ngày ký</th>
-						<th>Trạng thái</th>
 						<th>Tập tin</th>
 					</tr>
 				</thead>
 				<tbody>
-				<td>Hợp đồng mua bán máy siêu doopler</td>
-				<td>Mua bán</td>
-				<td>23/4/2025</td>
-				<td>Hiệu lực</td>
-				<td>
-					<button type="button" id="deleteBtn">
-						<i class="fa-solid fa-file-word"></i>
-					</button>
-				</td>
+					@if (Model.DeviceList.PageCount > 0)
+						{
+							int stt4 = 1;
+						foreach (var item in Model.DeviceList.Items)
+						{
+							<tr>
+								<td>@stt4</td>
+								<td class="facility">@item?.device_id</td>
+								<td class="facility">@item?.device_name</td>
+								<td class="facility">@item?.contact_address</td>
+								<td class="facility">@item?.device_received_date?.ToString("dd/MM/yyyy")</td>
+								<td>
+									<button type="button" id="deleteBtn">
+										<i class="fa-solid fa-file-word"></i>
+									</button>
+								</td>
+							</tr>
+							stt4++;
+						}
+					}
+					else
+					{
+						<tr>
+							<td id="facility">NOT FOUND </td>
+							<td id="facility">NOT FOUND </td>
+							<td id="facility">NOT FOUND </td>
+							<td id="facility">NOT FOUND </td>
+							<td id="facility">NOT FOUND </td>
+							<td id="facility">NOT FOUND </td>
+						</tr>
+					}
 				</tbody>
+			</table>
+
+			<!--Hợp đồng bảo trì -->
+			<div style="margin-top: 40px;">
+				<h2 style="color: red; text-align: center; font-weight: bold;">
+					<i class="fa-solid fa-screwdriver-wrench" style="margin-right: 0.2rem;"></i>
+					DANH SÁCH HỢP ĐỔNG BẢO TRÌ
+				</h2>
+			</div>
+
+			<table id="maintainTable" style="width:100%; margin-bottom: 70px;">
+				<thead>
+					<tr>
+						<th>STT</th>
+						<th>Mã ID</th>
+						<th>Tên thiết bị<br></th>
+						<th>Tên hợp đồng</th>
+						<th>Ngày ký</th>
+						<th>Tập tin</th>
+					</tr>
+				</thead>
 				<tbody>
-				<td>Hợp đồng bảo trì máy thở phillip</td>
-				<td>Bảo trì</td>
-				<td>1/4/2025</td>
-				<td>Hiệu lực</td>
-				<td>
-					<button type="button" id="deleteBtn">
-						<i class="fa-solid fa-file-word"></i>
-					</button>
-				</td>
+					@if (Model.MaintainList.PageCount > 0)
+					{
+						int stt5 = 1;
+						foreach (var item in Model.MaintainList.Items)
+						{
+							<tr>
+								<td>@stt5</td>
+								<td class="facility">@item?.device_id</td>
+								<td class="facility">@item?.device_name</td>
+								<td class="facility">@item.contact_address</td>
+								<td class="facility">@item.maintain_date?.ToString("dd/MM/yyyy")</td>
+								<td>
+									<button type="button" id="deleteBtn">
+										<i class="fa-solid fa-file-word"></i>
+									</button>
+								</td>
+							</tr>
+							stt5++;
+						}
+					}
+					else
+					{
+						<tr>
+							<td id="facility">NOT FOUND </td>
+							<td id="facility">NOT FOUND </td>
+							<td id="facility">NOT FOUND </td>
+							<td id="facility">NOT FOUND </td>
+							<td id="facility">NOT FOUND </td>
+							<td id="facility">NOT FOUND </td>
+						</tr>
+					}
+				</tbody>
+			</table>
+			<!--Hợp đồng sửa chữa -->
+			<div style="margin-top: 40px;">
+				<h2 style="color: red; text-align: center; font-weight: bold;">
+					<i class="fa-solid fa-screwdriver-wrench" style="margin-right: 0.2rem;"></i>
+					DANH SÁCH HỢP ĐỔNG SỬA CHỮA
+				</h2>
+			</div>
+
+			<table id="repairTable" style="width:100%; margin-bottom: 70px;">
+				<thead>
+					<tr>
+						<th>STT</th>
+						<th>Mã ID</th>
+						<th>Tên thiết bị<br></th>
+						<th>Tên hợp đồng</th>
+						<th>Ngày ký</th>
+						<th>Tập tin</th>
+					</tr>
+				</thead>
+				<tbody>
+					@if (Model.RepairList.PageCount > 0)
+					{
+						int stt6 = 1;
+						foreach (var item in Model.RepairList.Items)
+						{
+							<tr>
+								<td>@stt6</td>
+								<td class="facility">@item.FK_device_id</td>
+								<td class="facility">@item?.device_name</td>
+								<td class="facility">@item.contact_address</td>
+								<td class="facility">@item.repair_date.ToString("dd/MM/yyyy")</td>
+								<td>
+									<button type="button" id="deleteBtn">
+										<i class="fa-solid fa-file-word"></i>
+									</button>
+								</td>
+							</tr>
+							stt6++;
+						}
+					}
+					else
+					{
+						<tr>
+							<td id="facility">NOT FOUND </td>
+							<td id="facility">NOT FOUND </td>
+							<td id="facility">NOT FOUND </td>
+							<td id="facility">NOT FOUND </td>
+							<td id="facility">NOT FOUND </td>
+							<td id="facility">NOT FOUND </td>
+						</tr>
+					}
 				</tbody>
 			</table>
 		</div>
-	</div>
 	</div>
 
 	<!--sờ cờ ríp-->
@@ -383,55 +470,65 @@
 		// 	}
 		// }
 
-		// Tìm kiếm theo tên thiết bị
-		document.getElementById("searchInput").addEventListener("keyup", function () {
-			const filter = this.value.toUpperCase();
-			const rows = document.querySelectorAll("#shoppingDetail tbody tr");
+		// // Tìm kiếm theo tên thiết bị
+		// document.getElementById("searchInput").addEventListener("keyup", function () {
+		// 	const filter = this.value.toUpperCase();
+		// 	const rows = document.querySelectorAll("#shoppingDetail tbody tr");
 
-			rows.forEach(row => {
-				const cell = row.querySelector("td");
-				if (cell && cell.textContent.toUpperCase().indexOf(filter) > -1) {
-					row.style.display = "";
-				} else {
-					row.style.display = "none";
-				}
-			});
-		});
+		// 	rows.forEach(row => {
+		// 		const cell = row.querySelector("td");
+		// 		if (cell && cell.textContent.toUpperCase().indexOf(filter) > -1) {
+		// 			row.style.display = "";
+		// 		} else {
+		// 			row.style.display = "none";
+		// 		}
+		// 	});
+		// });
 
-		//Tìm kiếm chi phí sửa chữa / bảo trì
-		document.getElementById("searchInputInsuracnce").addEventListener("keyup", function () {
-			const filter = this.value.toUpperCase();
-			const rows = document.querySelectorAll("#insuranceDetail tbody tr");
+		// //Tìm kiếm chi phí sửa chữa / bảo trì
+		// document.getElementById("searchInputInsuracnce").addEventListener("keyup", function () {
+		// 	const filter = this.value.toUpperCase();
+		// 	const rows = document.querySelectorAll("#insuranceDetail tbody tr");
 
-			rows.forEach(row => {
-				const cell = row.querySelector("td");
-				if (cell && cell.textContent.toUpperCase().indexOf(filter) > -1) {
-					row.style.display = "";
-				} else {
-					row.style.display = "none";
-				}
-			});
-		});
+		// 	rows.forEach(row => {
+		// 		const cell = row.querySelector("td");
+		// 		if (cell && cell.textContent.toUpperCase().indexOf(filter) > -1) {
+		// 			row.style.display = "";
+		// 		} else {
+		// 			row.style.display = "none";
+		// 		}
+		// 	});
+		// });
 
-		// Tìm kiếm hợp đồng
-		document.getElementById("searchInputhopdong").addEventListener("keyup", function () {
-			const filter = this.value.toUpperCase();
-			const rows = document.querySelectorAll("#hopdongTable tbody tr");
+		document.addEventListener("DOMContentLoaded", function () {
+			document.getElementById("searchInputhopdong").addEventListener("keyup", function () {
+				const filter = this.value.toUpperCase();
 
-			rows.forEach(row => {
-				const cell = row.querySelector("td");
-				if (cell && cell.textContent.toUpperCase().indexOf(filter) > -1) {
-					row.style.display = "";
-				} else {
-					row.style.display = "none";
-				}
+				// Lấy tất cả các hàng từ 3 bảng
+				const rows = document.querySelectorAll(
+					"#purchaseTable tbody tr, #maintainTable tbody tr, #repairTable tbody tr"
+				);
+
+				rows.forEach(row => {
+					const idCell = row.querySelector("td:nth-child(2)");
+					const nameCell = row.querySelector("td:nth-child(3)");
+
+					const text = ((idCell?.textContent || "") + " " + (nameCell?.textContent || "")).toUpperCase();
+
+					// Ẩn/hiện hàng
+					if (text.includes(filter)) {
+						row.style.display = "";
+					} else {
+						row.style.display = "none";
+					}
+				});
 			});
 		});
 	</script>
 
 	
 	<script>
-		// Biểu đồ tròn - Tỉ lệ chi phí
+		
 		// Biểu đồ tròn - Tỉ lệ chi phí
 		const pieCtx = document.getElementById('pieChart').getContext('2d');
 		const pieChart = new Chart(pieCtx, {
@@ -465,7 +562,31 @@
 		});
 
 		// Biểu đồ cột - Chi phí theo tháng
-		
+		const ctx = document.getElementById('financeChart').getContext('2d');
+		const financeChart = new Chart(ctx, {
+			type: 'bar',
+			data: {
+				labels: @Html.Raw(Json.Serialize(ViewBag.ChartLabels)),
+				datasets: [{
+					label: 'Tổng chi phí theo tháng',
+					data: @Html.Raw(Json.Serialize(ViewBag.ChartValues)),
+					backgroundColor: 'rgba(54, 162, 235, 0.6)',
+					borderColor: 'rgba(54, 162, 235, 1)',
+					borderWidth: 1
+				}]
+			},
+			options: {
+				responsive: true,
+				scales: {
+					y: {
+						beginAtZero: true,
+						ticks: {
+							callback: value => value.toLocaleString() + ' đ'
+						}
+					}
+				}
+			}
+		});
 	</script>
 
 </body>

@@ -109,7 +109,7 @@ namespace Hospital_Test.Controllers
             string tbiContact_id = (max_contact + 1).ToString();
 
             //4. Thêm vào bảng dbo.tbl_contact khi đã có contact_id và địa chỉ, lưu file với contact_type  là "Hợp đồng bảo trì" 
-            string query_contact_device = String.Format("Insert into dbo.tbl_contact (contact_id, contact_type, contact_address, contact_finance, contact_date)" + "Values ({0} , {1} , N'{2}', {3}, '{4}' )", tbiContact_id, tbiContact_type, tbiContact_address, tbiContact_finance, tbiReceived_date);
+            string query_contact_device = String.Format("Insert into dbo.tbl_contact (contact_id, contact_type, contact_address, contact_finance)" + "Values ({0} , {1} , N'{2}', {3})", tbiContact_id, tbiContact_type, tbiContact_address, tbiContact_finance);
             DataProvider<Contact>.Instance.ExcuteQuery(query_contact_device);
 
             tbiStatus = "20";
@@ -839,12 +839,14 @@ namespace Hospital_Test.Controllers
             d.device_name,
             r.room_name,
             s.status_name,
+c.contact_address,
             cf.contact_finance
         FROM dbo.tbl_maintain m
         LEFT JOIN dbo.tbl_device id ON m.FK_device_id = id.device_id
         LEFT JOIN dbo.tbl_device d ON m.FK_device_id = d.device_id
         LEFT JOIN dbo.tbl_room r ON m.FK_room_id = r.room_id 
         LEFT JOIN dbo.tbl_status s ON m.FK_status_id = s.status_id
+LEFT JOIN dbo.tbl_contact c ON m.FK_contact_id = c.contact_id
         LEFT JOIN dbo.tbl_contact cf ON m.FK_contact_id = cf.contact_id
         WHERE m.FK_status_id = '03'";
 
@@ -880,12 +882,14 @@ namespace Hospital_Test.Controllers
                     d.device_name,
                     r.room_name,
                   s.status_name,
+c.contact_address,
                   f.contact_finance
 FROM dbo.tbl_repair re
                 LEFT JOIN dbo.tbl_device id ON re.FK_device_id = id.device_id
                 LEFT JOIN dbo.tbl_device d ON re.FK_device_id = d.device_id
                 LEFT JOIN dbo.tbl_room r ON re.FK_room_id = r.room_id
                 LEFT JOIN dbo.tbl_status s ON re.FK_status_id = s.status_id
+ LEFT JOIN dbo.tbl_contact c ON re.FK_contact_id = c.contact_id
                 LEFT JOIN dbo.tbl_contact f ON re.FK_contact_id = f.contact_id
                  WHERE re.FK_status_id = '13'";
 			List<Repair> repair = DataProvider<Repair>.Instance.GetListItemQuery(repairquery);
@@ -913,7 +917,46 @@ FROM dbo.tbl_repair re
                 RepairList = repairList,
                 RepairForm = repairForm,
             };
-			
+
+			string chartQuery = @"
+SELECT MonthYear, SUM(TotalFinance) AS TotalFinance
+FROM (
+    SELECT 
+        FORMAT(d.device_received_date, 'yyyy-MM') AS MonthYear,
+        ISNULL(c.contact_finance, 0) AS TotalFinance
+    FROM dbo.tbl_device d
+    LEFT JOIN dbo.tbl_contact c ON d.FK_contact_id = c.contact_id
+    WHERE d.device_received_date IS NOT NULL
+
+    UNION ALL
+
+    SELECT 
+        FORMAT(m.maintain_date, 'yyyy-MM') AS MonthYear,
+        ISNULL(c.contact_finance, 0) AS TotalFinance
+    FROM dbo.tbl_maintain m
+    LEFT JOIN dbo.tbl_contact c ON m.FK_contact_id = c.contact_id
+    WHERE m.maintain_date IS NOT NULL
+
+    UNION ALL
+
+    SELECT 
+        FORMAT(r.repair_date, 'yyyy-MM') AS MonthYear,
+        ISNULL(c.contact_finance, 0) AS TotalFinance
+    FROM dbo.tbl_repair r
+    LEFT JOIN dbo.tbl_contact c ON r.FK_contact_id = c.contact_id
+    WHERE r.repair_date IS NOT NULL
+) AS Combined
+GROUP BY MonthYear
+ORDER BY MonthYear DESC";
+
+			var chartData = DataProvider<Contact>.Instance.GetListItemQueryRaw(chartQuery)
+				.Take(5)
+				.OrderBy(d => d["MonthYear"])
+				.ToList();
+
+			ViewBag.ChartLabels = chartData.Select(d => d["MonthYear"].ToString()).ToList();
+			ViewBag.ChartValues = chartData.Select(d => Convert.ToInt32(d["TotalFinance"])).ToList();
+
 			return View("~/Views/Shared/Taichinh_Hopdong.cshtml", viewTC_HDModel);
 
         }
