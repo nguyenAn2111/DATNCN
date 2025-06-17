@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Admin\\source\\repos\\Hospital_Test\\Hospital_Test.csproj": {}
+    "C:\\Users\\Lenovo\\OneDrive\\Desktop\\ĐATNCN\\srcDATN\\Hospital_Test.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Admin\\source\\repos\\Hospital_Test\\Hospital_Test.csproj": {
+    "C:\\Users\\Lenovo\\OneDrive\\Desktop\\ĐATNCN\\srcDATN\\Hospital_Test.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Admin\\source\\repos\\Hospital_Test\\Hospital_Test.csproj",
+        "projectUniqueName": "C:\\Users\\Lenovo\\OneDrive\\Desktop\\ĐATNCN\\srcDATN\\Hospital_Test.csproj",
         "projectName": "Hospital_Test",
-        "projectPath": "C:\\Users\\Admin\\source\\repos\\Hospital_Test\\Hospital_Test.csproj",
-        "packagesPath": "C:\\Users\\Admin\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Admin\\source\\repos\\Hospital_Test\\obj\\",
+        "projectPath": "C:\\Users\\Lenovo\\OneDrive\\Desktop\\ĐATNCN\\srcDATN\\Hospital_Test.csproj",
+        "packagesPath": "C:\\Users\\Lenovo\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Lenovo\\OneDrive\\Desktop\\ĐATNCN\\srcDATN\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\Admin\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Lenovo\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -82,7 +82,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.205/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.400/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
