@@ -483,7 +483,7 @@
 	</div>
 
 	@* //Xóa thiết bị theo ID *@
-	<script>
+		<script>
 		let selectedDeviceId = "";
 
 		document.querySelectorAll(".del-btn").forEach(function (btn) {
@@ -527,8 +527,6 @@
 		});
 	</script>
 
-
-
 		<script>
 		// Tìm kiếm theo tên thiết bị trong bảng thống kê
 		document.getElementById("searchInput").addEventListener("keyup", function () {
@@ -563,7 +561,7 @@
 
 		//Modal chi tiết thiết bị
 		document.querySelectorAll("#dataTable tbody tr").forEach(function (row) {
-			row.querySelector("td:nth-child(7) button").addEventListener("click", function () {
+			row.querySelector("td:nth-child(6) button").addEventListener("click", function () {
 				// Hiển thị modal
 				document.getElementById("deviceDetailModal").style.display = "flex";
 			});
@@ -605,7 +603,7 @@ document.getElementById('stockoutdate').value =stockoutRaw && !stockoutRaw.inclu
                     document.getElementById('contactAddress').value = data.contact_address || '';
              
                     // Hiển thị modal
-                    document.getElementById('deviceDetailModal').style.display = 'block';
+                    document.getElementById('deviceDetailModal').style.display = 'flex';
                 })
                 .catch(error => {
                     console.error("Lỗi lấy dữ liệu thiết bị:", error);
@@ -615,8 +613,6 @@ document.getElementById('stockoutdate').value =stockoutRaw && !stockoutRaw.inclu
 
 	</script>
 
-
-    
         <script>
             // Định dạng tiền 
             function formatMoney(input) {
@@ -685,7 +681,7 @@ document.getElementById('stockoutdate').value =stockoutRaw && !stockoutRaw.inclu
 
 
     @*     //Script thêm series để get input  *@
-	<script>
+		<script>
 		const tbody = document.getElementById("seriesBody");
 		const seriCountInput = document.getElementById("seriCount");
 

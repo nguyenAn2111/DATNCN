@@ -53,7 +53,8 @@
                         <table id="dataTable" style="width:100%;">
                             <thead>
                                 <tr>
-                                    <th>Mã id</th>
+                                    <th>STT</th>
+                                    <th>Mã id thiết bị</th>
                                     <th>Tên thiết bị<br></th>
                                     <th>Ngày hỏng</th>
                                     <th>Ngày sửa chữa (dự kiến)</th>
@@ -65,28 +66,32 @@
 
                             <tbody>
                                 @if (Model.RepairList.PageCount > 0) 
-                                {
+                                    {
                                     foreach (var item in Model.RepairList.Items)
                                         {
-                                        <tr>
-                                            <td id="facility"> @item.FK_device_id</td>
-                                            <td id="facility"> @item.device_name</td>
-                                            <td id="facility"> @item.repair_broken.ToString("dd-MM-yyyy")</td>
-                                            <td id="facility"> @item.repair_date.ToString("dd-MM-yyyy")</td>
-                                            <td id="facility"> @item.room_name</td>
-                                            <td id="facility"> @item.status_name</td>
-                                            <td id="facility">
-                                                <div class="dropdown">
+                                            <tr>
+                                                <td>@item.repair_id</td>
+                                                <td> @item.FK_device_id</td>
+                                                <td> @item.device_name</td>
+                                                <td> @item.repair_broken.ToString("dd-MM-yyyy")</td>
+                                                <td> @item.repair_date.ToString("dd-MM-yyyy")</td>
+                                                <td> @item.room_name</td>
+                                                <td> @item.status_name</td>
+                                                <td>
+                                                    <div class="dropdown">
                                                     <a style="cursor: pointer;" class="detailRepairLink" onclick="openRepairDetail('@item.repair_id')"> <i class="fa-solid fa-circle-info"></i> </a>
-                                                </div>
-                                            </td>
+                                                    </div>
+                                                </td>
                                         </tr>
                                     }
                                 }
                             </tbody>
+
                         </table>
                     </form>
-                    </div>
+                        </div>
+
+                    </table>
                 </div>
             </div>
         </div>
@@ -96,9 +101,9 @@
                 2. Tạo yêu cầu sửa chữa
             </section>
             <form asp-action="Suachua_Add" method="post">
-                <div class="repair-request-form">
+            <div class="repair-request-form">
                 <div class="planer-form">
-                    <label for="device">Tên thiết bị:</label>
+                        <label for="device">Tên thiết bị:</label>
                     <select id="schDevicename" onchange="updateDeviceOptions()" style="margin-right: 1rem ;">
                         @foreach (var item in Model.RepairForm.devices_repair)
                         {
@@ -112,7 +117,7 @@
                         {
                             <option value="@item.device_id">@item.device_id</option>
                         }
-                    </select>
+                        </select>
                 </div><br/>
 
                 <div class="planer-form">
@@ -147,7 +152,7 @@
                         <input type="text" id="fileInput" name="schContact" class="file-input" multiple onchange="displayFileNames()">
                 </div><br/>
                     <!-- Gửi yêu cầu -->
-                <button type="submit">Gửi yêu cầu</button>
+                    <button type="submit">Gửi yêu cầu</button>
             </div>
             </form>
         </div>
@@ -159,30 +164,30 @@
             <div class="device-container">
                 @foreach (var item in Model.RepairList.Items)
                     {
-                        <div class="device-card" onclick="toggleTimeline(this)">
-                        <div class="device-header">
+                <div class="device-card" onclick="toggleTimeline(this)">
+                    <div class="device-header">
                             <div class="device-name">@item.repair_id - @item.device_name - @item.FK_device_id</div>
                             <div class="device-status">@item.repair_update_status</div>
-                        </div>
-                        <div class="timeline">
-                            <div class="timeline-item">
+                    </div>
+                    <div class="timeline">
+                        <div class="timeline-item">
                                 <div class="time">
                                     <p>@item.repair_update_date.ToString("dd/MM/yyyy - HH:mm")</p>
-                                </div>
+                        </div>
                                 <div class="title">
                                     <p>Status: @item.repair_update_status</p>
-                                </div>
+                        </div>
                                 <div class="description">
                                     <p>Note: @item.repair_update_note</p>
-                               </div>
-                            </div>
-                        </div>
-                        <div class="status-edit" style="display: flex; justify-content: flex-start; align-items: flex-start;">
-                        <button class="repair-btn" data-device-id="@item.FK_device_id" onclick="openRepairModal(this, '@item.FK_device_id', '@item.repair_update_status', '@item.repair_update_note', '@item.repair_update_date.ToString("yyyy-MM-dd HH:mm")')">
-                            Cập nhật trạng thái
-                        </button>
                         </div>
                     </div>
+                        </div>
+                    <div class="status-edit" style="display: flex; justify-content: flex-start; align-items: flex-start;">
+                        <button class="repair-btn" onclick="openRepairModal(@item.repair_id)">
+                            Cập nhật trạng thái
+                        </button>
+                    </div>
+                </div>
                     }
             </div>
         </div>
@@ -200,19 +205,19 @@
                     </div>
                     <div>
                         <label for="deviceID">Mã ID của thiết bị:</label>
-                        <input type="text" id="schid" readonly>
-                    </div>
+                        <input type="text" id="device_id">
+                        </div>
                 </div><br>
 
                 <div class="form-group-title">Mức độ & Đơn giá</div>
                 <div class="form-group">
                     <div>
                         <label for="priority">Mức độ ưu tiên:</label>
-                        <input type="number" id="priority">
-                    </div>
+                        <input type="text" id="repair_priority">
+                        </div>
                     <div>
                         <label for="repairNumber">Đơn giá:</label>
-                        <input type="number" id="finance">
+                        <input type="text" id="contact_finance">
                     </div>
                 </div><br>
 
@@ -236,30 +241,30 @@
                     </div>
                     <div style="display: flex; gap: 0.5rem;">
                         <label for="description">Thời gian cập nhật:</label>
-                        <input id="updateDate" type="datetime-local">
-                    </div>
+                        <input id="repair_update_date" type="datetime-local">
+                </div>
                 </div><br>
 
                 <div class="form-group-title">Mô tả & Hóa đơn</div>
                 <div class="form-group">
                     <div>
                         <label for="description" style="float: left; margin-right: 0.25rem;">Mô tả lỗi:</label>
-                        <textarea id="description" style="width: 45.5rem;"></textarea>
+                        <textarea id="repair_note" style="width: 45.5rem;"></textarea>
                     </div>
                     <div>
                         <label for="image" style="width: 14rem;">Đính kèm hình ảnh (nếu có):</label>
-                        <input type="text" id="image">
+                        <input type="text" id="repair_picture">
                     </div>
                     <div>
                         <label for="kinked_file">Hóa đơn sửa chữa (nếu có):</label>
                         <input type="text" id="contact">
-                    </div>
+            </div>
                 </div><br>
 
                 <button type="button" class="cancel-button" id="cancelMaintainDetailModal">Thoát</button>
             </div>
         </div>
-    </div>
+        </div>
 
 
         <div id="repairStatusModal" class="modal">
@@ -272,35 +277,31 @@
                 <form asp-action="Suachua_UpdateStatus" method="post">
                         <div class="form-group">
                             <div>
-                            <input type="hidden" name="repair_id" value="@(Model.RepairStatus?.repair_id ?? "")" /> @* ////////////////////sửa tất cả model.repair.status *@
-
+                                <input type="hidden" name="schID" id="modal_repair_id" />
                                 <label for="description">Trạng thái sửa chữa:</label>
-                            <input type="text" class="form-control" id="update_status" name="repair_update_status" value="@(Model.RepairStatus?.repair_update_status ?? "")">@* ////////////////////sửa tất cả model.repair.status *@
-
+                                <input type="text" id="modal_status" name="schstatus" style="width: 22rem;" required>
                             </div>
                         </div> <br>
                         <div class="form-group">
                             <div style="display: flex; gap: 0.5rem;">
                                 <label for="description" style="width: 5rem;">Mô tả:</label>
-                            <input type="text" class="form-control" id="update_note" name="repair_update_note"
-                                   value="@(Model.RepairStatus?.repair_update_note ?? "")">
-
+                                <textarea id="modal_note" name="schnote" cols="50" style="width: auto;" required></textarea>
                             </div><br>
                         </div> <br>
                         <div class="form-group">
                             <div style="display: flex; gap: 0.5rem;">
                                 <label for="description">Thời gian cập nhật:</label>
-                            <input type="datetime-local" class="form-control" id="update_date" name="repair_update_date"
-                                   value="@(Model.RepairStatus?.repair_update_date.ToString("yyyy-MM-ddTHH:mm") ?? "")">@* ////////////////////sửa tất cả model.repair.status *@
+                                <input type="datetime-local" id="modal_date" name="schdate" required>
                             </div>
                         </div> <br>
                         <button type="submit" class="submit-button">Cập nhật trạng thái</button>
-                    </form>
+                </form>
                 </div>
 
             </div>
         </div>
-
+        
+        
         <script>
             function displayFileName() {
                 var fileInput = document.getElementById('fileInput');
@@ -316,14 +317,6 @@
                 timeline.style.display = isTimelineVisible ? 'none' : 'block';
                 repairBtn.style.display = isTimelineVisible ? 'none' : 'inline-block';
             }
-
-        function openRepairModal(btn, deviceId, status, note, date) {
-            document.getElementById('repairStatusModal').style.display = 'flex';
-            document.getElementById('modal_device_id').value = deviceId;
-            document.getElementById('modal_status').value = status;
-            document.getElementById('modal_note').value = note;
-            document.getElementById('modal_date').value = date;
-        }
         </script>
         <script>
             window.onclick = function (event) {
@@ -418,21 +411,54 @@
                 .then(response => response.json())
                 .then(data => {
                     console.log("DATA:", data);
-                    document.getElementById('schid').value = data.FK_device_id || '';
+                    document.getElementById('device_id').value = data.device_id || '';
                     document.getElementById('device_name').value = data.device_name || '';
-                    document.getElementById('priority').value = data.repair_priority || '';
-                    document.getElementById('finance').value = data.contact_finance || '';
+                    document.getElementById('repair_priority').value = data.repair_priority || '';
+                    document.getElementById('contact_finance').value = data.contact_finance || '';
                     document.getElementById('updateStatus').value = data.repair_update_status || '';
-                    document.getElementById('description').value = data.repair_note || '';
-                    document.getElementById('image').value = data.repair_picture || '';
+                    document.getElementById('repair_note').value = data.repair_note || '';
+                    document.getElementById('repair_picture').value = data.repair_picture || '';
                     document.getElementById('contact').value = data.contact_address || '';
 
                     document.getElementById('broken').value = data.repair_broken?.split('T')[0] || '';
                     document.getElementById('date').value = data.repair_date?.split('T')[0] || '';
-                    document.getElementById('updateDate').value = data.repair_update_date?.split('T')[0] || '';
+                    document.getElementById('repair_update_date').value = data.repair_update_date?.split('T')[0] || '';
 
                     repairDetailModal.style.display = 'flex';
                 })
+        }
+
+
+        </script>
+        <script>
+        function openRepairModal(repair_id) {
+            // Gọi API lấy chi tiết phiếu sửa chữa
+            fetch(`/Management/Suachua_GetById?id=${repair_id}`)
+                .then(response => response.json())
+                .then(data => {
+                    // Điền thông tin lên các trường trong modal
+                    document.getElementById('modal_repair_id').value = data.repair_id || "";
+                    document.getElementById('modal_status').value = data.repair_update_status || "";
+                    document.getElementById('modal_note').value = data.repair_update_note || "";
+                    // Đảm bảo đúng định dạng yyyy-MM-ddTHH:mm cho input datetime-local
+                    if (data.repair_update_date) {
+                        let dt = new Date(data.repair_update_date);
+                        // Convert to 'yyyy-MM-ddTHH:mm' (ISO 8601)
+                        let pad = n => n < 10 ? '0' + n : n;
+                        let local = dt.getFullYear() + "-" +
+                            pad(dt.getMonth() + 1) + "-" +
+                            pad(dt.getDate()) + "T" +
+                            pad(dt.getHours()) + ":" +
+                            pad(dt.getMinutes());
+                        document.getElementById('modal_date').value = local;
+                    } else {
+                        document.getElementById('modal_date').value = "";
+                    }
+                    document.getElementById('repairStatusModal').style.display = 'flex';
+                })
+                .catch(err => {
+                    alert('Không lấy được dữ liệu phiếu sửa chữa!');
+                });
         }
 
         </script>
