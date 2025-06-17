@@ -28,6 +28,7 @@ using DocumentFormat.OpenXml.Vml;
 using Humanizer;
 using System.Globalization;
 using DocumentFormat.OpenXml.InkML;
+using DocumentFormat.OpenXml.Bibliography;
 namespace Hospital_Test.Controllers
 {
     public class ManagementController : Controller
@@ -714,11 +715,54 @@ namespace Hospital_Test.Controllers
         }
         //---------------------------------Kho-----------------------------------------------
         public IActionResult Kho()
-        {
+        {   // Khởi tạo
+            string field;
+            string sortOrder;
+            string searchField;
+            string searchString;
+            string page;
+
+            /// Lấy query, không có => đặt mặc định
+            var urlQuery = Request.HttpContext.Request.Query;
+            field = urlQuery["field"];
+            sortOrder = urlQuery["sort"];
+            searchField = urlQuery["searchField"];
+            searchString = urlQuery["SearchString"];
+            page = urlQuery["page"];
+            field = field == null ? "All" : field;
+
+            sortOrder = sortOrder == null ? "Name" : sortOrder; ;
+            searchField = searchField == null ? "device_name" : searchField;
+            searchString = searchString == null ? "" : searchString;
+            page = page == null ? "1" : page;
+            int currentPage = Convert.ToInt32(page);
+
+            ItemDisplay<Storage> storageList = new ItemDisplay<Storage>();
+            storageList.SortOrder = sortOrder;
+            storageList.CurrentSearchField = searchField;
+            storageList.CurrentSearchString = searchString;
+            storageList.CurrentPage = currentPage;
+
+            string query_str = @"
+               SELECT
+                st.*,
+                d.device_id,
+                d.device_name,
+                r_from.room_name AS room_from_name,
+                r_to.room_name AS room_to_name
+            FROM dbo.tbl_storage st
+            LEFT JOIN dbo.tbl_device d ON st.FK_device_id = d.device_id
+            LEFT JOIN dbo.tbl_room r_from ON st.FK_room_id_from = r_from.room_id
+            LEFT JOIN dbo.tbl_room r_to ON st.FK_room_id_to = r_to.room_id";
+            List<Storage> storage = DataProvider<Storage>.Instance.GetListItemQuery(query_str);
+            storage = Function.Instance.searchItems(storage, storageList);
+            storage = Function.Instance.sortItems(storage, storageList.SortOrder);
+            storageList.Paging(storage, 10);
+
             string query = @"SELECT device_name AS str_device_name, COUNT(device_id) AS str_quantity
-                FROM tbl_device
-                WHERE FK_room_id = 'KHO'
-                GROUP BY device_name";
+            FROM tbl_device
+            WHERE FK_room_id = 'KHO'
+            GROUP BY device_name";
             var dt = DataProvider<System.Data.DataTable>.Instance.ExcuteQuery(query);
 
             var list = new List<Storage>();
@@ -733,12 +777,64 @@ namespace Hospital_Test.Controllers
                     });
                 }
             }
-            return View("~/Views/Shared/Kho.cshtml", list);
+
+
+            List<Device> allDevices = DataProvider<Device>.Instance.GetListItem("tbl_device");
+            List<Device> devicesNotInKho = allDevices
+                .Where(d => !string.Equals(d.FK_room_id ?? "", "KHO", StringComparison.OrdinalIgnoreCase))
+                .ToList();
+
+            var storageforms = new StorageDetail
+            {
+                devices_str = devicesNotInKho,
+                rooms_str = DataProvider<Room>.Instance.GetListItem("tbl_room")
+            };
+
+
+
+            var model = new StoragePageViewModel
+            {
+                StorageList = storageList,
+                StorageForm = storageforms,
+                DeviceInStockList = list
+            };
+
+            return View("~/Views/Shared/Kho.cshtml", model);
         }
         [HttpPost]
         public IActionResult Kho(String sortOrder, String searchString, String searchField, int currentPage = 1)
         {
             return RedirectToAction("Kho", new { sort = sortOrder, searchField = searchField, searchString = searchString, page = currentPage });
+        }
+        
+        [HttpPost]
+        public IActionResult Kho_Import(int strID, string strDate, string strRoom_from, string strRoom_to, string strDevice )
+        {
+            List<Storage> storages = DataProvider<Storage>.Instance.GetListItem("tbl_storage");
+            int maxID = 0;
+            foreach (var item in storages)
+            {
+                int id;
+                if (int.TryParse(item.storage_id.ToString(), out id))
+                {
+                    if (id > maxID)
+                        maxID = id;
+                }
+            }
+            // storage_id mới = maxID + 1
+            int newstrID = maxID + 1;
+
+            strRoom_to = "KHO";
+
+            string query = String.Format(
+                "INSERT INTO dbo.tbl_storage (storage_date, FK_device_id, FK_room_id_from, FK_room_id_to) " +
+                    "VALUES ('{0}', '{1}', '{2}', '{3}')", strDate, strDevice, strRoom_from, strRoom_to );
+                DataProvider<Storage>.Instance.ExcuteQuery(query);
+
+            string updateQuery_device = String.Format("UPDATE dbo.tbl_device SET FK_room_id = '{0}' WHERE device_id = '{1}' ", strRoom_to, strDevice);
+            DataProvider<Device>.Instance.ExcuteQuery(updateQuery_device);
+
+            return RedirectToAction("Kho");
         }
         //-----------------------------Tài chính hợp đồng------------------------------
         public IActionResult Taichinh_Hopdong()

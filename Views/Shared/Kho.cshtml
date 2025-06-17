@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Hospital_Test.Models.Storage>
+﻿@model StoragePageViewModel
 
 <!DOCTYPE html>
 <html>
@@ -18,7 +18,6 @@
     </style>
 </head>
 <body>
-    <form asp-action="Kho" method="post">
         <div class="surgery-schedule">
             <div class="surgery-major">
                 <div class="surgery-title">
@@ -33,35 +32,34 @@
             <a href="#dieuchuyen">Điều chuyển và thu hồi</a>
         </nav>
 
-        <div class="group-container">
             <!--nhóm 1-->
+            <form asp-action="Kho" method="post">
             <div class="store">
                 <section class="maintain-title" id="thongtin">
                     📦Thông tin thiết bị trong kho
                 </section>
                 <input type="text" id="searchInput" placeholder="🔍 Tìm thiết bị...">
-                 
-                    <table id="deviceTable">
-                        <thead>
-                            <tr>
-                                <th>Tên thiết bị</th>
-                                <th>Số lượng trong kho</th>
-                                <th>Trạng thái tồn kho</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var item in Model)
-                            {
-                                <tr>
-                                <td>@item.device_name</td>
-                                <td>@item.str_quantity</td>
-                                    <td></td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table><br>
-                    <button class="submit-button" onclick="exportToExcel()">📥 Xuất Excel </button><br>
-                    
+                <table id="deviceTable">
+                    <thead>
+                        <tr>
+                            <th>Tên thiết bị</th>
+                            <th>Số lượng trong kho</th>
+                            <th>Trạng thái tồn kho</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var item in Model.DeviceInStockList)
+                    {
+                        <tr>
+                            <td>@item.device_name</td>
+                            <td>@item.str_quantity</td>
+                            <td></td>
+                        </tr>
+                    }
+                    </tbody>
+                </table><br>
+                <button class="submit-button" onclick="exportToExcel()">📥 Xuất Excel </button><br>
+            </form>
             </div>
 
 
@@ -98,69 +96,39 @@
                         <div class="modal-content">
                             <span class="close" onclick="document.getElementById('importModal').style.display='none'">&times;</span>
                             <h3>Ghi nhận thiết bị nhập kho</h3>
-                            <form>
+                            <form asp-action="Kho_Import" method="post">
+                                <div class="form-group-title">Thông tin thiết bị</div>
                                 <div class="form-group">
-                                    <div>
-                                        <label for="import-device-name">Tên thiết bị:</label>
-                                        <input type="text" id="import-device-name" placeholder="Nhập tên thiết bị">
-                                    </div>
-                                </div><br>
-                                <div class="form-group-title">
-                                    Mã seri thiết bị nhập kho
+                                    <label for="import-device">Thiết bị:</label>
+                                    <select id="import-device" name="strDevice" required>
+                                        <option value="">-- Chọn thiết bị --</option>
+                                        @foreach (var item in Model.StorageForm.devices_str)
+                                        {
+                                            <option value="@item.device_id">
+                                                @item.device_name (@item.device_id)
+                                            </option>
+                                        }
+                                    </select>
                                 </div>
-                                <div class="form-group">
-                                    <table id="deviceTable">
-                                        <thead>
-                                            <tr>
-                                                <th>STT</th>
-                                                <th>Mã Series</th>
-                                                <th>Hành động</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td>1</td>
-                                                <td><input type="text" name="series[]" required></td>
-                                                <td>
-                                                    <button type="button" class="removeDeviceButton">
-                                                        <i class="fa-solid fa-trash-can"></i>
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                    <button type="button" id="addSeribtn">
-                                        <i class="fa-solid fa-circle-plus" style="margin-right: 0.2rem;"></i>
-                                        Thêm series
-                                    </button>
-                                </div><br>
+                                <br />
+                                <div class="form-group-title">Thông tin nhập kho</div>
                                 <div class="form-group">
                                     <div>
-                                        <label for="import-warehouse">Kho nhập:</label>
-                                        <select id="import-warehouse">
-                                            <option value="warehouse1">Kho 1</option>
-                                            <option value="warehouse2">Kho 2</option>
-                                            <option value="warehouse3">Kho 3</option>
+                                        <label for="import-warehouse">Vị trí trước khi nhập về KHO:</label>
+                                        <select id="import-warehouse" name="strRoom_from">
+                                            <option value="">-- Chọn phòng --</option>
+                                            @foreach (var item in Model.StorageForm.rooms_str)
+                                            {
+                                                <option value="@item.room_id">@item.room_id </option>
+                                            }
                                         </select>
                                     </div>
                                     <div>
                                         <label for="import-date">Ngày nhập kho:</label>
-                                        <input type="date" id="import-date">
+                                        <input type="date" id="import-date" name="strDate" required>
                                     </div>
-                                </div><br>
-                                <div class="form-group">
-                                    <div>
-                                        <label for="import-receiver">Người tiếp nhận:</label>
-                                        <input type="text" id="import-receiver" placeholder="Nhập người nhận">
-                                    </div>
-                                    <div>
-                                        <label for="import-receiver">SĐT:</label>
-                                        <input type="tel" id="phone" name="phone"
-                                               pattern="0[0-9]{9}"
-                                               placeholder="Nhập số điện thoại"
-                                               required>
-                                    </div>
-                                </div><br>
+                                </div>
+                                <br />
                                 <button id="popup-button-reschedule" type="submit">Ghi nhận</button>
                             </form>
                         </div>
@@ -171,37 +139,33 @@
                         <div class="modal-content">
                             <span class="close" onclick="document.getElementById('exportModal').style.display='none'">&times;</span>
                             <h3>Ghi nhận thiết bị xuất kho</h3>
-                            <form>
+                                <div class="form-group-title">Thông tin thiết bị</div>
                                 <div class="form-group">
-                                    <label for="export-device-name">Tên thiết bị:</label>
-                                    <input type="text" id="export-device-name" placeholder="Nhập tên thiết bị">
+                                    <div>
+                                        <label for="import-device-name">Tên thiết bị:</label>
+                                        <input type="text" id="import-device-name" placeholder="Nhập tên thiết bị">
+                                    </div>
+                                    <div>
+                                        <label>Mã ID thiết bị:</label>
+                                        <select>
+                                            <option value="">devcie_id</option>
+                                        </select>
+                                    </div>
                                 </div><br>
+                                <div class="form-group-title">Thông tin nhập kho</div>
                                 <div class="form-group">
-                                    <label for="export-device-id">Mã thiết bị:</label>
-                                    <input type="text" id="export-device-id" placeholder="Nhập mã thiết bị">
-                                </div><br>
-                                <div class="form-group">
-                                    <label for="export-quantity">Số lượng xuất kho:</label>
-                                    <input type="number" id="export-quantity" placeholder="Nhập số lượng">
-                                </div><br>
-                                <div class="form-group">
-                                    <label for="export-warehouse">Kho xuất:</label>
-                                    <select id="export-warehouse">
-                                        <option value="warehouse1">Kho 1</option>
-                                        <option value="warehouse2">Kho 2</option>
-                                        <option value="warehouse3">Kho 3</option>
-                                    </select>
-                                </div><br>
-                                <div class="form-group">
-                                    <label for="export-date">Ngày xuất kho:</label>
-                                    <input type="date" id="export-date">
-                                </div><br>
-                                <div class="form-group">
-                                    <label for="export-receiver">Người nhận:</label>
-                                    <input type="text" id="export-receiver" placeholder="Nhập người nhận thiết bị">
+                                    <div>
+                                        <label for="import-warehouse">Vị trí sau khi xuất khỏi KHO:</label>
+                                        <select id="import-warehouse">
+                                            <option value="">room_id</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label for="import-date">Ngày xuất kho:</label>
+                                        <input type="date" id="import-date" placeholder="KHO">
+                                    </div>
                                 </div><br>
                                 <button id="popup-button-reschedule" type="submit">Ghi nhận</button>
-                            </form>
                         </div>
                     </div>
 
@@ -214,37 +178,29 @@
                         <table>
                             <thead>
                                 <tr>
-                                    <th>Thiết bị</th>
-                                    <th>Xuất / Nhập kho </th>
-                                    <th>Số lượng</th>
+                                    <th>Tên thiết bị</th>
+                                    <th>Mã ID</th>
+                                    <th>Ngày xuất/nhập kho</th>
+                                    <th>Vị trí nguồn</th>
                                     <th>Vị trí đích</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>Máy thở PHILIPS</td>
-                                    <td>Xuất kho</td>
-                                    <td>5</td>
-                                    <td>ICU</td>
-                                </tr>
-                                <tr>
-                                    <td>máy siêu âm doopler</td>
-                                    <td>Nhập kho</td>
-                                    <td>3</td>
-                                    <td>Kho 3</td>
-                                </tr>
-                                <tr>
-                                    <td>giường nâng hạ</td>
-                                    <td>Xuất kho</td>
-                                    <td>8</td>
-                                    <td>Khoa Cấp cứu</td>
-                                </tr>
+                            @foreach (var item in Model.StorageList.Items)
+                                {
+                                    <tr>
+                                        <td>@item.device_name</td>
+                                        <td>@item.FK_device_id</td>
+                                    <td>@item.storage_date.ToString("dd/MM/yyyy")</td>
+                                        <td>@item.FK_room_id_from</td>
+                                        <td>@item.FK_room_id_to</td>
+                                    </tr>
+                                }
                             </tbody>
                         </table>
                     </div>
                 </div>
             </div>
-
 
             <!-- Nhóm 3 -->
             <div class="store">
@@ -387,7 +343,6 @@
                 </div>
             </div>
         </div>
-
         <script>
         window.onclick = function (event) {
             // Kiểm tra nếu người dùng bấm vào vùng ngoài modal (tức là phần nền mờ)
@@ -443,5 +398,4 @@
             });
         });
     </script>
-    </form>
 </body>
