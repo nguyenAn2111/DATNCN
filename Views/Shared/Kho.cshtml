@@ -1,4 +1,4 @@
-﻿@model ItemDisplay<Storage>
+﻿@model IEnumerable<Hospital_Test.Models.Storage>
 
 <!DOCTYPE html>
 <html>
@@ -40,37 +40,28 @@
                     📦Thông tin thiết bị trong kho
                 </section>
                 <input type="text" id="searchInput" placeholder="🔍 Tìm thiết bị...">
-                <table id="deviceTable">
-                    <thead>
-                        <tr>
-                            <th>Tên thiết bị</th>
-                            <th>Số lượng trong kho</th>
-                            <th>Ngưỡng tối thiểu</th>
-                            <th>Trạng thái tồn kho</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Máy thở PHILIPS</td>
-                            <td>12</td>
-                            <td>5</td>
-                            <td></td>
-                        </tr>
-                        <tr>
-                            <td>Bơm tiêm điện</td>
-                            <td>3</td>
-                            <td>5</td>
-                            <td></td>
-                        </tr>
-                        <tr>
-                            <td>Monitor theo dõi</td>
-                            <td>0</td>
-                            <td>2</td>
-                            <td></td>
-                        </tr>
-                    </tbody>
-                </table><br>
-                <button class="submit-button" onclick="exportToExcel()">📥 Xuất Excel </button><br>
+                 
+                    <table id="deviceTable">
+                        <thead>
+                            <tr>
+                                <th>Tên thiết bị</th>
+                                <th>Số lượng trong kho</th>
+                                <th>Trạng thái tồn kho</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                <td>@item.device_name</td>
+                                <td>@item.str_quantity</td>
+                                    <td></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table><br>
+                    <button class="submit-button" onclick="exportToExcel()">📥 Xuất Excel </button><br>
+                    
             </div>
 
 
@@ -436,14 +427,13 @@
 
             rows.forEach(row => {
                 const quantity = parseInt(row.cells[1].textContent);  // Số lượng trong kho (cột 2)
-                const threshold = parseInt(row.cells[2].textContent); // Ngưỡng tối thiểu (cột 3)
-                const statusCell = row.cells[3]; // Cột trạng thái tồn kho (cột 4)
+                const statusCell = row.cells[2]; // Cột trạng thái tồn kho (cột 4)
 
                 // Kiểm tra số lượng và cập nhật trạng thái tồn kho
                 if (quantity === 0) {
                     statusCell.textContent = "⛔ Hết hàng";
                     statusCell.className = "status out";  // Bạn có thể định kiểu CSS cho trạng thái "out"
-                } else if (quantity <= threshold) {
+                } else if (quantity <= 3) {
                     statusCell.textContent = "⚠️ Sắp hết";
                     statusCell.className = "status low";  // Định kiểu CSS cho trạng thái "low"
                 } else {
