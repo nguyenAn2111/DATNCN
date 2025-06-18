@@ -756,17 +756,174 @@ namespace Hospital_Test.Controllers
             page = page == null ? "1" : page;
             int currentPage = Convert.ToInt32(page);
 
-            ItemDisplay<Storage> StorageList = new ItemDisplay<Storage>();
-            StorageList.SortOrder = sortOrder;
-            StorageList.CurrentSearchField = searchField;
-            StorageList.CurrentSearchString = searchString;
-            StorageList.CurrentPage = currentPage;
+            ItemDisplay<Storage> storageList = new ItemDisplay<Storage>();
+            storageList.SortOrder = sortOrder;
+            storageList.CurrentSearchField = searchField;
+            storageList.CurrentSearchString = searchString;
+            storageList.CurrentPage = currentPage;
+            string query_str = @"
+               SELECT
+                st.*,
+                d.device_id,
+                d.device_name,
+                r_from.room_name AS room_from_name,
+                r_to.room_name AS room_to_name
+            FROM dbo.tbl_storage st
+            LEFT JOIN dbo.tbl_device d ON st.FK_device_id = d.device_id
+            LEFT JOIN dbo.tbl_room r_from ON st.FK_room_id_from = r_from.room_id
+            LEFT JOIN dbo.tbl_room r_to ON st.FK_room_id_to = r_to.room_id";
+            List<Storage> storage = DataProvider<Storage>.Instance.GetListItemQuery(query_str);
+            storage = Function.Instance.searchItems(storage, storageList);
+            storage = Function.Instance.sortItems(storage, storageList.SortOrder);
+            storageList.Paging(storage, 10);
+
+            string query = @"
+            SELECT 
+                d.device_name AS str_device_name,
+                COUNT(CASE WHEN d.FK_room_id = 'KHO' THEN 1 END) AS str_quantity
+            FROM tbl_device d
+            GROUP BY d.device_name";
+            var dt = DataProvider<System.Data.DataTable>.Instance.ExcuteQuery(query);
+
+            var list = new List<Storage>();
+            if (dt != null && dt.Rows.Count > 0)
+            {
+                foreach (System.Data.DataRow row in dt.Rows)
+                {
+                    list.Add(new Storage
+                    {
+                        device_name = row["str_device_name"].ToString(),
+                        str_quantity = Convert.ToInt32(row["str_quantity"])
+                    });
+                }
+            }
+
+            List<Device> allDevices = DataProvider<Device>.Instance.GetListItem("tbl_device");
+            List<Room> allRooms = DataProvider<Room>.Instance.GetListItem("tbl_room");
+
+            // Lọc thiết bị để nhập kho (chưa ở kho)
+            var devices_import = allDevices
+                .Where(d => !string.Equals(d.FK_room_id ?? "", "KHO", StringComparison.OrdinalIgnoreCase))
+                .ToList();
+            // Lọc thiết bị để xuất kho (đang ở kho)
+            var devices_export = allDevices
+                .Where(d => string.Equals(d.FK_room_id ?? "", "KHO", StringComparison.OrdinalIgnoreCase))
+                .ToList();
+
+            var storageforms = new StorageDetail
+            {
+                devices_import = devices_import,
+                devices_export = devices_export,
+                devices_all = allDevices,
+                rooms_str = allRooms
+            };
+
+            var model = new StoragePageViewModel
+            {
+                StorageList = storageList,
+                StorageForm = storageforms,
+                DeviceInStockList = list
+            };
 
 
-
-            return View("~/Views/Shared/Kho.cshtml", StorageList);
+            return View("~/Views/Shared/Kho.cshtml", model);
         }
-        
+        [HttpPost]
+        public IActionResult Kho(String sortOrder, String searchString, String searchField, int currentPage = 1)
+        {
+            return RedirectToAction("Kho", new { sort = sortOrder, searchField = searchField, searchString = searchString, page = currentPage });
+        }
+
+        [HttpPost]
+        public IActionResult Kho_Import(int strID, string strDate, string strRoom_from, string strRoom_to, string strDevice)
+        {
+            List<Storage> storages = DataProvider<Storage>.Instance.GetListItem("tbl_storage");
+            int maxID = 0;
+            foreach (var item in storages)
+            {
+                int id;
+                if (int.TryParse(item.storage_id.ToString(), out id))
+                {
+                    if (id > maxID)
+                        maxID = id;
+                }
+            }
+            // storage_id mới = maxID + 1
+            int newstrID = maxID + 1;
+
+            strRoom_to = "KHO";
+
+            string query = String.Format(
+                "INSERT INTO dbo.tbl_storage (storage_date, FK_device_id, FK_room_id_from, FK_room_id_to) " +
+                    "VALUES ('{0}', '{1}', '{2}', '{3}')", strDate, strDevice, strRoom_from, strRoom_to);
+            DataProvider<Storage>.Instance.ExcuteQuery(query);
+
+            string updateQuery_device = String.Format("UPDATE dbo.tbl_device SET FK_room_id = '{0}' WHERE device_id = '{1}' ", strRoom_to, strDevice);
+            DataProvider<Device>.Instance.ExcuteQuery(updateQuery_device);
+
+            return RedirectToAction("Kho");
+        }
+
+        [HttpPost]
+        public IActionResult Kho_Export(int estrID, string estrDate, string estrRoom_from, string estrRoom_to, string estrDevice)
+        {
+            List<Storage> storages = DataProvider<Storage>.Instance.GetListItem("tbl_storage");
+            int maxID = 0;
+            foreach (var item in storages)
+            {
+                int id;
+                if (int.TryParse(item.storage_id.ToString(), out id))
+                {
+                    if (id > maxID)
+                        maxID = id;
+                }
+            }
+            // storage_id mới = maxID + 1
+            int newstrID = maxID + 1;
+
+            estrRoom_from = "KHO";
+
+            string query = String.Format(
+                "INSERT INTO dbo.tbl_storage (storage_date, FK_device_id, FK_room_id_from, FK_room_id_to) " +
+                    "VALUES ('{0}', '{1}', '{2}', '{3}')", estrDate, estrDevice, estrRoom_from, estrRoom_to);
+            DataProvider<Storage>.Instance.ExcuteQuery(query);
+
+            string updateQuery_device = String.Format("UPDATE dbo.tbl_device SET FK_room_id = '{0}' WHERE device_id = '{1}' ", estrRoom_to, estrDevice);
+            DataProvider<Device>.Instance.ExcuteQuery(updateQuery_device);
+
+            return RedirectToAction("Kho");
+        }
+        [HttpPost]
+        public IActionResult Kho_Transfer(string strDevice, string strRoom_to, string strDate)
+        {
+            // Lấy vị trí hiện tại của thiết bị
+            var allDevices = DataProvider<Device>.Instance.GetListItem("tbl_device");
+            var device = allDevices.FirstOrDefault(d => d.device_id == strDevice);
+            string room_from = device?.FK_room_id ?? "";
+
+            // Cập nhật thiết bị sang vị trí mới
+            string updateQuery = String.Format(
+                "UPDATE dbo.tbl_device SET FK_room_id = '{0}' WHERE device_id = '{1}'",
+                strRoom_to, strDevice
+            );
+            DataProvider<Device>.Instance.ExcuteQuery(updateQuery);
+
+            // Lưu lịch sử vào tbl_storage
+            string insertHistory = String.Format(
+                "INSERT INTO dbo.tbl_storage (storage_date, FK_device_id, FK_room_id_from, FK_room_id_to) " +
+                "VALUES ('{0}', '{1}', '{2}', '{3}')", strDate, strDevice, room_from, strRoom_to
+            );
+            DataProvider<Storage>.Instance.ExcuteQuery(insertHistory);
+
+            return RedirectToAction("Kho");
+        }
+        public IActionResult Kho_Delete()
+        {
+            var urlQuery = Request.HttpContext.Request.Query;
+            string storage_id_del = urlQuery["storage_id"];
+            DataProvider<Storage>.Instance.ExcuteQuery(String.Format("DELETE FROM dbo.tbl_storage WHERE storage_id = {0}", storage_id_del));
+            return RedirectToAction("Kho");
+        }
 
         public IActionResult Taichinh_Hopdong()
         {
@@ -796,20 +953,20 @@ namespace Hospital_Test.Controllers
             };
 
             string query = @"
-        SELECT
-            de.*,
-            r.room_name,
-            s.status_name,
-            c.contact_address,
-            cf.contact_finance,
-            ct.contact_type
-        FROM dbo.tbl_device de 
-        LEFT JOIN dbo.tbl_room r ON de.FK_room_id = r.room_id
-        LEFT JOIN dbo.tbl_status s ON de.FK_status_id = s.status_id
-        LEFT JOIN dbo.tbl_contact c ON de.FK_contact_id = c.contact_id
-        LEFT JOIN dbo.tbl_contact cf ON de.FK_contact_id = cf.contact_id
-        LEFT JOIN dbo.tbl_contact ct ON de.FK_contact_id = ct.contact_id
-        WHERE ct.contact_type LIKE '1%'";
+            SELECT
+                de.*,
+                r.room_name,
+                s.status_name,
+                c.contact_address,
+                cf.contact_finance,
+                ct.contact_type
+            FROM dbo.tbl_device de 
+            LEFT JOIN dbo.tbl_room r ON de.FK_room_id = r.room_id
+            LEFT JOIN dbo.tbl_status s ON de.FK_status_id = s.status_id
+            LEFT JOIN dbo.tbl_contact c ON de.FK_contact_id = c.contact_id
+            LEFT JOIN dbo.tbl_contact cf ON de.FK_contact_id = cf.contact_id
+            LEFT JOIN dbo.tbl_contact ct ON de.FK_contact_id = ct.contact_id
+            WHERE ct.contact_type LIKE '1%'";
 
             var devices = DataProvider<Device>.Instance.GetListItemQuery(query);
             devices = Function.Instance.searchItems(devices, deviceList);
@@ -833,22 +990,22 @@ namespace Hospital_Test.Controllers
             };
 
             string maintainquery = @"
-        SELECT
-            m.*,
-            id.device_id,
-            d.device_name,
-            r.room_name,
-            s.status_name,
-c.contact_address,
-            cf.contact_finance
-        FROM dbo.tbl_maintain m
-        LEFT JOIN dbo.tbl_device id ON m.FK_device_id = id.device_id
-        LEFT JOIN dbo.tbl_device d ON m.FK_device_id = d.device_id
-        LEFT JOIN dbo.tbl_room r ON m.FK_room_id = r.room_id 
-        LEFT JOIN dbo.tbl_status s ON m.FK_status_id = s.status_id
-LEFT JOIN dbo.tbl_contact c ON m.FK_contact_id = c.contact_id
-        LEFT JOIN dbo.tbl_contact cf ON m.FK_contact_id = cf.contact_id
-        WHERE m.FK_status_id = '03'";
+            SELECT
+                    m.*,
+                    id.device_id,
+                    d.device_name,
+                    r.room_name,
+                    s.status_name,
+                    c.contact_address,
+                    cf.contact_finance
+                FROM dbo.tbl_maintain m
+                LEFT JOIN dbo.tbl_device id ON m.FK_device_id = id.device_id
+                LEFT JOIN dbo.tbl_device d ON m.FK_device_id = d.device_id
+                LEFT JOIN dbo.tbl_room r ON m.FK_room_id = r.room_id 
+                LEFT JOIN dbo.tbl_status s ON m.FK_status_id = s.status_id
+                LEFT JOIN dbo.tbl_contact c ON m.FK_contact_id = c.contact_id
+                LEFT JOIN dbo.tbl_contact cf ON m.FK_contact_id = cf.contact_id
+            WHERE m.FK_status_id = '03'";
 
             var maintain = DataProvider<Maintain>.Instance.GetListItemQuery(maintainquery);
             maintain = Function.Instance.searchItems(maintain, maintainList);
@@ -919,35 +1076,35 @@ FROM dbo.tbl_repair re
             };
 
 			string chartQuery = @"
-SELECT MonthYear, SUM(TotalFinance) AS TotalFinance
-FROM (
-    SELECT 
-        FORMAT(d.device_received_date, 'yyyy-MM') AS MonthYear,
-        ISNULL(c.contact_finance, 0) AS TotalFinance
-    FROM dbo.tbl_device d
-    LEFT JOIN dbo.tbl_contact c ON d.FK_contact_id = c.contact_id
-    WHERE d.device_received_date IS NOT NULL
+            SELECT MonthYear, SUM(TotalFinance) AS TotalFinance
+            FROM (
+                SELECT 
+                    FORMAT(d.device_received_date, 'yyyy-MM') AS MonthYear,
+                    ISNULL(c.contact_finance, 0) AS TotalFinance
+                FROM dbo.tbl_device d
+                LEFT JOIN dbo.tbl_contact c ON d.FK_contact_id = c.contact_id
+                WHERE d.device_received_date IS NOT NULL
 
-    UNION ALL
+                UNION ALL
 
-    SELECT 
-        FORMAT(m.maintain_date, 'yyyy-MM') AS MonthYear,
-        ISNULL(c.contact_finance, 0) AS TotalFinance
-    FROM dbo.tbl_maintain m
-    LEFT JOIN dbo.tbl_contact c ON m.FK_contact_id = c.contact_id
-    WHERE m.maintain_date IS NOT NULL
+                SELECT 
+                    FORMAT(m.maintain_date, 'yyyy-MM') AS MonthYear,
+                    ISNULL(c.contact_finance, 0) AS TotalFinance
+                FROM dbo.tbl_maintain m
+                LEFT JOIN dbo.tbl_contact c ON m.FK_contact_id = c.contact_id
+                WHERE m.maintain_date IS NOT NULL
 
-    UNION ALL
+                UNION ALL
 
-    SELECT 
-        FORMAT(r.repair_date, 'yyyy-MM') AS MonthYear,
-        ISNULL(c.contact_finance, 0) AS TotalFinance
-    FROM dbo.tbl_repair r
-    LEFT JOIN dbo.tbl_contact c ON r.FK_contact_id = c.contact_id
-    WHERE r.repair_date IS NOT NULL
-) AS Combined
-GROUP BY MonthYear
-ORDER BY MonthYear DESC";
+                SELECT 
+                    FORMAT(r.repair_date, 'yyyy-MM') AS MonthYear,
+                    ISNULL(c.contact_finance, 0) AS TotalFinance
+                FROM dbo.tbl_repair r
+                LEFT JOIN dbo.tbl_contact c ON r.FK_contact_id = c.contact_id
+                WHERE r.repair_date IS NOT NULL
+            ) AS Combined
+            GROUP BY MonthYear
+            ORDER BY MonthYear DESC";
 
 			var chartData = DataProvider<Contact>.Instance.GetListItemQueryRaw(chartQuery)
 				.Take(5)
@@ -966,6 +1123,5 @@ ORDER BY MonthYear DESC";
         {
             return View("~/Views/Shared/Baotri_Suachua.cshtml");
         }
-
     }
 }
