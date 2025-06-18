@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Data.SqlClient;
 using System.Data;
 using Microsoft.Data.SqlClient;
 using DocumentFormat.OpenXml.InkML;
@@ -20,12 +19,7 @@ namespace Hospital_Test.DAO
         }
         private DataProvider() { }
 
-        //private string connectionSTR = @"Data Source=ADMIN\SQLEXPRESS;Initial Catalog=HTQLTBYT;Integrated Security=True;Connect Timeout=30;Encrypt=True;Trust Server Certificate=True;Application Intent=ReadWrite;Multi Subnet Failover=False";
-
-        //private string connectionSTR = @"Data Source=NGOXUANHINH2801;Initial Catalog=Hethongquanlylab;Integrated Security=True";
-        //private string connectionSTR = @"Data Source=ADMIN\SQLEXPRESS;Initial Catalog=HTQLVTYT;Integrated Security=True;Connect Timeout=30;Encrypt=True;Trust Server Certificate=True;Application Intent=ReadWrite;Multi Subnet Failover=False";
-        private string connectionSTR = @"Data Source= WARMACHINE-2137;Initial Catalog=HTQLTBYT;Integrated Security=True;Connect Timeout=30;Encrypt=True;Trust Server Certificate=True;Application Intent=ReadWrite;Multi Subnet Failover=False";
-
+        private string connectionSTR = @"Data Source=ADMIN\SQLEXPRESS;Initial Catalog=HTQLTBYT;Integrated Security=True;Connect Timeout=30;Encrypt=True;Trust Server Certificate=True;Application Intent=ReadWrite;Multi Subnet Failover=False";
         public DataTable ExcuteQuery(string query, object[] parameter = null)
         {
             DataTable data = new DataTable();
@@ -142,7 +136,7 @@ namespace Hospital_Test.DAO
             }
         }
 
-        
+
         public DataTable LoadData(string tableName = "")
         {
             if (tableName == "") tableName = typeof(T).Name;
@@ -183,29 +177,29 @@ namespace Hospital_Test.DAO
             }
         }
 
-		public List<Dictionary<string, object>> GetListItemQueryRaw(string query)
-		{
-			var result = new List<Dictionary<string, object>>();
-			using (var connection = new SqlConnection(connectionSTR))
-			{
-				connection.Open();
-				using (var command = new SqlCommand(query, connection))
-				{
-					using (var reader = command.ExecuteReader())
-					{
-						while (reader.Read())
-						{
-							var dict = new Dictionary<string, object>();
-							for (int i = 0; i < reader.FieldCount; i++)
-							{
-								dict[reader.GetName(i)] = reader.GetValue(i);
-							}
-							result.Add(dict);
-						}
-					}
-				}
-			}
-			return result;
-		}
-	}
+        public List<Dictionary<string, object>> GetListItemQueryRaw(string query)
+        {
+            var result = new List<Dictionary<string, object>>();
+            using (var connection = new SqlConnection(connectionSTR))
+            {
+                connection.Open();
+                using (var command = new SqlCommand(query, connection))
+                {
+                    using (var reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            var dict = new Dictionary<string, object>();
+                            for (int i = 0; i < reader.FieldCount; i++)
+                            {
+                                dict[reader.GetName(i)] = reader.GetValue(i);
+                            }
+                            result.Add(dict);
+                        }
+                    }
+                }
+            }
+            return result;
+        }
+    }
 }

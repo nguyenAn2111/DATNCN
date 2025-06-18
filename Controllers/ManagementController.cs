@@ -309,7 +309,6 @@ namespace Hospital_Test.Controllers
             }
         }
 
-        /// //////////////////////////////////////////////////////////////
         //---------------------------------------Bảo trì--------------------------------
         public IActionResult Baotri_Add()
         {
@@ -490,6 +489,27 @@ namespace Hospital_Test.Controllers
             var maintain = DataProvider<Maintain>.Instance.GetListItemQuery(query).FirstOrDefault();
             return Json(maintain);
         }
+        public IActionResult Baotri_UpdateStatus (string btrStatus, string device_id)
+        {
+            Device status_update = DataProvider<Device>.Instance.GetListItem("tbl_device").FirstOrDefault(x => x.device_id == device_id);
+
+            if (status_update == null)
+            {
+                return NotFound();
+            }
+
+            // Cập nhật thông tin
+            status_update.FK_status_id = btrStatus;
+
+            string status_update_query = String.Format(
+                "UPDATE dbo.tbl_device SET FK_status_id = '{0}' WHERE device_id = '{1}'",
+                btrStatus.Replace("'", "''"),
+                device_id.Replace("'", "''")
+            );
+            DataProvider<Device>.Instance.ExcuteQuery(status_update_query);
+            return RedirectToAction("Suachua");
+        }
+
 
 		//--------------------------------Sửa chữa---------------------------------------
 		public IActionResult Suachua_Add()
@@ -653,37 +673,37 @@ namespace Hospital_Test.Controllers
 			return RedirectToAction("Suachua");
 		}
 
-		public IActionResult Suachua()
-		{
-			// Khởi tạo
-			string field;
-			string sortOrder;
-			string searchField;
-			string searchString;
-			string page;
+        public IActionResult Suachua()
+        {
+            // Khởi tạo
+            string field;
+            string sortOrder;
+            string searchField;
+            string searchString;
+            string page;
 
-			/// Lấy query, không có => đặt mặc định
-			var urlQuery = Request.HttpContext.Request.Query;
-			field = urlQuery["field"];
-			sortOrder = urlQuery["sort"];
-			searchField = urlQuery["searchField"];
-			searchString = urlQuery["SearchString"];
-			page = urlQuery["page"];
-			field = field == null ? "All" : field;
+            /// Lấy query, không có => đặt mặc định
+            var urlQuery = Request.HttpContext.Request.Query;
+            field = urlQuery["field"];
+            sortOrder = urlQuery["sort"];
+            searchField = urlQuery["searchField"];
+            searchString = urlQuery["SearchString"];
+            page = urlQuery["page"];
+            field = field == null ? "All" : field;
 
-			sortOrder = sortOrder == null ? "Name" : sortOrder; ;
-			searchField = searchField == null ? "device_name" : searchField;
-			searchString = searchString == null ? "" : searchString;
-			page = page == null ? "1" : page;
-			int currentPage = Convert.ToInt32(page);
+            sortOrder = sortOrder == null ? "Name" : sortOrder; ;
+            searchField = searchField == null ? "device_name" : searchField;
+            searchString = searchString == null ? "" : searchString;
+            page = page == null ? "1" : page;
+            int currentPage = Convert.ToInt32(page);
 
-			ItemDisplay<Repair> repairList = new ItemDisplay<Repair>();
-			repairList.SortOrder = sortOrder;
-			repairList.CurrentSearchField = searchField;
-			repairList.CurrentSearchString = searchString;
-			repairList.CurrentPage = currentPage;
+            ItemDisplay<Repair> repairList = new ItemDisplay<Repair>();
+            repairList.SortOrder = sortOrder;
+            repairList.CurrentSearchField = searchField;
+            repairList.CurrentSearchString = searchString;
+            repairList.CurrentPage = currentPage;
 
-			string query = @"
+            string query = @"
                 SELECT
                   re.*,
                   d.device_id,
@@ -698,16 +718,16 @@ namespace Hospital_Test.Controllers
                 LEFT JOIN dbo.tbl_status s ON d.FK_status_id = s.status_id
                 LEFT JOIN dbo.tbl_contact f ON re.FK_contact_id = f.contact_id
                 WHERE s.status_id LIKE '1%'";
-			List<Repair> repair = DataProvider<Repair>.Instance.GetListItemQuery(query);
-			repair = Function.Instance.searchItems(repair, repairList);
-			repair = Function.Instance.sortItems(repair, repairList.SortOrder);
-			repairList.Paging(repair, 10);
+            List<Repair> repair = DataProvider<Repair>.Instance.GetListItemQuery(query);
+            repair = Function.Instance.searchItems(repair, repairList);
+            repair = Function.Instance.sortItems(repair, repairList.SortOrder);
+            repairList.Paging(repair, 10);
 
-			var repairForm = new RepairDetail
-			{
-				devices_repair = DataProvider<Device>.Instance.GetListItem("tbl_device"),
-				rooms_repair = DataProvider<Room>.Instance.GetListItem("tbl_room")
-			};
+            var repairForm = new RepairDetail
+            {
+                devices_repair = DataProvider<Device>.Instance.GetListItem("tbl_device"),
+                rooms_repair = DataProvider<Room>.Instance.GetListItem("tbl_room")
+            };
 
             string repair_id = urlQuery["repair_id"];
             Repair repairStatus = null;
@@ -719,20 +739,20 @@ namespace Hospital_Test.Controllers
 
 
             var viewModel = new RepairPageViewModel
-			{
-				RepairList = repairList,
-				RepairForm = repairForm,
-				RepairStatus = repairStatus
-			};
-			return View("~/Views/Shared/Suachua.cshtml", viewModel);
-		}
-		[HttpPost]
-		public IActionResult Suachua(String sortOrder, String searchString, String searchField, int currentPage = 1)
-		{
-			return RedirectToAction("Suachua", new { sort = sortOrder, searchField = searchField, searchString = searchString, page = currentPage });
-		}
-		//---------------------------------Kho-----------------------------------------------
-		public IActionResult Kho()
+            {
+                RepairList = repairList,
+                RepairForm = repairForm,
+                RepairStatus = repairStatus
+            };
+            return View("~/Views/Shared/Suachua.cshtml", viewModel);
+        }
+        [HttpPost]
+        public IActionResult Suachua(String sortOrder, String searchString, String searchField, int currentPage = 1)
+        {
+            return RedirectToAction("Suachua", new { sort = sortOrder, searchField = searchField, searchString = searchString, page = currentPage });
+        }
+        //---------------------------------Kho-----------------------------------------------
+        public IActionResult Kho()
         {
             // Khởi tạo
             string field;
@@ -925,6 +945,7 @@ namespace Hospital_Test.Controllers
             return RedirectToAction("Kho");
         }
 
+        //-------------------------Tài chính - Hợp đồng-----------------------------------------
         public IActionResult Taichinh_Hopdong()
         {
             string field, sortOrder, searchField, searchString, page;
@@ -1117,7 +1138,6 @@ FROM dbo.tbl_repair re
 			return View("~/Views/Shared/Taichinh_Hopdong.cshtml", viewTC_HDModel);
 
         }
-
 
         public IActionResult Baotri_Suachua()
         {

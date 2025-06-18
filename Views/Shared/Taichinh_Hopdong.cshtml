@@ -113,7 +113,7 @@
 											<td class="facility">@item?.device_name</td>
 											<td class="facility">@item?.device_condition</td>
 											<td class="facility">@item?.device_received_date?.ToString("dd/MM/yyyy")</td>
-											<td class="facility">@item?.contact_finance</td>
+											<td>@(Int32.Parse(item.contact_finance).ToString("N0"))</td>
 											<td class="facility">@item?.room_name</td>
 										</tr>
 										stt1++;
@@ -186,7 +186,7 @@
 											<td class="facility">@item.device_name</td>
 											<td class="facility">@item.status_name</td>
 											<td class="facility">@item.maintain_date?.ToString("dd/MM/yyyy")</td>
-											<td class="facility">@item.contact_finance</td>
+											<td>@(Int32.Parse(item.contact_finance).ToString("N0"))</td>
 											<td class="facility">@item.room_name</td>
 										</tr>
 										stt2++;
@@ -260,7 +260,7 @@
 											<td class="facility">@item.device_name</td>
 											<td class="facility">@item.status_name</td>
 											<td class="facility">@item.repair_date.ToString("dd/MM/yyyy")</td>
-											<td class="facility">@item.contact_finance</td>
+											<td>@(Int32.Parse(item.contact_finance).ToString("N0"))</td>
 											<td class="facility">@item.room_name</td>
 										</tr>
 										stt3++;
@@ -292,52 +292,52 @@
 			🚛 Hợp đồng - Giấy tờ
 		</section>
 		<div>
-			<input type="text" id="searchInputhopdong" placeholder="🔍Tìm kiếm hợp đồng">
+			<input type="text" id="searchInputhopdong" placeholder="🔍Tìm kiếm hợp đồng" style=" width: 30%; margin: 0.5rem 1.5rem;">
 		</div>
 		<div id="hopdongTable">
 
 			<!--Hợp đồng mua sắm -->
-			<div style="margin-top: 40px;">
-				<h2 style="color: red; text-align: center; font-weight: bold;">
-					<i class="fa-solid fa-cart-shopping" style="margin-right: 0.2rem;"></i>
-					DANH SÁCH HỢP ĐỔNG MUA SẮM
-				</h2>
-			</div>
-			
-			<table id="purchaseTable" style="width:100%; margin-bottom: 70px;">
-				<thead>
-					<tr>
-						<th>STT</th>
-						<th>Mã ID</th>
-						<th>Tên thiết bị<br></th>
-						<th>Tên hợp đồng</th>
-						<th>Ngày ký</th>
-						<th>Tập tin</th>
-					</tr>
-				</thead>
-				<tbody>
-					@if (Model.DeviceList.PageCount > 0)
+			<div class="card-group">
+				<div>
+					<h2 style="color: red; text-align: center; font-weight: bold; font_family: Lato">
+						<i class="fa-solid fa-cart-shopping" style="margin-right: 0.2rem;"></i>
+						DANH SÁCH HỢP ĐỔNG MUA SẮM
+					</h2>
+				</div><br />
+				<table id="purchaseTable" style="width:100%; margin-bottom: 3rm;">
+					<thead>
+						<tr>
+							<th>STT</th>
+							<th>Mã ID</th>
+							<th>Tên thiết bị<br></th>
+							<th>Tên hợp đồng</th>
+							<th>Ngày ký</th>
+							<th>Tập tin</th>
+						</tr>
+					</thead>
+					<tbody>
+						@if (Model.DeviceList.PageCount > 0)
 						{
-							int stt4 = 1;
+						int stt4 = 1;
 						foreach (var item in Model.DeviceList.Items)
 						{
-							<tr>
-								<td>@stt4</td>
-								<td class="facility">@item?.device_id</td>
-								<td class="facility">@item?.device_name</td>
-								<td class="facility">@item?.contact_address</td>
-								<td class="facility">@item?.device_received_date?.ToString("dd/MM/yyyy")</td>
-								<td>
-									<button type="button" id="deleteBtn">
-										<i class="fa-solid fa-file-word"></i>
-									</button>
-								</td>
-							</tr>
-							stt4++;
+						<tr>
+							<td>@stt4</td>
+							<td class="facility">@item?.device_id</td>
+							<td class="facility">@item?.device_name</td>
+							<td class="facility">@item?.contact_address</td>
+							<td class="facility">@item?.device_received_date?.ToString("dd/MM/yyyy")</td>
+							<td>
+								<button type="button" id="deleteBtn">
+									<i class="fa-solid fa-file-word"></i>
+								</button>
+							</td>
+						</tr>
+						stt4++;
 						}
-					}
-					else
-					{
+						}
+						else
+						{
 						<tr>
 							<td id="facility">NOT FOUND </td>
 							<td id="facility">NOT FOUND </td>
@@ -346,116 +346,121 @@
 							<td id="facility">NOT FOUND </td>
 							<td id="facility">NOT FOUND </td>
 						</tr>
-					}
-				</tbody>
-			</table>
-
+						}
+					</tbody>
+				</table>
+			</div>
+			
 			<!--Hợp đồng bảo trì -->
-			<div style="margin-top: 40px;">
-				<h2 style="color: red; text-align: center; font-weight: bold;">
-					<i class="fa-solid fa-screwdriver-wrench" style="margin-right: 0.2rem;"></i>
-					DANH SÁCH HỢP ĐỔNG BẢO TRÌ
-				</h2>
-			</div>
-
-			<table id="maintainTable" style="width:100%; margin-bottom: 70px;">
-				<thead>
-					<tr>
-						<th>STT</th>
-						<th>Mã ID</th>
-						<th>Tên thiết bị<br></th>
-						<th>Tên hợp đồng</th>
-						<th>Ngày ký</th>
-						<th>Tập tin</th>
-					</tr>
-				</thead>
-				<tbody>
-					@if (Model.MaintainList.PageCount > 0)
-					{
-						int stt5 = 1;
-						foreach (var item in Model.MaintainList.Items)
+			<div class="card-group">
+				<div>
+					<h2 style="color: red; text-align: center; font-weight: bold;font_family: Lato">
+						<i class="fa-solid fa-screwdriver-wrench" style="margin-right: 0.2rem;"></i>
+						DANH SÁCH HỢP ĐỔNG BẢO TRÌ
+					</h2>
+				</div><br/>
+				<table id="maintainTable" style="width:100%;">
+					<thead>
+						<tr>
+							<th>STT</th>
+							<th>Mã ID</th>
+							<th>Tên thiết bị<br></th>
+							<th>Tên hợp đồng</th>
+							<th>Ngày ký</th>
+							<th>Tập tin</th>
+						</tr>
+					</thead>
+					<tbody>
+						@if (Model.MaintainList.PageCount > 0)
+						{
+							int stt5 = 1;
+							foreach (var item in Model.MaintainList.Items)
+							{
+								<tr>
+									<td>@stt5</td>
+									<td class="facility">@item?.device_id</td>
+									<td class="facility">@item?.device_name</td>
+									<td class="facility">@item.contact_address</td>
+									<td class="facility">@item.maintain_date?.ToString("dd/MM/yyyy")</td>
+									<td>
+										<button type="button" id="deleteBtn">
+											<i class="fa-solid fa-file-word"></i>
+										</button>
+									</td>
+								</tr>
+								stt5++;
+							}
+						}
+						else
 						{
 							<tr>
-								<td>@stt5</td>
-								<td class="facility">@item?.device_id</td>
-								<td class="facility">@item?.device_name</td>
-								<td class="facility">@item.contact_address</td>
-								<td class="facility">@item.maintain_date?.ToString("dd/MM/yyyy")</td>
-								<td>
-									<button type="button" id="deleteBtn">
-										<i class="fa-solid fa-file-word"></i>
-									</button>
-								</td>
+								<td id="facility">NOT FOUND </td>
+								<td id="facility">NOT FOUND </td>
+								<td id="facility">NOT FOUND </td>
+								<td id="facility">NOT FOUND </td>
+								<td id="facility">NOT FOUND </td>
+								<td id="facility">NOT FOUND </td>
 							</tr>
-							stt5++;
 						}
-					}
-					else
-					{
-						<tr>
-							<td id="facility">NOT FOUND </td>
-							<td id="facility">NOT FOUND </td>
-							<td id="facility">NOT FOUND </td>
-							<td id="facility">NOT FOUND </td>
-							<td id="facility">NOT FOUND </td>
-							<td id="facility">NOT FOUND </td>
-						</tr>
-					}
-				</tbody>
-			</table>
+					</tbody>
+				</table>
+			</div>
+
 			<!--Hợp đồng sửa chữa -->
-			<div style="margin-top: 40px;">
-				<h2 style="color: red; text-align: center; font-weight: bold;">
-					<i class="fa-solid fa-screwdriver-wrench" style="margin-right: 0.2rem;"></i>
-					DANH SÁCH HỢP ĐỔNG SỬA CHỮA
-				</h2>
-			</div>
-
-			<table id="repairTable" style="width:100%; margin-bottom: 70px;">
-				<thead>
-					<tr>
-						<th>STT</th>
-						<th>Mã ID</th>
-						<th>Tên thiết bị<br></th>
-						<th>Tên hợp đồng</th>
-						<th>Ngày ký</th>
-						<th>Tập tin</th>
-					</tr>
-				</thead>
-				<tbody>
-					@if (Model.RepairList.PageCount > 0)
-					{
-						int stt6 = 1;
-						foreach (var item in Model.RepairList.Items)
+			<div class="card-group">
+				<div>
+					<h2 style="color: red; text-align: center; font-weight: bold;font_family: Lato">
+						<i class="fa-solid fa-screwdriver-wrench" style="margin-right: 0.2rem;"></i>
+						DANH SÁCH HỢP ĐỔNG SỬA CHỮA
+					</h2>
+				</div><br />
+				<table id="repairTable" style="width:100%;">
+					<thead>
+						<tr>
+							<th>STT</th>
+							<th>Mã ID</th>
+							<th>Tên thiết bị<br></th>
+							<th>Tên hợp đồng</th>
+							<th>Ngày ký</th>
+							<th>Tập tin</th>
+						</tr>
+					</thead>
+					<tbody>
+						@if (Model.RepairList.PageCount > 0)
+						{
+							int stt6 = 1;
+							foreach (var item in Model.RepairList.Items)
+							{
+								<tr>
+									<td>@stt6</td>
+									<td class="facility">@item.FK_device_id</td>
+									<td class="facility">@item?.device_name</td>
+									<td class="facility">@item.contact_address</td>
+									<td class="facility">@item.repair_date.ToString("dd/MM/yyyy")</td>
+									<td>
+										<button type="button" id="deleteBtn">
+											<i class="fa-solid fa-file-word"></i>
+										</button>
+									</td>
+								</tr>
+								stt6++;
+							}
+						}
+						else
 						{
 							<tr>
-								<td>@stt6</td>
-								<td class="facility">@item.FK_device_id</td>
-								<td class="facility">@item?.device_name</td>
-								<td class="facility">@item.contact_address</td>
-								<td class="facility">@item.repair_date.ToString("dd/MM/yyyy")</td>
-								<td>
-									<button type="button" id="deleteBtn">
-										<i class="fa-solid fa-file-word"></i>
-									</button>
-								</td>
+								<td id="facility">NOT FOUND </td>
+								<td id="facility">NOT FOUND </td>
+								<td id="facility">NOT FOUND </td>
+								<td id="facility">NOT FOUND </td>
+								<td id="facility">NOT FOUND </td>
+								<td id="facility">NOT FOUND </td>
 							</tr>
-							stt6++;
 						}
-					}
-					else
-					{
-						<tr>
-							<td id="facility">NOT FOUND </td>
-							<td id="facility">NOT FOUND </td>
-							<td id="facility">NOT FOUND </td>
-							<td id="facility">NOT FOUND </td>
-							<td id="facility">NOT FOUND </td>
-							<td id="facility">NOT FOUND </td>
-						</tr>
-					}
-				</tbody>
-			</table>
+					</tbody>
+				</table>
+			</div>
+
 		</div>
 	</div>
 
