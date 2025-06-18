@@ -423,6 +423,7 @@ namespace Hospital_Test.Controllers
                     m.*,
                     d.device_id,
                     d.device_name,
+                    d.FK_status_id,
                     r.room_name,
                     s.status_name
                 FROM dbo.tbl_device d
@@ -444,16 +445,29 @@ namespace Hospital_Test.Controllers
 
             DateTime today = DateTime.Today;
             var overdue = maintain
-                .Where(m => m.maintain_date != null && m.maintain_date.Value.Date < today)
+                .Where(m =>
+                    m.maintain_date != null &&
+                    m.maintain_date.Value.Date < today
+                )
                 .ToList();
 
             var comingup = maintain
-                .Where(m => m.maintain_date != null && m.maintain_date.Value.Date >= today && m.maintain_date.Value.Date <= today.AddDays(2))
+                .Where(m =>
+                    m.maintain_date != null &&
+                    m.maintain_date.Value.Date >= today &&
+                    m.maintain_date.Value.Date <= today.AddDays(2)
+                )
                 .ToList();
 
             var completed = maintain
-                .Where(m => m.maintain_date != null && m.maintain_date.Value.Date > today.AddDays(2) && m.maintain_date.Value.Date <= today.AddDays(30))
+                .Where(m =>
+                        m.maintain_date != null &&
+                        m.maintain_date.Value.Date > today.AddDays(2) &&
+                        m.maintain_date.Value.Date <= today.AddDays(30)
+                )
                 .ToList();
+
+
 
             // Tạo view model tổng hợp
             var viewModel = new MaintainPageViewModel
@@ -489,30 +503,31 @@ namespace Hospital_Test.Controllers
             var maintain = DataProvider<Maintain>.Instance.GetListItemQuery(query).FirstOrDefault();
             return Json(maintain);
         }
-        public IActionResult Baotri_UpdateStatus (string btrStatus, string device_id)
+        [HttpPost]
+        public IActionResult Baotri_Update_Status(string fkStatus, string device_id)
         {
             Device status_update = DataProvider<Device>.Instance.GetListItem("tbl_device").FirstOrDefault(x => x.device_id == device_id);
 
             if (status_update == null)
             {
-                return NotFound();
+                TempData["msg"] = "Không tìm thấy thiết bị!";
+                return RedirectToAction("Suachua");
             }
-
-            // Cập nhật thông tin
-            status_update.FK_status_id = btrStatus;
 
             string status_update_query = String.Format(
                 "UPDATE dbo.tbl_device SET FK_status_id = '{0}' WHERE device_id = '{1}'",
-                btrStatus.Replace("'", "''"),
+                fkStatus.Replace("'", "''"),
                 device_id.Replace("'", "''")
             );
             DataProvider<Device>.Instance.ExcuteQuery(status_update_query);
-            return RedirectToAction("Suachua");
+
+            TempData["msg"] = "Cập nhật trạng thái thành công!";
+            return RedirectToAction("Baotri");
         }
 
 
-		//--------------------------------Sửa chữa---------------------------------------
-		public IActionResult Suachua_Add()
+        //--------------------------------Sửa chữa---------------------------------------
+        public IActionResult Suachua_Add()
 		{
 			List<Repair> repairs;
 			repairs = DataProvider<Repair>.Instance.GetListItem("tbl_repair");
@@ -1056,20 +1071,20 @@ namespace Hospital_Test.Controllers
 			string repairquery = @"
                SELECT
                     re.*,
-                  id.device_id,
+                    id.device_id,
                     d.device_name,
                     r.room_name,
-                  s.status_name,
-c.contact_address,
-                  f.contact_finance
-FROM dbo.tbl_repair re
+                    s.status_name,
+                    c.contact_address,
+                    f.contact_finance
+                FROM dbo.tbl_repair re
                 LEFT JOIN dbo.tbl_device id ON re.FK_device_id = id.device_id
                 LEFT JOIN dbo.tbl_device d ON re.FK_device_id = d.device_id
                 LEFT JOIN dbo.tbl_room r ON re.FK_room_id = r.room_id
                 LEFT JOIN dbo.tbl_status s ON re.FK_status_id = s.status_id
- LEFT JOIN dbo.tbl_contact c ON re.FK_contact_id = c.contact_id
+                LEFT JOIN dbo.tbl_contact c ON re.FK_contact_id = c.contact_id
                 LEFT JOIN dbo.tbl_contact f ON re.FK_contact_id = f.contact_id
-                 WHERE re.FK_status_id = '13'";
+                WHERE re.FK_status_id = '13'";
 			List<Repair> repair = DataProvider<Repair>.Instance.GetListItemQuery(repairquery);
 			repair = Function.Instance.searchItems(repair, repairList);
 			repair = Function.Instance.sortItems(repair, repairList.SortOrder);

@@ -1,5 +1,9 @@
 ﻿@model MaintainPageViewModel
 
+@if (TempData["msg"] != null)
+{
+    <div class="alert alert-info">@TempData["msg"]</div>
+}
 <!DOCTYPE html>
 <html>
 <!--phần đầu-->
@@ -246,7 +250,7 @@
                                 </div>
                                 
                                 <div style="padding-top: 0.5rem;">
-                                    <button type="button" id="popup-button" class="reschedule-btn" onclick="openRescheduleModal('@item.device_id', '@item.device_name')">">📅 Cập nhật trạng thái</button>
+                                    <button type="button" id="popup-button" class="reschedule-btn" onclick="openRescheduleModal('@item.device_id', '@item.device_name')">📅 Cập nhật trạng thái</button>
                                     <button type="button" id="popup-button" onclick="sendReminder('@item.device_name', '@item.maintain_maintenance', '@item.maintain_maintenance_phone')">📩 Gửi nhắc</button>
                                 </div>
                             </div>
@@ -275,7 +279,7 @@
                                     Vị trí: @item.room_name
                                     </div>
                                     <div style="padding-top: 0.5rem;">
-                                    <button type="button" id="popup-button" class="reschedule-btn" onclick="openRescheduleModal('@item.device_id', '@item.device_name')">">📅 Cập nhật trạng thái</button>
+                                    <button type="button" id="popup-button" class="reschedule-btn" onclick="openRescheduleModal('@item.device_id', '@item.device_name')">📅 Cập nhật trạng thái</button>
                                         <button type="button" id="popup-button" onclick="sendReminder('@item.device_name', '@item.maintain_maintenance', '@item.maintain_maintenance_phone')">📩 Gửi nhắc</button>
                                     </div>
                                 </div>
@@ -290,7 +294,7 @@
                     </div>
                 <!-- Đã hoàn thành hoặc lên lịch -->
                 <div class="status-column completed">
-                        <h3>✅ Đã bảo trì / Lên lịch</h3>
+                        <h3>✅ Đã Lên lịch</h3>
                         @if (Model.CompletedList != null && Model.CompletedList.Any())
                         {
                             foreach (var item in Model.CompletedList)
@@ -304,7 +308,7 @@
                                     Người phụ trách: @item.maintain_maintenance
                                     </div>
                                     <div style="padding-top: 0.5rem;">
-                                    <button type="button" id="popup-button" class="reschedule-btn" onclick="openRescheduleModal('@item.device_id', '@item.device_name')">">📅 Cập nhật trạng thái</button>
+                                    <button type="button" id="popup-button" class="reschedule-btn" onclick="openRescheduleModal('@item.device_id', '@item.device_name')">📅 Cập nhật trạng thái</button>
                                         <button type="button" id="popup-button" onclick="sendReminder('@item.device_name', '@item.maintain_maintenance', '@item.maintain_maintenance_phone')">📩 Gửi nhắc</button>
                                     </div>
                                 </div>
@@ -317,33 +321,35 @@
                             </div>
                         }
                     </div>
-                <!--Lập lại lịch bảo trì -->
-                <div id="rescheduleModal" class="modal">
-                    <div class="modal-content">
-                        <div style="text-align: center; font-family: Lato; color: #001F54; font-size: 1.5rem; font-weight: 800; text-transform: uppercase;">
-                            Cập nhật trạng thái
-                        </div>
-                        <br>
-                        <form id="rescheduleForm">
-                            <input type="hidden" id="deviceId" name="device_id" />
-                            <div>
-                                <label>Tên thiết bị:</label>
-                                <input type="text" id="deviceName" name="device_name" disabled />
-                            </div>
-                            <div>
-                                <label>Chọn trạng thái:</label>
-                                <select id="statusId" name="status_id">
-                                    <option value="02">Đang bảo trì</option>
-                                    <option value="03">Đã bảo trì xong</option>
-                                </select>
-                            </div>
-                            <button type="submit">Cập nhật</button>
-                            <button type="button" onclick="closeRescheduleModal()">Huỷ</button>
-                        </form>
-                    </div>
-                </div>
             </div>
             </form>
+            <!--Lập lại lịch bảo trì -->
+            <div id="rescheduleModal" class="modal">
+                <div class="modal-content">
+                    <div style="text-align: center; font-family: Lato; color: #001F54; font-size: 1.5rem; font-weight: 800; text-transform: uppercase;">
+                        Cập nhật trạng thái
+                    </div>
+                    <br>
+                <form method="post" asp-action="Baotri_Update_Status">
+                    <div class="form_group" style="display: flex; column-gap: 3rem;">
+                        <input type="hidden" id="deviceId" name="device_id" />
+                        <div>
+                            <label>Tên thiết bị:</label>
+                        <input type="text" id="deviceName" name="device_name" style="width: 16rem;" disabled />
+                        </div><br />
+                        <div>
+                            <label>Chọn trạng thái:</label>
+                            <select id="statusId" name="fkStatus">
+                                <option value="02">Đang bảo trì</option>
+                                <option value="03">Đã bảo trì xong</option>
+                            </select>
+                        </div>
+                    </div> <br/>
+                    <button class="submit-button" type="submit">Cập nhật</button>
+                    <button class="cancel-button" type="button" onclick="closeRescheduleModal()">Huỷ</button>
+                </form>
+                </div>
+            </div>
         </div>
 
         @*---------vùng scripts------------------------------------------------------------------------- *@
@@ -358,37 +364,6 @@
             function closeRescheduleModal() {
                 document.getElementById("rescheduleModal").style.display = "none";
             }
-
-            document.getElementById("rescheduleForm").addEventListener("submit", function (e) {
-                e.preventDefault();
-                const deviceId = document.getElementById("deviceId").value;
-                const statusId = document.getElementById("statusId").value;
-
-                fetch('/Device/UpdateStatus', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        device_id: deviceId,
-                        status_id: statusId
-                    })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        alert("Cập nhật trạng thái thành công!");
-                        location.reload();
-                    } else {
-                        alert("Có lỗi khi cập nhật: " + (data.message || ""));
-                    }
-                    closeRescheduleModal();
-                })
-                .catch(error => {
-                    alert("Lỗi kết nối server!");
-                    closeRescheduleModal();
-                });
-            });
         </script>
 
         <script>
