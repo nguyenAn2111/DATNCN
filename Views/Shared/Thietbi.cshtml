@@ -64,34 +64,34 @@
                         @if (Model.DeviceList.PageCount > 0)
                         {
                             foreach (var item in Model.DeviceList.Items)
-                            {
-                                <tr>
-                            <td class="facility"> @item.device_id</td>
-                            <td class="facility"> @item.device_seri</td>
-                            <td class="facility"> @item.device_name</td>
-                            <td class="facility"> @item.room_name</td>
-                            <td class="facility"> @item.status_name</td>
-                            <td class="facility"> @item.device_received_date?.ToString("dd/MM/yyyy")</td>
-                                    <td class="detail">
+							{
+								<tr>
+									<td class="facility"> @item.device_id</td>
+									<td class="facility"> @item.device_seri</td>
+									<td class="facility"> @item.device_name</td>
+									<td class="facility"> @item.room_name</td>
+									<td class="facility"> @item.status_name</td>
+									<td class="facility"> @item.device_received_date?.ToString("dd/MM/yyyy")</td>
 
-                                        <button class="detail-btn" data-device-id="@item.device_id">
-                                            <a href="#" class="fa-solid fa-circle-info" onclick="openDeviceDetail('@item.device_id')"></a>
-                                        </button>
-                                    </td>
+									<td class="detaiil">
+										<button class="detaiil-btn" data-device-id="@item.device_id">
+											<a href="#" class="fa-solid fa-circle-info" onclick="openDeviceDetail('@item.device_id')"></a>
+										</button>
+									</td>
 
-                                     <td class="delete">
-                                        <button type="button" class="delete-btn" data-device-id="@item.device_id">
-                                            <i class="fa-solid fa-trash"></i>
-                                        </button>
-                                    </td>
+									<td class="delete">
+										<button type="button" class="del-btn" data-device-id="@item.device_id">
+											<i class="fa-solid fa-trash"></i>
+										</button>
+									</td>
 									<div id="confirmModal" class="modal">
 										<div class="modal-content">
 											<div class="modal-header">
 												<h3>XÁC NHẬN XÓA</h3>
 											</div>
-											<div class="modal-body">
+											<div class="modaal-body">
 												<p class="confirm-text">
-													Bạn có chắc muốn xóa thiết bị <strong id="deleteDeviceIdText" style="color:#d44c4c;"></strong> không?
+													Bạn có chắc muốn xóa thiết bị <strong id="delDeviceIdText" style="color:#d44c4c;"></strong> không?
 												</p>
 											</div>
 											<div class="modal-actions spaced-buttons">
@@ -100,7 +100,7 @@
 											</div>
 										</div>
 									</div>
-                                </tr>
+								</tr>
                             }
                         }
                         else
@@ -136,7 +136,7 @@
 							Thông tin cơ bản
 						</div>
 						<div class="form-group">
-
+							
 							<div>
 								<label>Mã ID:</label>
 								<input name="tbiID" type="text" id="ID" style="width: 8rem; margin-right: 1rem;" readonly tabindex="-1" class="readonly-input">
@@ -240,15 +240,15 @@
 						<div class="form-group-title">
 							<div>
 								<i class="fa-solid fa-paperclip" style="margin-right: 0.5rem;"></i>
-								Các loại hợp đồng
+								Hợp đồng mua bán
 							</div>
 						</div>
 						<div class="form-group">
 							<input type="hidden" name="tbiContact_id" id="contact_id" />
-							<div>
+							@* <div>
 								<label>Loại hợp đồng, giấy tờ:</label>
 								<input type="text" name="tbiContact_type" id="contactType" style="width: 10rem; margin-right: 1rem;" readonly tabindex="-1" class="readonly-input" />
-							</div>
+							</div> *@
 							<div>
 								<label>File phương tiện:</label>
 								<input type="text" name="tbiContact_address" id="contactAddress" readonly tabindex="-1" class="readonly-input" />
@@ -329,9 +329,9 @@
 							<label>Loại thiết bị:</label>
 							<input name="tbiType" type="text" style="width: 18rem; margin-right: 1rem;">
 						</div>
-                        </div><br>
 
-                        <div class="form-group-title"> 
+
+
 						<div>
 							<label>Thuộc nhóm:</label>
 							<select name="tbiGroup">
@@ -345,7 +345,7 @@
 								<option value="CNTT y tế">Thiết bị công nghệ và CNTT y tế</option>
 							</select>
 						</div>
-					</div>
+					</div><br>
 
 					<div class="deviceAdd-form">
 						<div>
@@ -375,9 +375,6 @@
 							<tbody id="seriesBody">
 							</tbody>
 						</table>
-                            <button type="button" id="addSeribtn">
-                                <i class="fa-solid fa-circle-plus" style="margin-right: 0.2rem;"></i>
-                                Thêm mã series</button>
 					</div>
 
 					<div class="form-group-title">
@@ -460,9 +457,8 @@
 						<div>
 							<label>Loại hợp đồng:</label>
 							<select name="tbiContact_type">
-								<option value="Mua bán">Mua bán</option>
-								<option value="Bảo trì">Bảo trì</option>
-								<option value="Sửa chữa">Sửa chữa</option>
+								<option value="1">Mua bán</option>
+								
 							</select>
 						</div>
 						<div>
@@ -490,10 +486,10 @@
 		<script>
 		let selectedDeviceId = "";
 
-		document.querySelectorAll(".delete-btn").forEach(function (btn) {
+		document.querySelectorAll(".del-btn").forEach(function (btn) {
 			btn.addEventListener("click", function () {
 				selectedDeviceId = this.getAttribute("data-device-id");
-				document.getElementById("deleteDeviceIdText").innerText = selectedDeviceId;
+				document.getElementById("delDeviceIdText").innerText = selectedDeviceId;
 				document.getElementById("confirmModal").style.display = "flex";
 			});
 		});
@@ -596,9 +592,13 @@
                     document.getElementById('received_date').value = data.device_received_date?.split('T')[0] || '';
                     document.getElementById('condition').value = data.device_condition || '';
                     document.getElementById('finance').value = data.contact_finance || '';
-                    document.getElementById('stockoutdate').value = data.device_stockout_date?.split('T')[0] || '';
+
+                    const stockoutRaw = data.device_stockout_date;
+document.getElementById('stockoutdate').value =stockoutRaw && !stockoutRaw.includes("1900-01-01")
+        ? stockoutRaw.split('T')[0]
+        : '';
 					document.getElementById('contact_id').value = data.FK_contact_id || '';
-                    document.getElementById('contactType').value = data.contact_type || '';
+                    // document.getElementById('contactType').value = data.contact_type || '';
 					document.getElementById('devicenote').value = data.device_note || '';
                     document.getElementById('contactAddress').value = data.contact_address || '';
              
@@ -685,8 +685,8 @@
 		const tbody = document.getElementById("seriesBody");
 		const seriCountInput = document.getElementById("seriCount");
 
-                // Tính số thứ tự cho hàng mới
-                const rowCount = tableBody.rows.length + 1;  // Tăng thêm 1 cho số thứ tự mới
+               
+              
 		
 		function createSeriesRow(stt, value = '') {
 			const row = document.createElement("tr");
@@ -696,7 +696,7 @@
 						<input name="tbiSeri" type="text" class="form-control" required value="${value}" />
 					</td>
 					<td>
-						<button type="button" class="btn btn-outline-danger btn-sm remove-row" title="Xóa dòng">
+								<button type="button" class="del-btn" title="Xóa dòng">
 							<i class="fa-solid fa-trash-can"></i>
 						</button>
 					</td>
@@ -725,13 +725,11 @@
 		}
 
 		document.addEventListener("click", function (e) {
-			if (e.target.closest(".remove-row")) {
+			if (e.target.closest(".del-btn")) {
 				const row = e.target.closest("tr");
 				if (row && tbody.childElementCount > 1) {
 					row.remove();
 					updateSTT();
-				} else {
-					alert("Phải có ít nhất 1 dòng mã series.");
 				}
 			}
 		});
@@ -739,7 +737,6 @@
 		window.addEventListener("DOMContentLoaded", () => {
 			generateSeries();
 		});
-            }
 	</script>
 
 

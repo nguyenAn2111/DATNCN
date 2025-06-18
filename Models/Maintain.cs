@@ -21,8 +21,9 @@ namespace Hospital_Test.Models
         public string device_name { get; set; }
         public string room_name { get; set; }
         public string status_name { get; set; }
-
-        public Maintain(DataRow row)
+		public string contact_finance { get; set; }
+		public string contact_address { get; set; }
+		public Maintain(DataRow row)
         {
             if (row["maintain_date"] != DBNull.Value)
                 maintain_date = (DateTime)row["maintain_date"];
@@ -39,7 +40,13 @@ namespace Hospital_Test.Models
             maintain_maintenance_phone = row["maintain_maintenance_phone"] != DBNull.Value ? row["maintain_maintenance_phone"].ToString() : "";
             maintain_delivery = row["maintain_delivery"] != DBNull.Value ? row["maintain_delivery"].ToString() : "";
             maintain_delivery_phone = row["maintain_delivery_phone"] != DBNull.Value ? row["maintain_delivery_phone"].ToString() : "";
-        }
+			contact_finance = row.Table.Columns.Contains("contact_finance") && row["contact_finance"] != DBNull.Value
+			  ? row["contact_finance"].ToString()
+			  : "";
+			contact_address = row.Table.Columns.Contains("contact_address") && row["contact_address"] != DBNull.Value
+			  ? row["contact_address"].ToString()
+			  : "";
+		}
     }
 
 }
