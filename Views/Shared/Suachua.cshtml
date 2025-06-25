@@ -66,7 +66,7 @@
 
                             <tbody>
                                 @if (Model.RepairList.PageCount > 0) 
-                                    {
+                                {
                                     foreach (var item in Model.RepairList.Items)
                                         {
                                             <tr>
@@ -80,18 +80,15 @@
                                                 <td>
                                                     <div class="dropdown">
                                                     <a style="cursor: pointer;" class="detailRepairLink" onclick="openRepairDetail('@item.repair_id')"> <i class="fa-solid fa-circle-info"></i> </a>
-                                                    </div>
-                                                </td>
+                                                </div>
+                                            </td>
                                         </tr>
                                     }
                                 }
                             </tbody>
-
                         </table>
                     </form>
-                        </div>
-
-                    </table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -101,9 +98,9 @@
                 2. Tạo yêu cầu sửa chữa
             </section>
             <form asp-action="Suachua_Add" method="post">
-            <div class="repair-request-form">
+                <div class="repair-request-form">
                 <div class="planer-form">
-                        <label for="device">Tên thiết bị:</label>
+                    <label for="device">Tên thiết bị:</label>
                     <select id="schDevicename" onchange="updateDeviceOptions()" style="margin-right: 1rem ;">
                         @foreach (var item in Model.RepairForm.devices_repair)
                         {
@@ -117,7 +114,7 @@
                         {
                             <option value="@item.device_id">@item.device_id</option>
                         }
-                        </select>
+                    </select>
                 </div><br/>
 
                 <div class="planer-form">
@@ -152,7 +149,7 @@
                         <input type="text" id="fileInput" name="schContact" class="file-input" multiple onchange="displayFileNames()">
                 </div><br/>
                     <!-- Gửi yêu cầu -->
-                    <button type="submit">Gửi yêu cầu</button>
+                <button type="submit">Gửi yêu cầu</button>
             </div>
             </form>
         </div>
@@ -164,30 +161,30 @@
             <div class="device-container">
                 @foreach (var item in Model.RepairList.Items)
                     {
-                <div class="device-card" onclick="toggleTimeline(this)">
-                    <div class="device-header">
+                        <div class="device-card" onclick="toggleTimeline(this)">
+                        <div class="device-header">
                             <div class="device-name">@item.repair_id - @item.device_name - @item.FK_device_id</div>
                             <div class="device-status">@item.repair_update_status</div>
-                    </div>
-                    <div class="timeline">
-                        <div class="timeline-item">
+                        </div>
+                        <div class="timeline">
+                            <div class="timeline-item">
                                 <div class="time">
                                     <p>@item.repair_update_date.ToString("dd/MM/yyyy - HH:mm")</p>
-                        </div>
+                                </div>
                                 <div class="title">
                                     <p>Status: @item.repair_update_status</p>
-                        </div>
+                                </div>
                                 <div class="description">
                                     <p>Note: @item.repair_update_note</p>
-                        </div>
-                    </div>
+                               </div>
+                            </div>
                         </div>
                     <div class="status-edit" style="display: flex; justify-content: flex-start; align-items: flex-start;">
                         <button class="repair-btn" onclick="openRepairModal(@item.repair_id)">
                             Cập nhật trạng thái
                         </button>
+                        </div>
                     </div>
-                </div>
                     }
             </div>
         </div>
@@ -258,13 +255,13 @@
                     <div>
                         <label for="kinked_file">Hóa đơn sửa chữa (nếu có):</label>
                         <input type="text" id="contact">
-            </div>
+                    </div>
                 </div><br>
 
                 <button type="button" class="cancel-button" id="cancelMaintainDetailModal">Thoát</button>
             </div>
         </div>
-        </div>
+    </div>
 
 
         <div id="repairStatusModal" class="modal">
