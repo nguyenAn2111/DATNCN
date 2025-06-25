@@ -42,14 +42,14 @@
 		<!--Tài chính-->
 		<div class="store">
 			<section class="maintain-title" id="Taichinh">
-				📦Tài chính
+				💸Tài chính
 			</section>
 
 			<div class="chart">
-				<div class="chart-placeholder">
+				<div class="chart-placeholder" style="width: 40%">
 					<canvas id="pieChart"></canvas>
 				</div>
-				<div style="width: 50%; margin-top: 0px;">
+				<div style="width: 55%">
 					<canvas id="financeChart"></canvas>
 				</div>
 			</div>
@@ -289,7 +289,7 @@
 	<!--Hợp đồng-->
 	<div class="store">
 		<section class="maintain-title" id="hopdong">
-			🚛 Hợp đồng - Giấy tờ
+			🗃️ Hợp đồng - Giấy tờ
 		</section>
 		<div>
 			<input type="text" id="searchInputhopdong" placeholder="🔍Tìm kiếm hợp đồng">
@@ -461,44 +461,6 @@
 
 	<!--sờ cờ ríp-->
 	<script>
-		// window.onclick = function (event) {
-		// 	// Kiểm tra nếu người dùng bấm vào vùng ngoài modal (tức là phần nền mờ)
-		// 	if (event.target === document.getElementById('shoppingDetail') ||
-		// 		event.target === document.getElementById('insuranceDetail')
-		// 	) {
-		// 		event.target.style.display = "none";
-		// 	}
-		// }
-
-		// // Tìm kiếm theo tên thiết bị
-		// document.getElementById("searchInput").addEventListener("keyup", function () {
-		// 	const filter = this.value.toUpperCase();
-		// 	const rows = document.querySelectorAll("#shoppingDetail tbody tr");
-
-		// 	rows.forEach(row => {
-		// 		const cell = row.querySelector("td");
-		// 		if (cell && cell.textContent.toUpperCase().indexOf(filter) > -1) {
-		// 			row.style.display = "";
-		// 		} else {
-		// 			row.style.display = "none";
-		// 		}
-		// 	});
-		// });
-
-		// //Tìm kiếm chi phí sửa chữa / bảo trì
-		// document.getElementById("searchInputInsuracnce").addEventListener("keyup", function () {
-		// 	const filter = this.value.toUpperCase();
-		// 	const rows = document.querySelectorAll("#insuranceDetail tbody tr");
-
-		// 	rows.forEach(row => {
-		// 		const cell = row.querySelector("td");
-		// 		if (cell && cell.textContent.toUpperCase().indexOf(filter) > -1) {
-		// 			row.style.display = "";
-		// 		} else {
-		// 			row.style.display = "none";
-		// 		}
-		// 	});
-		// });
 
 		document.addEventListener("DOMContentLoaded", function () {
 			document.getElementById("searchInputhopdong").addEventListener("keyup", function () {

@@ -1,0 +1,49 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\Lenovo\\OneDrive\\Desktop\\\u0110ATNCN\\srcDATN\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{BE7D7811-E103-4EC3-9FC5-D895B7C3E3BF}|Hospital_Test.csproj|c:\\users\\lenovo\\onedrive\\desktop\\\u0111atncn\\srcdatn\\controllers\\managementcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{BE7D7811-E103-4EC3-9FC5-D895B7C3E3BF}|Hospital_Test.csproj|solutionrelative:controllers\\managementcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 1,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedHeight": 268,
+          "SelectedChildIndex": 3,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:128:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:128:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{b1e99781-ab81-11d0-b683-00aa00a3ee26}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "ManagementController.cs",
+              "DocumentMoniker": "C:\\Users\\Lenovo\\OneDrive\\Desktop\\\u0110ATNCN\\srcDATN\\Controllers\\ManagementController.cs",
+              "RelativeDocumentMoniker": "Controllers\\ManagementController.cs",
+              "ToolTip": "C:\\Users\\Lenovo\\OneDrive\\Desktop\\\u0110ATNCN\\srcDATN\\Controllers\\ManagementController.cs",
+              "RelativeToolTip": "Controllers\\ManagementController.cs",
+              "ViewState": "AgIAABgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-25T19:34:24.92Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
