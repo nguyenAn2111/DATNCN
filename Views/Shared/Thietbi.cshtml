@@ -309,8 +309,7 @@
 			<div class="modal-body">
 				<form method="post" asp-action="Thietbi_Add">
 					<div class="deviceAdd-form">
-						<div>
-							<i class="fa-solid fa-info-circle" style="margin-right: 0.5rem;"></i>
+						<div class="form-group-title">
 							Thông tin chung
 						</div>
 					</div>
@@ -329,9 +328,6 @@
 							<label>Loại thiết bị:</label>
 							<input name="tbiType" type="text" style="width: 18rem; margin-right: 1rem;">
 						</div>
-
-
-
 						<div>
 							<label>Thuộc nhóm:</label>
 							<select name="tbiGroup">
@@ -348,13 +344,12 @@
 					</div><br>
 
 					<div class="deviceAdd-form">
-						<div>
-							<i class="fa-solid fa-list-ul" style="margin-right: 0.5rem;"></i>
+						<div class="form-group-title">
 							Các mã series
 						</div>
 					</div>
 
-					<div class="form-group d-flex align-items-center gap-2" style="gap: 1rem;">
+					<div class="form-group" style="gap: 1rem;">
 						<label for="seriCount" class="mb-0">Số lượng mã series cần thêm:</label>
 						<input type="number" id="seriCount" min="1" value="1" class="form-control" style="width: 120px;" >
 
