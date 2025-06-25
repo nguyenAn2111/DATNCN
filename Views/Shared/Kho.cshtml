@@ -101,16 +101,18 @@
                             <form asp-action="Kho_Import" method="post">
                                 <div class="form-group-title">Thông tin thiết bị</div>
                                 <div class="form-group">
-                                    <label for="import-device">Thiết bị:</label>
-                                    <select id="import-device" name="strDevice" required>
-                                        <option value="">-- Chọn thiết bị --</option>
-                                        @foreach (var item in Model.StorageForm.devices_import)
-                                        {
-                                            <option value="@item.device_id">
-                                                @item.device_name (@item.device_id)
-                                            </option>
-                                        }
-                                    </select>
+                                    <div>
+                                        <label for="import-device">Thiết bị:</label>
+                                        <select id="import-device" name="strDevice" required>
+                                            <option value="">-- Chọn thiết bị --</option>
+                                            @foreach (var item in Model.StorageForm.devices_import)
+                                            {
+                                                <option value="@item.device_id">
+                                                    @item.device_name (@item.device_id)
+                                                </option>
+                                            }
+                                        </select>
+                                    </div>
                                 </div>
                                 <br />
                                 <div class="form-group-title">Thông tin nhập kho</div>
@@ -144,16 +146,18 @@
                             <form asp-action="Kho_Export">
                                 <div class="form-group-title">Thông tin thiết bị</div>
                                 <div class="form-group">
+                                    <div>
                                     <label for="import-device">Thiết bị:</label>
-                                    <select id="import-device" name="estrDevice" required>
-                                        <option value="">-- Chọn thiết bị --</option>
-                                        @foreach (var item in Model.StorageForm.devices_export)
-                                        {
-                                            <option value="@item.device_id">
-                                                @item.device_name (@item.device_id)
-                                            </option>
-                                        }
-                                    </select>
+                                        <select id="import-device" name="estrDevice" required>
+                                            <option value="">-- Chọn thiết bị --</option>
+                                            @foreach (var item in Model.StorageForm.devices_export)
+                                            {
+                                                <option value="@item.device_id">
+                                                    @item.device_name (@item.device_id)
+                                                </option>
+                                            }
+                                        </select>
+                                    </div>
                                 </div>
                                 <br />
                                 <div class="form-group-title">Thông tin nhập kho</div>
@@ -186,16 +190,18 @@
                             <h3>Tạo yêu cầu chuyển thiết bị</h3>
                             <form asp-action="Kho_Transfer" method="post">
                                 <div class="form-group">
-                                    <label for="transfer-device">Thiết bị:</label>
-                                    <select id="transfer-device" name="strDevice" required>
-                                        <option value="">-- Chọn thiết bị --</option>
-                                        @foreach (var item in Model.StorageForm.devices_all)
-                                        {
-                                        <option value="@item.device_id" data-room="@item.FK_room_id">
-                                                @item.device_id - @item.device_name
-                                            </option>
-                                        }
-                                    </select>
+                                    <div>
+                                        <label for="transfer-device">Thiết bị:</label>
+                                        <select id="transfer-device" name="strDevice" required>
+                                            <option value="">-- Chọn thiết bị --</option>
+                                            @foreach (var item in Model.StorageForm.devices_all)
+                                            {
+                                                <option value="@item.device_id" data-room="@item.FK_room_id">
+                                                    @item.device_id - @item.device_name
+                                                </option>
+                                            }
+                                        </select>
+                                    </div>
                                 </div><br>
                                 <div class="form-group">
                                     <label for="room-from">Vị trí hiện tại:</label>
@@ -214,8 +220,8 @@
                                 <div class="form-group">
                                     <label for="transfer-date">Ngày chuyển:</label>
                                     <input type="date" id="transfer-date" name="strDate" required />
-                                </div>
-                                <button type="submit">Ghi nhận chuyển thiết bị</button>
+                                </div><br />
+                        <button id="popup-button-reschedule" type="submit">Ghi nhận chuyển thiết bị</button>
                             </form>
                         </div>
                     </div>

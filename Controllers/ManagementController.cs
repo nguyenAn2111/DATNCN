@@ -870,7 +870,7 @@ namespace Hospital_Test.Controllers
         }
 
         [HttpPost]
-        public IActionResult Kho_Import(int strID, string strDate, string strRoom_from, string strRoom_to, string strDevice)
+        public IActionResult Kho_Import(int strID, string strDate, string strRoom_from, string strRoom_to, string strDevice, string status_id)
         {
             List<Storage> storages = DataProvider<Storage>.Instance.GetListItem("tbl_storage");
             int maxID = 0;
@@ -893,6 +893,10 @@ namespace Hospital_Test.Controllers
                     "VALUES ('{0}', '{1}', '{2}', '{3}')", strDate, strDevice, strRoom_from, strRoom_to);
             DataProvider<Storage>.Instance.ExcuteQuery(query);
 
+            status_id = "21";
+            string updateStatus_device = String.Format("UPDATE dbo.tbl_device SET FK_status_id = '{0}' WHERE device_id = '{1}' ", status_id, strDevice);
+            DataProvider<Device>.Instance.ExcuteQuery(updateStatus_device);
+
             string updateQuery_device = String.Format("UPDATE dbo.tbl_device SET FK_room_id = '{0}' WHERE device_id = '{1}' ", strRoom_to, strDevice);
             DataProvider<Device>.Instance.ExcuteQuery(updateQuery_device);
 
@@ -900,7 +904,7 @@ namespace Hospital_Test.Controllers
         }
 
         [HttpPost]
-        public IActionResult Kho_Export(int estrID, string estrDate, string estrRoom_from, string estrRoom_to, string estrDevice)
+        public IActionResult Kho_Export(int estrID, string estrDate, string estrRoom_from, string estrRoom_to, string estrDevice, string status_id)
         {
             List<Storage> storages = DataProvider<Storage>.Instance.GetListItem("tbl_storage");
             int maxID = 0;
@@ -925,6 +929,11 @@ namespace Hospital_Test.Controllers
 
             string updateQuery_device = String.Format("UPDATE dbo.tbl_device SET FK_room_id = '{0}' WHERE device_id = '{1}' ", estrRoom_to, estrDevice);
             DataProvider<Device>.Instance.ExcuteQuery(updateQuery_device);
+
+            status_id = "20";
+            
+            string updateStatus_device = String.Format("UPDATE dbo.tbl_device SET FK_status_id = '{0}' WHERE device_id = '{1}' ", status_id, estrDevice);
+            DataProvider<Device>.Instance.ExcuteQuery(updateStatus_device);
 
             return RedirectToAction("Kho");
         }
@@ -1154,6 +1163,10 @@ namespace Hospital_Test.Controllers
 
         }
 
+        public IActionResult Phuluc()
+        {
+            return View("~/Views/Shared/Phuluc.cshtml");
+        }
         public IActionResult Baotri_Suachua()
         {
             return View("~/Views/Shared/Baotri_Suachua.cshtml");
