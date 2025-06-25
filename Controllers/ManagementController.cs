@@ -33,14 +33,129 @@ namespace Hospital_Test.Controllers
 {
     public class ManagementController : Controller
     {
-        public IActionResult Index()
+		public IActionResult Index()
+		{
+			return RedirectToAction("Trangchu");
+		}
+
+		public IActionResult Trangchu()
         {
-            return View("Trangchu");
-        }
-        public IActionResult Trangchu()
-        {
+            try
+            {
+                // Lấy tổng số thiết bị đang quản lý
+                string totalDevicesQuery = "SELECT COUNT(*) AS Count FROM dbo.tbl_device";
+                var totalDevicesResult = DataProvider<Device>.Instance.ExcuteQuery(totalDevicesQuery);
+                int totalDevices = totalDevicesResult.Rows.Count > 0 ? Convert.ToInt32(totalDevicesResult.Rows[0]["Count"]) : 0;
+                ViewBag.TotalDevices = totalDevices;
+
+                // Lấy số thiết bị đang sử dụng (trạng thái là "đang sử dụng", giả định FK_status_id = '20')
+                string devicesInUseQuery = "SELECT COUNT(*) AS Count FROM dbo.tbl_device WHERE FK_status_id = '20'";
+                var devicesInUseResult = DataProvider<Device>.Instance.ExcuteQuery(devicesInUseQuery);
+                int devicesInUse = devicesInUseResult.Rows.Count > 0 ? Convert.ToInt32(devicesInUseResult.Rows[0]["Count"]) : 0;
+                ViewBag.DevicesInUse = devicesInUse;
+
+                // Lấy số thiết bị trong kho (vị trí là "KHO")
+                string devicesInStockQuery = "SELECT COUNT(*) AS Count FROM dbo.tbl_device WHERE FK_room_id = 'KHO'";
+                var devicesInStockResult = DataProvider<Device>.Instance.ExcuteQuery(devicesInStockQuery);
+                int devicesInStock = devicesInStockResult.Rows.Count > 0 ? Convert.ToInt32(devicesInStockResult.Rows[0]["Count"]) : 0;
+                ViewBag.DevicesInStock = devicesInStock;
+
+                // 2. Lịch sử xuất nhập kho
+                string query_str = @"
+            SELECT
+                st.*,
+                d.device_id,
+                d.device_name,
+                r_from.room_name AS room_from_name,
+                r_to.room_name AS room_to_name
+            FROM dbo.tbl_storage st
+            LEFT JOIN dbo.tbl_device d ON st.FK_device_id = d.device_id
+            LEFT JOIN dbo.tbl_room r_from ON st.FK_room_id_from = r_from.room_id
+            LEFT JOIN dbo.tbl_room r_to ON st.FK_room_id_to = r_to.room_id";
+
+                var storage = DataProvider<Storage>.Instance.GetListItemQuery(query_str);
+                ViewBag.StorageHistory = storage;
+
+
+
+				// 3. Biểu đồ tài chính (lấy từ Taichinh_Hopdong.cs)
+				string queryDevice = @"
+SELECT d.*, c.contact_finance
+FROM dbo.tbl_device d
+LEFT JOIN dbo.tbl_contact c ON d.FK_contact_id = c.contact_id";
+				var devices = DataProvider<Device>.Instance.GetListItemQuery(queryDevice);
+
+				// Lấy danh sách bảo trì
+				string queryMaintain = @"
+SELECT m.*, c.contact_finance
+FROM dbo.tbl_maintain m
+LEFT JOIN dbo.tbl_contact c ON m.FK_contact_id = c.contact_id";
+				var maintain = DataProvider<Maintain>.Instance.GetListItemQuery(queryMaintain);
+
+				// Lấy danh sách sửa chữa
+				string queryRepair = @"
+SELECT r.*, c.contact_finance
+FROM dbo.tbl_repair r
+LEFT JOIN dbo.tbl_contact c ON r.FK_contact_id = c.contact_id";
+				var repair = DataProvider<Repair>.Instance.GetListItemQuery(queryRepair);
+				int totalCost1 = devices.Sum(d => {
+					int value;
+					return int.TryParse(d.contact_finance, out value) ? value : 0;
+				});
+				int totalCost2 = maintain.Sum(d => {
+					int value;
+					return int.TryParse(d.contact_finance, out value) ? value : 0;
+				});
+				int totalCost3 = repair.Sum(d => {
+					int value;
+					return int.TryParse(d.contact_finance, out value) ? value : 0;
+				});
+				ViewBag.TotalCost1 = totalCost1;
+				ViewBag.TotalCost2 = totalCost2;
+				ViewBag.TotalCost3 = totalCost3;
+
+                //Biểu đồ cột theo tháng
+				string chartQuery = @"
+        SELECT MonthYear, SUM(TotalFinance) AS TotalFinance
+        FROM (
+            SELECT FORMAT(d.device_received_date, 'yyyy-MM') AS MonthYear, ISNULL(c.contact_finance, 0) AS TotalFinance
+            FROM dbo.tbl_device d
+            LEFT JOIN dbo.tbl_contact c ON d.FK_contact_id = c.contact_id
+            WHERE d.device_received_date IS NOT NULL
+
+            UNION ALL
+
+            SELECT FORMAT(m.maintain_date, 'yyyy-MM') AS MonthYear, ISNULL(c.contact_finance, 0) AS TotalFinance
+            FROM dbo.tbl_maintain m
+            LEFT JOIN dbo.tbl_contact c ON m.FK_contact_id = c.contact_id
+            WHERE m.maintain_date IS NOT NULL
+
+            UNION ALL
+
+            SELECT FORMAT(r.repair_date, 'yyyy-MM') AS MonthYear, ISNULL(c.contact_finance, 0) AS TotalFinance
+            FROM dbo.tbl_repair r
+            LEFT JOIN dbo.tbl_contact c ON r.FK_contact_id = c.contact_id
+            WHERE r.repair_date IS NOT NULL
+        ) AS Combined
+        GROUP BY MonthYear
+        ORDER BY MonthYear DESC";
+
+                var chartData = DataProvider<Contact>.Instance.GetListItemQueryRaw(chartQuery)
+                    .Take(5).OrderBy(d => d["MonthYear"]).ToList();
+
+                ViewBag.ChartLabels = chartData.Select(d => d["MonthYear"].ToString()).ToList();
+                ViewBag.ChartValues = chartData.Select(d => Convert.ToInt32(d["TotalFinance"])).ToList();
+            }
+            catch (Exception ex)
+            {
+                ViewBag.TotalDevices = ViewBag.DevicesInUse = ViewBag.DevicesInStock = 0;
+                ViewBag.StorageHistory = new List<Storage>();
+                ViewBag.ChartLabels = new List<string>();
+                ViewBag.ChartValues = new List<int>();
+            }
 
             return View("~/Views/Shared/Trangchu.cshtml");
+
         }
 
         //Form them thiet bi
@@ -114,10 +229,16 @@ namespace Hospital_Test.Controllers
             string query_contact_device = String.Format("Insert into dbo.tbl_contact (contact_id, contact_type, contact_address, contact_finance)" + "Values ({0} , {1} , N'{2}', {3})", tbiContact_id, tbiContact_type, tbiContact_address, tbiContact_finance);
             DataProvider<Contact>.Instance.ExcuteQuery(query_contact_device);
 
-            tbiStatus = "20";
+			if (tbiRoom.Trim().ToLower().Contains("kho"))
+			{
+				tbiStatus = "30";
+			}
+			else
+			{
+				tbiStatus = "20";
+			}
 
-
-            foreach (var seri in tbiSeri)
+			foreach (var seri in tbiSeri)
             {
                 string seriStr = seri.Trim();
                 // Lấy 4 số cuối của mã series
@@ -137,7 +258,7 @@ namespace Hospital_Test.Controllers
                 DataProvider<Device>.Instance.ExcuteQuery(query);
 
             }
-            return RedirectToAction("Baotri");
+            return RedirectToAction("Thietbi");
         }
 
 
@@ -264,11 +385,15 @@ namespace Hospital_Test.Controllers
         string tbiType, string tbiGroup, int tbiMaintenance_cycle, string tbiMaintenance_start, string tbiStockout_date,
         string tbiCondition, string tbiReceived_date, string tbiNote, int tbiContact_finance, string tbiContact_address, string tbiContact_type, string tbiContact_id)
         {
-            string query = $@"
+			string last4Digits = tbiSeri.Length >= 4 ? tbiSeri.Substring(tbiSeri.Length - 4) :  tbiSeri.PadLeft(4, '0');
+			string manufacturerNoSpaces = tbiManufacturer.Replace(" ", "");
+			string first4Letters = manufacturerNoSpaces.Length >= 4 ? manufacturerNoSpaces.Substring(0, 4) : manufacturerNoSpaces;
+			string tbiId = $"{tbiType}-{first4Letters}-{last4Digits}";
+			string query = $@"
 
         UPDATE dbo.tbl_device
         SET 
-            device_id='{tbiID}',
+            device_id='{tbiId}',
             device_name = N'{tbiName}',
             device_manufacturer = N'{tbiManufacturer}',
             device_seri = '{tbiSeri}',
@@ -284,15 +409,7 @@ namespace Hospital_Test.Controllers
          WHERE device_id = '{tbiID}'";
             DataProvider<Device>.Instance.ExcuteQuery(query);
 
-            //string queryContact = $@"
-            //          UPDATE dbo.tbl_contact
-            //          SET
-            //          contact_type = N'{tbiContact_type}',
-            //          contact_finance = {tbiContact_finance}
-            //          WHERE contact_id = '{tbiContact_id}'";
-
-            //DataProvider<Contact>.Instance.ExcuteQuery(queryContact);
-
+         
             return RedirectToAction("Thietbi");
         }
 
@@ -309,6 +426,10 @@ namespace Hospital_Test.Controllers
             {
                 return Json(new { success = false, error = ex.Message });
             }
+        }
+        public IActionResult Baotri_Suachua()
+        {
+            return View("~/Views/Shared/Baotri_Suachua.cshtml");
         }
 
         /// //////////////////////////////////////////////////////////////
@@ -736,9 +857,7 @@ namespace Hospital_Test.Controllers
 		//---------------------------------Kho-----------------------------------------------
 		public IActionResult Kho()
         {
-            // Khởi tạo
-            // Khởi tạo
-            // Khởi tạo
+          
             string field;
             string sortOrder;
             string searchField;
@@ -815,6 +934,24 @@ namespace Hospital_Test.Controllers
                 .Where(d => string.Equals(d.FK_room_id ?? "", "KHO", StringComparison.OrdinalIgnoreCase))
                 .ToList();
 
+            //Phòng
+            string Roomquery = @"
+               SELECT
+                    r.*
+                              FROM dbo.tbl_room r";
+
+ ItemDisplay<Room> roomList = new ItemDisplay<Room>();
+            roomList.SortOrder = sortOrder;
+            roomList.CurrentSearchField = searchField;
+            roomList.CurrentSearchString = searchString;
+            roomList.CurrentPage = currentPage;
+            List<Room> rooms;
+            rooms = DataProvider<Room>.Instance.GetListItemQuery(Roomquery);
+            rooms = Function.Instance.searchItems(rooms, roomList);
+            rooms = Function.Instance.sortItems(rooms, roomList.SortOrder);
+            roomList.Paging(rooms, 10);
+           
+
             var storageforms = new StorageDetail
             {
                 devices_import = devices_import,
@@ -827,7 +964,8 @@ namespace Hospital_Test.Controllers
             {
                 StorageList = storageList,
                 StorageForm = storageforms,
-                DeviceInStockList = list
+                DeviceInStockList = list,
+                RoomList = roomList // Gán RoomList vào model
             };
 
 
@@ -1124,11 +1262,36 @@ ORDER BY MonthYear DESC";
 
         }
 
+		[HttpPost]
+		public JsonResult Phong_Delete(string id)
+		{
+			try
+			{
+				string query = $"DELETE FROM dbo.tbl_room WHERE room_id = '{id}'";
+				DataProvider<Room>.Instance.ExcuteQuery(query);
+				return Json(new { success = true });
+			}
+			catch (Exception ex)
+			{
+				return Json(new { success = false, error = ex.Message });
+			}
+		}
 
-        public IActionResult Baotri_Suachua()
-        {
-            return View("~/Views/Shared/Baotri_Suachua.cshtml");
-        }
+		[HttpPost]
+		public JsonResult Phong_Add(string room_id, string room_type)
+		{
+			try
+			{
+				string query = $"INSERT INTO dbo.tbl_room (room_id, room_type, room_name) VALUES ('{room_id}', N'{room_type}','{room_id}')";
+				DataProvider<Room>.Instance.ExcuteQuery(query);
+				return Json(new { success = true });
+			}
+			catch (Exception ex)
+			{
+				return Json(new { success = false, error = ex.Message });
+			}
+		}
 
-    }
+	
+	}
 }

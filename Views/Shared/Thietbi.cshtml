@@ -20,21 +20,14 @@
         <div class="surgery-schedule">  
             <div class="surgery-major">
                 <div class="surgery-title">
-                    THIẾT BỊ
-                </div>
+				⚕️DANH SÁCH THIẾT BỊ Y TẾ
+			</div>
             </div>
             <div class="surgery-table">
                 <table id="surgery-table">
                     <div class="wrap-sreach">
                         <input name="searchString" id="searchInput" style="width: 21rem; margin-bottom: 0rem;" type="text" placeholder="🔍Tìm kiếm tên thiết bị">
-                        @* <select name="statusFilter" style="width: 13rem; padding: 0.5rem;" id="statusFilter">
-                            <option value="">TẤT CẢ</option>    
-                            <option value="MUA MỚI">Mua Mới</option>
-                            <option value="HOẠT ĐỘNG">Hoạt động</option>
-                            <option value="BẢO TRÌ">Bảo trì</option>
-                            <option value="SỬA CHỮA">Sửa chữa</option>
-                            <option value="DỪNG SỬ DỤNG - THANH LÝ">Dừng sử dụng - Thanh lý</option>
-                        </select> *@
+                     
                         <div class="surgery-major-button">
                             <!-- nghiệp vụ -->
                             <div class="dropdown">
@@ -114,16 +107,7 @@
                 </table>
             </div>
         </div>
-        <!--modal xóa thiết bị-->
-        <div id="confirmModal" class="modal">
-            <div class="modal-content">
-                <p style="text-align: center; font-family: Lato; color: #001F54; font-size: 1.2rem; font-weight: 800; text-transform: uppercase;">Bạn có chắc chắn muốn xóa thiết bị này không?</p><br>
-                <div>
-                    <button id="popup-button-reschedule" class="confirmDelete">Xóa</button>
-                    <button id="popup-button-reschedule" class="cancelDelete">Quay lại</button>
-                </div>
-            </div>
-        </div>
+     
 	<!-- Modal Chi tiết thiết bị -->
 	<div id="deviceDetailModal" class="modal">
 		<div class="modal-content">
@@ -327,7 +311,7 @@
 
 						<div>
 							<label>Loại thiết bị:</label>
-							<input name="tbiType" type="text" style="width: 18rem; margin-right: 1rem;">
+							<input name="tbiType" type="text" style="width: 18rem; margin-right: 1rem;" placeholder="-Nhập mã loại theo phụ lục-">
 						</div>
 
 
@@ -526,22 +510,49 @@
 			});
 		});
 	</script>
+	<script>
 
-		<script>
-		// Tìm kiếm theo tên thiết bị trong bảng thống kê
-		document.getElementById("searchInput").addEventListener("keyup", function () {
-			const filter = this.value.toUpperCase();
-			const rows = document.querySelectorAll("#dataTable tbody tr");
+		document.addEventListener("DOMContentLoaded", function () {
+			document.getElementById("searchInput").addEventListener("keyup", function () {
+				const filter = this.value.toUpperCase();
 
-			rows.forEach(row => {
-				const cell = row.querySelector("td");
-				if (cell && cell.textContent.toUpperCase().indexOf(filter) > -1) {
-					row.style.display = "";
-				} else {
-					row.style.display = "none";
-				}
+				// Lấy tất cả các hàng từ 3 bảng
+				const rows = document.querySelectorAll(
+					"#dataTable tbody tr"
+				);
+
+				rows.forEach(row => {
+					const idCell = row.querySelector("td:nth-child(1)");
+					const nameCell = row.querySelector("td:nth-child(3)");
+					const vitriCell = row.querySelector("td:nth-child(4)");
+					const statusCell = row.querySelector("td:nth-child(5)");
+					const text = ((idCell?.textContent || "") + " " + (nameCell?.textContent || "") + " " + (vitriCell?.textContent || "") + " "+(statusCell?.textContent || "")).toUpperCase();
+
+					// Ẩn/hiện hàng
+					if (text.includes(filter)) {
+						row.style.display = "";
+					} else {
+						row.style.display = "none";
+					}
+				});
 			});
 		});
+	</script>
+		<script>
+		// // Tìm kiếm theo tên thiết bị trong bảng thống kê
+		// document.getElementById("searchInput").addEventListener("keyup", function () {
+		// 	const filter = this.value.toUpperCase();
+		// 	const rows = document.querySelectorAll("#dataTable tbody tr");
+
+		// 	rows.forEach(row => {
+		// 		const cell = row.querySelector("td");
+		// 		if (cell && cell.textContent.toUpperCase().indexOf(filter) > -1) {
+		// 			row.style.display = "";
+		// 		} else {
+		// 			row.style.display = "none";
+		// 		}
+		// 	});
+		// });
 
 		//filter lọc "Trang thái hoạt động"
 		document.getElementById("statusFilter").addEventListener("change", function () {
