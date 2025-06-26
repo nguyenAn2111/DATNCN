@@ -187,11 +187,11 @@ body {
     font-size: 3rem;
 }
 
-.Iconly {
+/*.Iconly {
     display: flex;
-    align-items: center; /* Căn icon và text theo chiều dọc */
-    gap: 1rem; /* Khoảng cách giữa icon và text */
-}
+    align-items: center;*/ /* Căn icon và text theo chiều dọc */
+/*gap: 1rem;*/ /* Khoảng cách giữa icon và text */
+/*}*/
 
 .wrap-sreach {
     display: flex;
@@ -201,10 +201,31 @@ body {
 
 .icon {
     display: flex;
-    flex-direction: column; /* Xếp số và text theo chiều dọc */
-    align-items: center; /* Căn giữa nội dung */
-    width: fit-content;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center; /* Thêm dòng này để căn giữa cả chiều dọc */
+    width: 60px; /* Cố định chiều rộng */
+    height: 60px; /* Cố định chiều cao */
     float: left;
+}
+
+    /* Thêm class mới cho icon Font Awesome */
+    .icon i {
+        font-size: 35px; /* Kích thước cố định */
+        width: 35px; /* Chiều rộng cố định */
+        height: 35px; /* Chiều cao cố định */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 10px; /* Khoảng cách với text bên dưới */
+    }
+
+/* Đảm bảo các phần tử trong Iconly căn đều */
+.Iconly {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    height: 100%; /* Chiếm đủ chiều cao */
 }
 
 #title-number {
@@ -251,12 +272,6 @@ body {
     border-style: solid;
     background-color: #ffff;
     border-radius: 12px;
-}
-
-p {
-    width: fit-content;
-    float: left;
-    font-size: 1.5rem;
 }
 
 .doctor.dropbox {
@@ -416,7 +431,7 @@ option {
     transform: scale(1.05); /* Hiệu ứng phóng to nhẹ */
 }
 /* Style for search input */
-#searchInput{
+#searchInput {
     padding: 8px;
     width: 16rem;
     border-radius: 8px;
@@ -447,11 +462,11 @@ td#delete {
 #deleteBtn {
     border-width: 0px;
     font-size: 1rem;
-    }
+}
 
     #deleteBtn:hover {
         color: #EF476F;
-        }
+    }
 
 td#detail {
     border: 1px solid #001F54;
@@ -1289,6 +1304,12 @@ section {
     border: 1px solid #ccc;
 }
 
+.chart-box {
+    max-width: 100%;
+    width: 400px;
+    height: 400px;
+}
+
 .chart-placeholder h3 {
     color: #034078;
     font-family: 'Times New Roman';
@@ -1475,6 +1496,7 @@ section {
     justify-content: center;
     gap: 1rem;
 }
+
 #delDeviceIdText {
     text-transform: uppercase;
     font-weight: 700;
@@ -1518,6 +1540,7 @@ section {
     padding: 0; /* Loại bỏ padding thừa */
     cursor: pointer;
 }
+
 .readonly-input {
     color: #f0f0f0 !important; /* Màu chữ sáng */
     background-color: #9a9a9a !important; /* Nền xám sẫm */

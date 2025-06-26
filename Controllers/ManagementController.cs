@@ -27,6 +27,7 @@ using DocumentFormat.OpenXml.Wordprocessing;
 using DocumentFormat.OpenXml.Vml;
 using Humanizer;
 using System.Globalization;
+using DocumentFormat.OpenXml.InkML;
 namespace Hospital_Test.Controllers
 {
     public class ManagementController : Controller
@@ -141,7 +142,7 @@ namespace Hospital_Test.Controllers
 
         public IActionResult Thietbi()
         {
-            //khởi tạo
+            // Khởi tạo các tham số
             string field;
             string sortOrder;
             string searchField;
@@ -168,8 +169,7 @@ namespace Hospital_Test.Controllers
             deviceList.CurrentSearchString = searchString;
             deviceList.CurrentPage = currentPage;
 
-
-            //Mapping cho room_type và room_id
+            // Mapping cho room_type và room_id
             // Lấy danh sách phòng để chuẩn bị dữ liệu cho dropdown
             List<Room> rooms = DataProvider<Room>.Instance.GetListItem("tbl_room");
 
@@ -189,29 +189,31 @@ namespace Hospital_Test.Controllers
                 .ToList();
             ViewBag.DistinctRoomTypes = distinctRoomTypes;
 
+            // Query để lấy danh sách thiết bị
             string query = @"
-               SELECT
-                    de.*,
-                    r.room_name,
-                    s.status_name,
-                    c.contact_address
-                FROM dbo.tbl_device de
-                LEFT JOIN dbo.tbl_contact c ON de.FK_contact_id = c.contact_id
-                LEFT JOIN dbo.tbl_room r ON de.FK_room_id = r.room_id
-                LEFT JOIN dbo.tbl_status s ON de.FK_status_id = s.status_id";
+        SELECT
+            de.*,
+            r.room_name,
+            s.status_name,
+            c.contact_address
+        FROM dbo.tbl_device de
+        LEFT JOIN dbo.tbl_contact c ON de.FK_contact_id = c.contact_id
+        LEFT JOIN dbo.tbl_room r ON de.FK_room_id = r.room_id
+        LEFT JOIN dbo.tbl_status s ON de.FK_status_id = s.status_id";
 
-            List<Device> devices;
-            devices = DataProvider<Device>.Instance.GetListItemQuery(query);
+            List<Device> devices = DataProvider<Device>.Instance.GetListItemQuery(query);
+
+            // Thực hiện tìm kiếm và sắp xếp thiết bị theo yêu cầu
             devices = Function.Instance.searchItems(devices, deviceList);
             devices = Function.Instance.sortItems(devices, deviceList.SortOrder);
             deviceList.Paging(devices, 10);
 
+            // Tạo model chi tiết thiết bị
             var deviceForm = new DeviceDetail
             {
                 statuses_device = DataProvider<Status>.Instance.GetListItem("tbl_status"),
                 rooms_device = DataProvider<Room>.Instance.GetListItem("tbl_room"),
                 contacts_device = DataProvider<Contact>.Instance.GetListItem("tbl_contact")
-
             };
 
             // Tạo view model tổng hợp
@@ -220,6 +222,8 @@ namespace Hospital_Test.Controllers
                 DeviceList = deviceList,
                 DeviceForm = deviceForm
             };
+
+            CheckAllDevicesMaintenanceStatus();
 
             return View("~/Views/Shared/Thietbi.cshtml", viewTbiModel);
         }
@@ -282,16 +286,37 @@ namespace Hospital_Test.Controllers
          WHERE device_id = '{tbiID}'";
             DataProvider<Device>.Instance.ExcuteQuery(query);
 
-            //string queryContact = $@"
-            //          UPDATE dbo.tbl_contact
-            //          SET
-            //          contact_type = N'{tbiContact_type}',
-            //          contact_finance = {tbiContact_finance}
-            //          WHERE contact_id = '{tbiContact_id}'";
-
-            //DataProvider<Contact>.Instance.ExcuteQuery(queryContact);
-
             return RedirectToAction("Thietbi");
+        }
+        public void CheckAllDevicesMaintenanceStatus() //thêm hàm tính ngày bảo trì
+        {
+            // Lấy danh sách tất cả thiết bị
+            string getAllDevicesQuery = "SELECT device_id, device_maintenance_start, device_maintenance_cycle, FK_status_id FROM dbo.tbl_device";
+            var dt = DataProvider<Device>.Instance.ExcuteQuery(getAllDevicesQuery);
+
+            DateTime currentDate = DateTime.Today;
+
+            foreach (DataRow deviceRow in dt.Rows)
+            {
+                // Kiểm tra null trước khi convert
+                if (deviceRow["device_maintenance_start"] != DBNull.Value &&
+                    deviceRow["device_maintenance_cycle"] != DBNull.Value)
+                {
+                    string deviceId = deviceRow["device_id"].ToString();
+                    DateTime maintenanceStart = Convert.ToDateTime(deviceRow["device_maintenance_start"]);
+                    int maintenanceCycleDays = Convert.ToInt32(deviceRow["device_maintenance_cycle"]); // Giờ là số ngày
+
+                    // Tính ngày hết hạn (thêm số NGÀY của chu kỳ vào ngày bắt đầu)
+                    DateTime expirationDate = maintenanceStart.AddDays(maintenanceCycleDays).Date;
+
+                    // Nếu ngày hiện tại >= ngày hết hạn và trạng thái chưa phải "00"
+                    if (currentDate >= expirationDate && deviceRow["FK_status_id"].ToString() != "00")
+                    {
+                        string updateStatusQuery = $"UPDATE dbo.tbl_device SET FK_status_id = '00' WHERE device_id = '{deviceId}'";
+                        DataProvider<Device>.Instance.ExcuteQuery(updateStatusQuery);
+                    }
+                }
+            }
         }
 
         [HttpPost]
@@ -872,6 +897,10 @@ namespace Hospital_Test.Controllers
         [HttpPost]
         public IActionResult Kho_Import(int strID, string strDate, string strRoom_from, string strRoom_to, string strDevice, string status_id)
         {
+            var allDevices = DataProvider<Device>.Instance.GetListItem("tbl_device");
+            var device = allDevices.FirstOrDefault(d => d.device_id == strDevice);
+            string room_from = device?.FK_room_id ?? "";
+
             List<Storage> storages = DataProvider<Storage>.Instance.GetListItem("tbl_storage");
             int maxID = 0;
             foreach (var item in storages)
