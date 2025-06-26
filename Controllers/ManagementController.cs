@@ -293,6 +293,13 @@ namespace Hospital_Test.Controllers
             // Lấy danh sách tất cả thiết bị
             string getAllDevicesQuery = "SELECT device_id, device_maintenance_start, device_maintenance_cycle, FK_status_id FROM dbo.tbl_device";
             var dt = DataProvider<Device>.Instance.ExcuteQuery(getAllDevicesQuery);
+            return RedirectToAction("Thietbi");
+        }
+        public void CheckAllDevicesMaintenanceStatus() //thêm hàm tính ngày bảo trì
+        {
+            // Lấy danh sách tất cả thiết bị
+            string getAllDevicesQuery = "SELECT device_id, device_maintenance_start, device_maintenance_cycle, FK_status_id FROM dbo.tbl_device";
+            var dt = DataProvider<Device>.Instance.ExcuteQuery(getAllDevicesQuery);
 
             DateTime currentDate = DateTime.Today;
 
