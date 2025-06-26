@@ -27,6 +27,7 @@ using DocumentFormat.OpenXml.Wordprocessing;
 using DocumentFormat.OpenXml.Vml;
 using Humanizer;
 using System.Globalization;
+using DocumentFormat.OpenXml.InkML;
 namespace Hospital_Test.Controllers
 {
     public class ManagementController : Controller
@@ -141,7 +142,7 @@ namespace Hospital_Test.Controllers
 
         public IActionResult Thietbi()
         {
-            //khởi tạo
+            // Khởi tạo các tham số
             string field;
             string sortOrder;
             string searchField;
@@ -168,8 +169,7 @@ namespace Hospital_Test.Controllers
             deviceList.CurrentSearchString = searchString;
             deviceList.CurrentPage = currentPage;
 
-
-            //Mapping cho room_type và room_id
+            // Mapping cho room_type và room_id
             // Lấy danh sách phòng để chuẩn bị dữ liệu cho dropdown
             List<Room> rooms = DataProvider<Room>.Instance.GetListItem("tbl_room");
 
@@ -189,29 +189,31 @@ namespace Hospital_Test.Controllers
                 .ToList();
             ViewBag.DistinctRoomTypes = distinctRoomTypes;
 
+            // Query để lấy danh sách thiết bị
             string query = @"
-               SELECT
-                    de.*,
-                    r.room_name,
-                    s.status_name,
-                    c.contact_address
-                FROM dbo.tbl_device de
-                LEFT JOIN dbo.tbl_contact c ON de.FK_contact_id = c.contact_id
-                LEFT JOIN dbo.tbl_room r ON de.FK_room_id = r.room_id
-                LEFT JOIN dbo.tbl_status s ON de.FK_status_id = s.status_id";
+        SELECT
+            de.*,
+            r.room_name,
+            s.status_name,
+            c.contact_address
+        FROM dbo.tbl_device de
+        LEFT JOIN dbo.tbl_contact c ON de.FK_contact_id = c.contact_id
+        LEFT JOIN dbo.tbl_room r ON de.FK_room_id = r.room_id
+        LEFT JOIN dbo.tbl_status s ON de.FK_status_id = s.status_id";
 
-            List<Device> devices;
-            devices = DataProvider<Device>.Instance.GetListItemQuery(query);
+            List<Device> devices = DataProvider<Device>.Instance.GetListItemQuery(query);
+
+            // Thực hiện tìm kiếm và sắp xếp thiết bị theo yêu cầu
             devices = Function.Instance.searchItems(devices, deviceList);
             devices = Function.Instance.sortItems(devices, deviceList.SortOrder);
             deviceList.Paging(devices, 10);
 
+            // Tạo model chi tiết thiết bị
             var deviceForm = new DeviceDetail
             {
                 statuses_device = DataProvider<Status>.Instance.GetListItem("tbl_status"),
                 rooms_device = DataProvider<Room>.Instance.GetListItem("tbl_room"),
                 contacts_device = DataProvider<Contact>.Instance.GetListItem("tbl_contact")
-
             };
 
             // Tạo view model tổng hợp
@@ -220,6 +222,8 @@ namespace Hospital_Test.Controllers
                 DeviceList = deviceList,
                 DeviceForm = deviceForm
             };
+
+            CheckAllDevicesMaintenanceStatus();
 
             return View("~/Views/Shared/Thietbi.cshtml", viewTbiModel);
         }
@@ -282,16 +286,37 @@ namespace Hospital_Test.Controllers
          WHERE device_id = '{tbiID}'";
             DataProvider<Device>.Instance.ExcuteQuery(query);
 
-            //string queryContact = $@"
-            //          UPDATE dbo.tbl_contact
-            //          SET
-            //          contact_type = N'{tbiContact_type}',
-            //          contact_finance = {tbiContact_finance}
-            //          WHERE contact_id = '{tbiContact_id}'";
-
-            //DataProvider<Contact>.Instance.ExcuteQuery(queryContact);
-
             return RedirectToAction("Thietbi");
+        }
+        public void CheckAllDevicesMaintenanceStatus() //thêm hàm tính ngày bảo trì
+        {
+            // Lấy danh sách tất cả thiết bị
+            string getAllDevicesQuery = "SELECT device_id, device_maintenance_start, device_maintenance_cycle, FK_status_id FROM dbo.tbl_device";
+            var dt = DataProvider<Device>.Instance.ExcuteQuery(getAllDevicesQuery);
+
+            DateTime currentDate = DateTime.Today;
+
+            foreach (DataRow deviceRow in dt.Rows)
+            {
+                // Kiểm tra null trước khi convert
+                if (deviceRow["device_maintenance_start"] != DBNull.Value &&
+                    deviceRow["device_maintenance_cycle"] != DBNull.Value)
+                {
+                    string deviceId = deviceRow["device_id"].ToString();
+                    DateTime maintenanceStart = Convert.ToDateTime(deviceRow["device_maintenance_start"]);
+                    int maintenanceCycleDays = Convert.ToInt32(deviceRow["device_maintenance_cycle"]); // Giờ là số ngày
+
+                    // Tính ngày hết hạn (thêm số NGÀY của chu kỳ vào ngày bắt đầu)
+                    DateTime expirationDate = maintenanceStart.AddDays(maintenanceCycleDays).Date;
+
+                    // Nếu ngày hiện tại >= ngày hết hạn và trạng thái chưa phải "00"
+                    if (currentDate >= expirationDate && deviceRow["FK_status_id"].ToString() != "00")
+                    {
+                        string updateStatusQuery = $"UPDATE dbo.tbl_device SET FK_status_id = '00' WHERE device_id = '{deviceId}'";
+                        DataProvider<Device>.Instance.ExcuteQuery(updateStatusQuery);
+                    }
+                }
+            }
         }
 
         [HttpPost]
@@ -617,32 +642,50 @@ namespace Hospital_Test.Controllers
 			string updateQuery = String.Format("UPDATE dbo.tbl_device SET FK_room_id = '{0}' WHERE device_id = '{1}'", schRoom, schDevice);
 			DataProvider<Device>.Instance.ExcuteQuery(updateQuery);
 
-			return RedirectToAction("Suachua");
+            return RedirectToAction("Suachua");
 		}
 
-		[HttpGet]
-		public JsonResult Suachua_GetById(string id)
-		{
-			string query = $@"
-               SELECT
-                  re.*,
-                  d.device_id,
-                  d.device_name,
-                  r.room_name,
-                  s.status_name,
-                  f.contact_finance,
-                  f.contact_address
-                FROM dbo.tbl_repair re
-                LEFT JOIN dbo.tbl_device d ON re.FK_device_id = d.device_id
-                LEFT JOIN dbo.tbl_room r ON d.FK_room_id = r.room_id
-                LEFT JOIN dbo.tbl_status s ON d.FK_status_id = s.status_id
-                LEFT JOIN dbo.tbl_contact f ON re.FK_contact_id = f.contact_id
-                WHERE re.repair_id = '{id}'";
-			var repair = DataProvider<Repair>.Instance.GetListItemQuery(query).FirstOrDefault();
-			return Json(repair);
-		}
+        [HttpGet]
+        public JsonResult Suachua_GetById(string id, string purpose = null)
+        {
+            string query = $@"
+        SELECT
+            re.*,
+            d.device_id,
+            d.device_name,
+            r.room_name,
+            s.status_name,
+            f.contact_finance,
+            f.contact_address
+        FROM dbo.tbl_repair re
+        LEFT JOIN dbo.tbl_device d ON re.FK_device_id = d.device_id
+        LEFT JOIN dbo.tbl_room r ON d.FK_room_id = r.room_id
+        LEFT JOIN dbo.tbl_status s ON d.FK_status_id = s.status_id
+        LEFT JOIN dbo.tbl_contact f ON re.FK_contact_id = f.contact_id
+        WHERE re.repair_id = '{id}'";
 
-		[HttpGet]
+            var repair = DataProvider<Repair>.Instance.GetListItemQuery(query).FirstOrDefault();
+
+            if (repair == null)
+                return Json(new { success = false, message = "Không tìm thấy thông tin sửa chữa" });
+
+            if (purpose == "status_update")
+            {
+                return Json(new
+                {
+                    success = true,
+                    repair_id = repair.repair_id,
+                    repair_update_status = repair.repair_update_status,
+                    repair_update_note = repair.repair_update_note,
+                    repair_update_date = repair.repair_update_date,
+                    fk_status_id = repair.FK_status_id // Sửa thành chữ thường để nhất quán, thêm dòng 
+                });
+            }
+
+            return Json(repair);
+        }
+
+        [HttpGet]
 		public IActionResult Suachua_UpdateStatus(string repair_id)
 		{
 			var repair = DataProvider<Repair>.Instance.GetListItem("tbl_repair")
@@ -660,33 +703,54 @@ namespace Hospital_Test.Controllers
 			return View(viewModel);
 		}
 
-		[HttpPost]
-		public IActionResult Suachua_UpdateStatus(string repair_id, string repair_update_status, string repair_update_note, DateTime repair_update_date)
-		{
+        [HttpPost]
+        public IActionResult Suachua_UpdateStatus(string schID, string schstatus, string schnote, DateTime schdate, string totalStatus)
+        {
+            // Lấy thông tin sửa chữa
+            Repair repairs_update = DataProvider<Repair>.Instance.GetListItem("tbl_repair")
+                .FirstOrDefault(x => x.repair_id == schID);
 
-			Repair repairs_update = DataProvider<Repair>.Instance.GetListItem("tbl_repair").FirstOrDefault(x => x.repair_id == repair_id);
+            if (repairs_update == null)
+            {
+                return NotFound();
+            }
 
-			if (repairs_update == null)
-			{
-				return NotFound();
-			}
+            // Lấy thông tin thiết bị tương ứng
+            var device = DataProvider<Device>.Instance.GetListItem("tbl_device")
+                .FirstOrDefault(x => x.device_id == repairs_update.FK_device_id);
 
-			// Cập nhật thông tin
-			repairs_update.repair_update_status = repair_update_status;
-			repairs_update.repair_update_note = repair_update_note;
-			repairs_update.repair_update_date = repair_update_date;
+            if (device == null)
+            {
+                return NotFound("Không tìm thấy thiết bị tương ứng");
+            }
 
-			string repair_update = String.Format(
-				"UPDATE dbo.tbl_repair SET repair_update_date = '{0}', repair_update_note = N'{1}', repair_update_status = N'{2}' WHERE repair_id = '{3}'",
-				repair_update_date.ToString("yyyy-MM-dd HH:mm:ss"),
-				repair_update_note.Replace("'", "''"),
-				repair_update_status.Replace("'", "''"),
-				repair_id.Replace("'", "''")
-			);
-			DataProvider<Repair>.Instance.ExcuteQuery(repair_update);
+            // Cập nhật thông tin sửa chữa
+            repairs_update.repair_update_status = schstatus;
+            repairs_update.repair_update_note = schnote;
+            repairs_update.repair_update_date = schdate;
+            repairs_update.FK_status_id = totalStatus;
 
-			return RedirectToAction("Suachua");
-		}
+            // Cập nhật trạng thái thiết bị
+            device.FK_status_id = totalStatus;
+
+            // Tạo transaction để đảm bảo cả 2 bảng cùng được cập nhật
+            string repair_update = String.Format(
+                "BEGIN TRANSACTION; " +
+                "UPDATE dbo.tbl_repair SET repair_update_date = '{0}', repair_update_note = N'{1}', repair_update_status = N'{2}', FK_status_id = '{3}' WHERE repair_id = '{4}'; " +
+                "UPDATE dbo.tbl_device SET FK_status_id = '{3}' WHERE device_id = '{5}'; " +
+                "COMMIT;",
+                schdate.ToString("yyyy-MM-dd HH:mm:ss"),
+                schnote.Replace("'", "''"),
+                schstatus.Replace("'", "''"),
+                totalStatus.Replace("'", "''"),
+                schID.Replace("'", "''"),
+                repairs_update.FK_device_id?.Replace("'", "''") ?? ""
+            );
+
+            DataProvider<Repair>.Instance.ExcuteQuery(repair_update);
+
+            return RedirectToAction("Suachua");
+        }
 
         public IActionResult Suachua()
         {
@@ -872,6 +936,10 @@ namespace Hospital_Test.Controllers
         [HttpPost]
         public IActionResult Kho_Import(int strID, string strDate, string strRoom_from, string strRoom_to, string strDevice, string status_id)
         {
+            var allDevices = DataProvider<Device>.Instance.GetListItem("tbl_device");
+            var device = allDevices.FirstOrDefault(d => d.device_id == strDevice);
+            string room_from = device?.FK_room_id ?? "";
+
             List<Storage> storages = DataProvider<Storage>.Instance.GetListItem("tbl_storage");
             int maxID = 0;
             foreach (var item in storages)

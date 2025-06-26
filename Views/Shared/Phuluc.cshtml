@@ -56,6 +56,7 @@
             1. Tra cứu tên viết tắt các loại máy
         </section>
         <input name="searchString" id="searchInput" style="width: 21rem; margin-bottom: 0rem;" type="text" placeholder="🔍Tìm kiếm tên loại máy">
+        <!-- Section 1: Chẩn đoán -->
             <div class="function-card">
                 <button class="collapsible">Nhóm Thiết Bị Chẩn Đoán</button><br>
                 <div class="content">
@@ -78,7 +79,7 @@
                         <tr>
                             <td>Máy CT Scan</td>
                             <td>CT</td>
-                            <td>Chụp cắt lớp vi tính, giúp chẩn đoán chính xác hơn.</td>
+                            <td>Chụp cắt lớp vi tính, tạo hình ảnh chi tiết của cơ thể.</td>
                         </tr>
                         <tr>
                             <td>Máy MRI</td>
@@ -86,19 +87,34 @@
                             <td>Chụp cộng hưởng từ, giúp chẩn đoán chính xác hơn.</td>
                         </tr>
                         <tr>
-                            <td>Máy điện tim</td>
-                            <td>ECG</td>
-                            <td>Ghi lại hoạt động điện tim.</td>
+                            <td>Máy đo điện tim</td>
+                            <td>EGG</td>
+                            <td>Ghi lại hoạt động điện của tim.</td>
                         </tr>
                         <tr>
                             <td>Máy đo điện não đồ</td>
                             <td>EEG</td>
                             <td>Kiểm tra hoạt động điện não.</td>
                         </tr>
+                        <tr>
+                            <td>Máy đo nhịp tim</td>
+                            <td>HRM</td>
+                            <td>Đo nhịp tim bệnh nhân.</td>
+                        </tr>
+                        <tr>
+                            <td>Máy đo huyết áp tự động</td>
+                            <td>BP</td>
+                            <td>Kiểm tra huyết áp nhanh chóng.</td>
+                        </tr>
+                        <tr>
+                            <td>Máy đo nồng độ oxy máu</td>
+                            <td>SPO2</td>
+                            <td>Đo độ bão hòa oxy trong máu.</td>
+                        </tr>
                     </table>
                 </div>
             </div>
-
+        <!-- Section 2: Điều trị -->
             <div class="function-card">
                 <button class="collapsible">Nhóm Thiết Bị Điều Trị</button><br>
                 <div class="content">
@@ -123,12 +139,46 @@
                             <td>IV</td>
                             <td>Truyền dịch và thuốc cho bệnh nhân.</td>
                         </tr>
+                        <tr>
+                            <td>Máy lọc máu</td>
+                            <td>HD</td>
+                            <td>Lọc máu cho bệnh nhân suy thận.</td>
+                        </tr>
+                        <tr>
+                            <td>Máy kích thích tim</td>
+                            <td>PM</td>
+                            <td>Máy tạo nhịp tim hỗ trợ hoạt động tim.</td>
+                        </tr>
+                        <tr>
+                            <td>Đèn mổ</td>
+                            <td>SURG-L</td>
+                            <td>Chiếu sáng khu vực phẫu thuật.</td>
+                        </tr>
+                        <tr>
+                            <td>Dao mổ điện</td>
+                            <td>ESU</td>
+                            <td>Dùng điện để cắt mô trong phẫu thuật.</td>
+                        </tr>
+                        <tr>
+                            <td>Máy xạ trị</td>
+                            <td>RT</td>
+                            <td>Dùng tia xạ để điều trị ung thư.</td>
+                        </tr>
+                        <tr>
+                            <td>Máy sốc điện tim</td>
+                            <td>DEFIB</td>
+                            <td>Hồi sức tim ngừng đập.</td>
+                        </tr>
+                        <tr>
+                            <td>Máy hỗ trợ tuần hoàn</td>
+                            <td>ECMO</td>
+                            <td>Hỗ trợ tim phổi khi suy hô hấp.</td>
+                        </tr>
                     </table>
                 </div>
             </div>
-
+        <!-- Section 3: Phẫu Thuật & Nội Soi -->
             <div class="function-card">
-                <!-- Section 3: Phẫu Thuật & Nội Soi -->
                 <button class="collapsible">Nhóm Dụng Cụ Phẫu Thuật & Nội Soi</button><br>
                 <div class="content">
                     <table>
@@ -152,12 +202,16 @@
                             <td>ROBOT-S</td>
                             <td>Hỗ trợ thực hiện phẫu thuật chính xác.</td>
                         </tr>
+                        <tr>
+                            <td>Máy cứt đốt mô</td>
+                            <td>ESU</td>
+                            <td>Dùng nhiệt điện để cắt đốt mô.</td>
+                        </tr>
                     </table>
                 </div>
             </div>
-
+        <!-- Section 4: Xét Nghiệm -->
             <div class="function-card">
-                <!-- Section 4: Xét Nghiệm -->
                 <button class="collapsible">Nhóm Thiết Bị Xét Nghiệm</button><br>
                 <div class="content">
                     <table>
@@ -174,18 +228,121 @@
                         <tr>
                             <td>Máy xét nghiệm huyết học</td>
                             <td>HEMO</td>
-                            <td>Kiểm tra tế bào máu.</td>
+                            <td>Kiểm tra các tế bào máu.</td>
                         </tr>
                         <tr>
                             <td>Máy xét nghiệm nước tiểu</td>
                             <td>URINE</td>
                             <td>Phân tích nước tiểu để chẩn đoán bệnh.</td>
                         </tr>
+                        <tr>
+                            <td>Máy PCR</td>
+                            <td>PCR</td>
+                            <td>Phát hiện DNA/RNA của virus, vi khuẩn.</td>
+                        </tr>
+                        <tr>
+                            <td>Máy đo đông máu</td>
+                            <td>COAG</td>
+                            <td>Đánh giá khả năng đông máu của bệnh nhân.</td>
+                        </tr>
                     </table>
                 </div>
             </div>
+        <!-- Nhóm 5: Thiết Bị Hỗ Trợ Bệnh Nhân -->
+            <div class="function-card">
+            <button class="collapsible">Nhóm Thiết Bị Hỗ Trợ Bệnh Nhân</button><br>
+            <div class="content">
+                <table>
+                    <tr>
+                        <th>Loại thiết bị</th>
+                        <th>Mã</th>
+                        <th>Chức năng</th>
+                    </tr>
+                    <tr>
+                        <td>Máy tạo oxy</td>
+                        <td>O2</td>
+                        <td>Cung cấp oxy cho bệnh nhân.</td>
+                    </tr>
+                    <tr>
+                        <td>Xe lăn</td>
+                        <td>WC</td>
+                        <td>Hỗ trợ di chuyển cho bệnh nhân.</td>
+                    </tr>
+                    <tr>
+                        <td>Giường bệnh</td>
+                        <td>BED</td>
+                        <td>Giường chuyên dụng cho bệnh nhân.</td>
+                    </tr>
+                    <tr>
+                        <td>Máy hút dịch</td>
+                        <td>SUCTION</td>
+                        <td>Hút dịch trong điều trị bệnh.</td>
+                    </tr>
+                </table>
+            </div>
         </div>
-
+        <!-- Nhóm 6: Thiết Bị Kiểm Soát Môi Trường & Khử Khuẩn -->
+            <div class="function-card">
+            <button class="collapsible">Nhóm Thiết Bị Kiểm Soát Môi Trường & Khử Khuẩn</button><br>
+            <div class="content">
+                <table>
+                    <tr>
+                        <th>Loại thiết bị</th>
+                        <th>Mã</th>
+                        <th>Chức năng</th>
+                    </tr>
+                    <tr>
+                        <td>Máy khử khuẩn</td>
+                        <td>STER</td>
+                        <td>Tiêu diệt vi khuẩn trên dụng cụ y tế.</td>
+                    </tr>
+                    <tr>
+                        <td>Máy lọc không khí</td>
+                        <td>AIR</td>
+                        <td>Loại bỏ vi khuẩn, bụi trong không khí.</td>
+                    </tr>
+                    <tr>
+                        <td>Tủ an toàn sinh học</td>
+                        <td>BSC</td>
+                        <td>Bảo vệ người vận hành khi xử lý mẫu bệnh phẩm.</td>
+                    </tr>
+                    <tr>
+                        <td>Nồi hấp tiệt trùng</td>
+                        <td>AUTO</td>
+                        <td>Tiệt trùng dụng cụ y tế bằng hơi nước.</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <!-- Nhóm 7: Nhóm Thiết Bị Công Nghệ & CNTT Y Tế -->
+            <div class="function-card">
+            <button class="collapsible">Nhóm Thiết Bị Công Nghệ & CNTT Y Tế</button><br>
+            <div class="content">
+                <table>
+                    <tr>
+                        <th>Loại thiết bị</th>
+                        <th>Mã</th>
+                        <th>Chức năng</th>
+                    </tr>
+                    <tr>
+                        <td>Máy tính y tế</td>
+                        <td>PC</td>
+                        <td>Quản lý hồ sơ bệnh án điện tử.</td>
+                    </tr>
+                    <tr>
+                        <td>Máy in phim X-quang</td>
+                        <td>PRT-XQ</td>
+                        <td>In kết quả chẩn đoán hình ảnh.</td>
+                    </tr>
+                    <tr>
+                        <td>Phần mềm quản lý bệnh viện</td>
+                        <td>HMS</td>
+                        <td>Hệ thống quản lý bệnh viện.</td>
+                    </tr>
+                </table>
+            </div>
+            </div>
+        </div>
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
