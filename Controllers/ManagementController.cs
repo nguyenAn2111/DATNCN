@@ -223,7 +223,7 @@ namespace Hospital_Test.Controllers
                 DeviceForm = deviceForm
             };
 
-            CheckAllDevicesMaintenanceStatus();
+            CheckAllDevicesMaintenanceStatus(); //gọi hàm
 
             return View("~/Views/Shared/Thietbi.cshtml", viewTbiModel);
         }
@@ -646,7 +646,7 @@ namespace Hospital_Test.Controllers
 		}
 
         [HttpGet]
-        public JsonResult Suachua_GetById(string id, string purpose = null)
+        public JsonResult Suachua_GetById(string id, string purpose = null) //sửa toàn bộ hàm 
         {
             string query = $@"
         SELECT
