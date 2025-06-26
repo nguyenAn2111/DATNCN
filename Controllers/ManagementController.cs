@@ -223,7 +223,7 @@ namespace Hospital_Test.Controllers
                 DeviceForm = deviceForm
             };
 
-            CheckAllDevicesMaintenanceStatus(); //gọi hàm
+            CheckAllDevicesMaintenanceStatus();
 
             return View("~/Views/Shared/Thietbi.cshtml", viewTbiModel);
         }
@@ -286,13 +286,6 @@ namespace Hospital_Test.Controllers
          WHERE device_id = '{tbiID}'";
             DataProvider<Device>.Instance.ExcuteQuery(query);
 
-            return RedirectToAction("Thietbi");
-        }
-        public void CheckAllDevicesMaintenanceStatus() //thêm hàm tính ngày bảo trì
-        {
-            // Lấy danh sách tất cả thiết bị
-            string getAllDevicesQuery = "SELECT device_id, device_maintenance_start, device_maintenance_cycle, FK_status_id FROM dbo.tbl_device";
-            var dt = DataProvider<Device>.Instance.ExcuteQuery(getAllDevicesQuery);
             return RedirectToAction("Thietbi");
         }
         public void CheckAllDevicesMaintenanceStatus() //thêm hàm tính ngày bảo trì
@@ -560,100 +553,100 @@ namespace Hospital_Test.Controllers
 
         //--------------------------------Sửa chữa---------------------------------------
         public IActionResult Suachua_Add()
-		{
-			List<Repair> repairs;
-			repairs = DataProvider<Repair>.Instance.GetListItem("tbl_repair");
-			List<Device> devices;
-			devices = DataProvider<Device>.Instance.GetListItem("tbl_device");
-			List<Room> rooms;
-			rooms = DataProvider<Room>.Instance.GetListItem("tbl_room");
-			List<Contact> contacts;
-			contacts = DataProvider<Contact>.Instance.GetListItem("tbl_contact");
+        {
+            List<Repair> repairs;
+            repairs = DataProvider<Repair>.Instance.GetListItem("tbl_repair");
+            List<Device> devices;
+            devices = DataProvider<Device>.Instance.GetListItem("tbl_device");
+            List<Room> rooms;
+            rooms = DataProvider<Room>.Instance.GetListItem("tbl_room");
+            List<Contact> contacts;
+            contacts = DataProvider<Contact>.Instance.GetListItem("tbl_contact");
 
-			RepairDetail repairdetails = new RepairDetail();
-			repairdetails.repairs_id = repairs;
-			repairdetails.devices_repair = devices;
-			repairdetails.rooms_repair = rooms;
-			repairdetails.contacts_repair = contacts;
+            RepairDetail repairdetails = new RepairDetail();
+            repairdetails.repairs_id = repairs;
+            repairdetails.devices_repair = devices;
+            repairdetails.rooms_repair = rooms;
+            repairdetails.contacts_repair = contacts;
 
-			return View("Suachua", repairdetails);
-		}
-		[HttpPost]
-		public IActionResult Suachua_Add(string schID, string schBroken, string schPriority, string schDate, string schNote, string schImage, int schFinance, string schContact, string schDevice, string schStatus, string schRoom, string schUpdateDate, string schUpdateStatus, string schUpdateNote)
-		{
-
-
-			List<Repair> repairsID = DataProvider<Repair>.Instance.GetListItem("tbl_repair");
-			int max_repair = 0;
-			foreach (var item in repairsID)
-			{
-				int currentrepair_Id;
-				// Chuyển đổi từ string sang int (cần đảm bảo repair_id có thể chuyển đổi sang int)
-				if (int.TryParse(item.repair_id, out currentrepair_Id))
-				{
-					if (currentrepair_Id > max_repair)
-					{
-						max_repair = currentrepair_Id;
-					}
-				}
-			}
-			string SchID = (max_repair + 1).ToString();
-
-			//Tạo id cho contact
-			List<Contact> Contacts_repair = DataProvider<Contact>.Instance.GetListItem("tbl_contact");
-			int max_contact = 0;
-			foreach (var item in Contacts_repair)
-			{
-				int currentId;
-				if (int.TryParse(item.contact_id, out currentId))
-				{
-					if (currentId > max_contact)
-					{
-						max_contact = currentId;
-					}
-				}
-			}
-			string SchContact_id = (max_contact + 1).ToString();
+            return View("Suachua", repairdetails);
+        }
+        [HttpPost]
+        public IActionResult Suachua_Add(string schID, string schBroken, string schPriority, string schDate, string schNote, string schImage, int schFinance, string schContact, string schDevice, string schStatus, string schRoom, string schUpdateDate, string schUpdateStatus, string schUpdateNote)
+        {
 
 
-			// Thêm vào bảng dbo.tbl_contact khi đã có contact_id và địa chỉ, lưu file với contact_type  là "Hợp đồng suachua" 
-			string query_contact_repair = String.Format("Insert into dbo.tbl_contact (contact_id, contact_type, contact_address, contact_finance)" + "Values ('{0}' , 3 , N'{1}', {2} )", SchContact_id, schContact, schFinance);
-			DataProvider<Contact>.Instance.ExcuteQuery(query_contact_repair);
+            List<Repair> repairsID = DataProvider<Repair>.Instance.GetListItem("tbl_repair");
+            int max_repair = 0;
+            foreach (var item in repairsID)
+            {
+                int currentrepair_Id;
+                // Chuyển đổi từ string sang int (cần đảm bảo repair_id có thể chuyển đổi sang int)
+                if (int.TryParse(item.repair_id, out currentrepair_Id))
+                {
+                    if (currentrepair_Id > max_repair)
+                    {
+                        max_repair = currentrepair_Id;
+                    }
+                }
+            }
+            string SchID = (max_repair + 1).ToString();
+
+            //Tạo id cho contact
+            List<Contact> Contacts_repair = DataProvider<Contact>.Instance.GetListItem("tbl_contact");
+            int max_contact = 0;
+            foreach (var item in Contacts_repair)
+            {
+                int currentId;
+                if (int.TryParse(item.contact_id, out currentId))
+                {
+                    if (currentId > max_contact)
+                    {
+                        max_contact = currentId;
+                    }
+                }
+            }
+            string SchContact_id = (max_contact + 1).ToString();
 
 
-			DateTime SchUpdateDate;
-			if (string.IsNullOrEmpty(schUpdateDate) ||
-				!DateTime.TryParseExact(schUpdateDate, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.None, out SchUpdateDate))
-			{
-				SchUpdateDate = DateTime.Now;
-			}
+            // Thêm vào bảng dbo.tbl_contact khi đã có contact_id và địa chỉ, lưu file với contact_type  là "Hợp đồng suachua" 
+            string query_contact_repair = String.Format("Insert into dbo.tbl_contact (contact_id, contact_type, contact_address, contact_finance)" + "Values ('{0}' , 3 , N'{1}', {2} )", SchContact_id, schContact, schFinance);
+            DataProvider<Contact>.Instance.ExcuteQuery(query_contact_repair);
+
+
+            DateTime SchUpdateDate;
+            if (string.IsNullOrEmpty(schUpdateDate) ||
+                !DateTime.TryParseExact(schUpdateDate, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.None, out SchUpdateDate))
+            {
+                SchUpdateDate = DateTime.Now;
+            }
 
             //SQL trước đang để schUpdateStatus là int, hiện giờ đã đổi sang string cho đồng bộ
             schUpdateStatus = "Thêm thiết bị sửa chữa";
-			schUpdateNote = "Đã thêm thông tin của thiết bị cần sửa chữa";
-			schStatus = "11";
-			schRoom = "KHO";
+            schUpdateNote = "Đã thêm thông tin của thiết bị cần sửa chữa";
+            schStatus = "11";
+            schRoom = "KHO";
 
-			string schBrokenFormat = DateTime.ParseExact(schBroken, "yyyy-MM-dd", CultureInfo.InvariantCulture).ToString("yyyy-MM-dd");
-			string schDateFormat = DateTime.ParseExact(schDate, "yyyy-MM-dd", CultureInfo.InvariantCulture).ToString("yyyy-MM-dd");
-			string schUpdateDateFormat = SchUpdateDate.ToString("yyyy-MM-dd HH:mm:ss");
+            string schBrokenFormat = DateTime.ParseExact(schBroken, "yyyy-MM-dd", CultureInfo.InvariantCulture).ToString("yyyy-MM-dd");
+            string schDateFormat = DateTime.ParseExact(schDate, "yyyy-MM-dd", CultureInfo.InvariantCulture).ToString("yyyy-MM-dd");
+            string schUpdateDateFormat = SchUpdateDate.ToString("yyyy-MM-dd HH:mm:ss");
 
-			string query = String.Format(
-			"INSERT INTO dbo.tbl_repair (repair_id, repair_broken, repair_priority, repair_date, repair_update_date, repair_update_status, repair_note, repair_picture, repair_update_note, FK_room_id, FK_device_id, FK_status_id, FK_contact_id) " +
-							"VALUES ('{0}', '{1}',{2}, '{3}', '{4}', N'{5}', N'{6}', '{7}', N'{8}', '{9}', '{10}', '{11}', '{12}')", SchID, schBrokenFormat, schPriority, schDateFormat, schUpdateDateFormat, schUpdateStatus, schNote, schImage, schUpdateNote, schRoom, schDevice, schStatus, SchContact_id);
-			DataProvider<Repair>.Instance.ExcuteQuery(query);
+            string query = String.Format(
+            "INSERT INTO dbo.tbl_repair (repair_id, repair_broken, repair_priority, repair_date, repair_update_date, repair_update_status, repair_note, repair_picture, repair_update_note, FK_room_id, FK_device_id, FK_status_id, FK_contact_id) " +
+                            "VALUES ('{0}', '{1}',{2}, '{3}', '{4}', N'{5}', N'{6}', '{7}', N'{8}', '{9}', '{10}', '{11}', '{12}')", SchID, schBrokenFormat, schPriority, schDateFormat, schUpdateDateFormat, schUpdateStatus, schNote, schImage, schUpdateNote, schRoom, schDevice, schStatus, SchContact_id);
+            DataProvider<Repair>.Instance.ExcuteQuery(query);
 
-			string updateQuery_device = String.Format("UPDATE dbo.tbl_device SET FK_status_id = '{0}' WHERE device_id = '{1}' ", schStatus, schDevice);
-			DataProvider<Device>.Instance.ExcuteQuery(updateQuery_device);
+            string updateQuery_device = String.Format("UPDATE dbo.tbl_device SET FK_status_id = '{0}' WHERE device_id = '{1}' ", schStatus, schDevice);
+            DataProvider<Device>.Instance.ExcuteQuery(updateQuery_device);
 
-			string updateQuery = String.Format("UPDATE dbo.tbl_device SET FK_room_id = '{0}' WHERE device_id = '{1}'", schRoom, schDevice);
-			DataProvider<Device>.Instance.ExcuteQuery(updateQuery);
+            string updateQuery = String.Format("UPDATE dbo.tbl_device SET FK_room_id = '{0}' WHERE device_id = '{1}'", schRoom, schDevice);
+            DataProvider<Device>.Instance.ExcuteQuery(updateQuery);
 
             return RedirectToAction("Suachua");
-		}
+        }
 
         [HttpGet]
-        public JsonResult Suachua_GetById(string id, string purpose = null) //sửa toàn bộ hàm 
+        public JsonResult Suachua_GetById(string id, string purpose = null)
         {
             string query = $@"
         SELECT
@@ -693,22 +686,22 @@ namespace Hospital_Test.Controllers
         }
 
         [HttpGet]
-		public IActionResult Suachua_UpdateStatus(string repair_id)
-		{
-			var repair = DataProvider<Repair>.Instance.GetListItem("tbl_repair")
-						 .FirstOrDefault(x => x.repair_id == repair_id);
+        public IActionResult Suachua_UpdateStatus(string repair_id)
+        {
+            var repair = DataProvider<Repair>.Instance.GetListItem("tbl_repair")
+                         .FirstOrDefault(x => x.repair_id == repair_id);
 
-			if (repair == null)
-				return NotFound();
+            if (repair == null)
+                return NotFound();
 
-			var viewModel = new RepairPageViewModel
-			{
-				RepairStatus = repair,
-				// Gán các thuộc tính khác nếu cần
-			};
+            var viewModel = new RepairPageViewModel
+            {
+                RepairStatus = repair,
+                // Gán các thuộc tính khác nếu cần
+            };
 
-			return View(viewModel);
-		}
+            return View(viewModel);
+        }
 
         [HttpPost]
         public IActionResult Suachua_UpdateStatus(string schID, string schstatus, string schnote, DateTime schdate, string totalStatus)
@@ -1006,7 +999,7 @@ namespace Hospital_Test.Controllers
             DataProvider<Device>.Instance.ExcuteQuery(updateQuery_device);
 
             status_id = "20";
-            
+
             string updateStatus_device = String.Format("UPDATE dbo.tbl_device SET FK_status_id = '{0}' WHERE device_id = '{1}' ", status_id, estrDevice);
             DataProvider<Device>.Instance.ExcuteQuery(updateStatus_device);
 
@@ -1144,15 +1137,15 @@ namespace Hospital_Test.Controllers
             var completed = maintain.Where(m => m.maintain_date != null && m.maintain_date.Value.Date > today.AddDays(2) && m.maintain_date.Value.Date <= today.AddDays(30)).ToList();
 
 
-			// === 3. DỮ LIỆU SỬA CHỮA  ===
-			var repairList = new ItemDisplay<Repair>
-			{
-				SortOrder = sortOrder,
-				CurrentSearchField = searchField,
-				CurrentSearchString = searchString,
-				CurrentPage = currentPage
-			};
-			string repairquery = @"
+            // === 3. DỮ LIỆU SỬA CHỮA  ===
+            var repairList = new ItemDisplay<Repair>
+            {
+                SortOrder = sortOrder,
+                CurrentSearchField = searchField,
+                CurrentSearchString = searchString,
+                CurrentPage = currentPage
+            };
+            string repairquery = @"
                SELECT
                     re.*,
                     id.device_id,
@@ -1169,20 +1162,20 @@ namespace Hospital_Test.Controllers
                 LEFT JOIN dbo.tbl_contact c ON re.FK_contact_id = c.contact_id
                 LEFT JOIN dbo.tbl_contact f ON re.FK_contact_id = f.contact_id
                 WHERE re.FK_status_id = '13'";
-			List<Repair> repair = DataProvider<Repair>.Instance.GetListItemQuery(repairquery);
-			repair = Function.Instance.searchItems(repair, repairList);
-			repair = Function.Instance.sortItems(repair, repairList.SortOrder);
-			repairList.Paging(repair, 10);
+            List<Repair> repair = DataProvider<Repair>.Instance.GetListItemQuery(repairquery);
+            repair = Function.Instance.searchItems(repair, repairList);
+            repair = Function.Instance.sortItems(repair, repairList.SortOrder);
+            repairList.Paging(repair, 10);
 
-			var repairForm = new RepairDetail
-			{
-				devices_repair = DataProvider<Device>.Instance.GetListItem("tbl_device"),
-				rooms_repair = DataProvider<Room>.Instance.GetListItem("tbl_room")
-			};
-			
+            var repairForm = new RepairDetail
+            {
+                devices_repair = DataProvider<Device>.Instance.GetListItem("tbl_device"),
+                rooms_repair = DataProvider<Room>.Instance.GetListItem("tbl_room")
+            };
 
-			// === 4. GỘP VÀO MODEL CHUNG ===
-			var viewTC_HDModel = new ContactPageViewModel
+
+            // === 4. GỘP VÀO MODEL CHUNG ===
+            var viewTC_HDModel = new ContactPageViewModel
             {
                 DeviceList = deviceList,
                 DeviceForm = deviceForm,
@@ -1195,7 +1188,7 @@ namespace Hospital_Test.Controllers
                 RepairForm = repairForm,
             };
 
-			string chartQuery = @"
+            string chartQuery = @"
             SELECT MonthYear, SUM(TotalFinance) AS TotalFinance
             FROM (
                 SELECT 
@@ -1226,15 +1219,15 @@ namespace Hospital_Test.Controllers
             GROUP BY MonthYear
             ORDER BY MonthYear DESC";
 
-			var chartData = DataProvider<Contact>.Instance.GetListItemQueryRaw(chartQuery)
-				.Take(5)
-				.OrderBy(d => d["MonthYear"])
-				.ToList();
+            var chartData = DataProvider<Contact>.Instance.GetListItemQueryRaw(chartQuery)
+                .Take(5)
+                .OrderBy(d => d["MonthYear"])
+                .ToList();
 
-			ViewBag.ChartLabels = chartData.Select(d => d["MonthYear"].ToString()).ToList();
-			ViewBag.ChartValues = chartData.Select(d => Convert.ToInt32(d["TotalFinance"])).ToList();
+            ViewBag.ChartLabels = chartData.Select(d => d["MonthYear"].ToString()).ToList();
+            ViewBag.ChartValues = chartData.Select(d => Convert.ToInt32(d["TotalFinance"])).ToList();
 
-			return View("~/Views/Shared/Taichinh_Hopdong.cshtml", viewTC_HDModel);
+            return View("~/Views/Shared/Taichinh_Hopdong.cshtml", viewTC_HDModel);
 
         }
 
