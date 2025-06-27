@@ -53,7 +53,6 @@
 						<table id="dataTable" style="width:100%;">
 							<thead>
 								<tr>
-									<th>STT</th>
 									<th>Mã id thiết bị</th>
 									<th>Tên thiết bị<br></th>
 									<th>Ngày hỏng</th>
@@ -67,11 +66,9 @@
 							<tbody>
 								@if (Model.RepairList.PageCount > 0)
 								{
-									int stt = 1;
 									foreach (var item in Model.RepairList.Items)
 									{
 										<tr>
-											<td>@stt</td>
 											<td> @item.FK_device_id</td>
 											<td> @item.device_name</td>
 											<td> @item.repair_broken.ToString("dd-MM-yyyy")</td>
@@ -84,13 +81,15 @@
 												</div>
 											</td>
 										</tr>
-										stt++;
 									}
 								}
 							</tbody>
+
 						</table>
 					</form>
 				</div>
+
+				</table>
 			</div>
 		</div>
 	</div>
@@ -103,19 +102,16 @@
 			<div class="repair-request-form">
 				<div class="planer-form">
 					<label for="device">Tên thiết bị:</label>
-					<select id="schDevicename" onchange="updateDeviceOptions()" style="margin-right: 1rem ;">
-						@foreach (var item in Model.RepairForm.devices_repair)
+					<select id="schDevicename" onchange="updateDeviceOptions()" style="margin-right: 1rem;">
+						@foreach (var item in Model.RepairForm.devices_repair.Where(d => Convert.ToInt32(d.FK_status_id) == 20 || Convert.ToInt32(d.FK_status_id) == 21))
 						{
-							<option value="@item.device_id">@item.device_name</option>
+							<option value="@item.device_id" data-id="@item.device_id">@item.device_name</option>
 						}
 					</select>
 
 					<label for="device">Mã ID thiết bị:</label>
-					<select id="schDevice" name="schDevice" style="margin-right: 1rem ;">
-						@foreach (var item in Model.RepairForm.devices_repair)
-						{
-							<option value="@item.device_id">@item.device_id</option>
-						}
+					<select id="schDevice" name="schDevice" style="margin-right: 1rem;">
+						<option value="">-- Chọn thiết bị --</option>
 					</select>
 				</div><br />
 
@@ -165,7 +161,7 @@
 			{
 				<div class="device-card" onclick="toggleTimeline(this)">
 					<div class="device-header">
-						<div class="device-name"> @item.device_name - @item.FK_device_id</div>
+						<div class="device-name">@item.repair_id - @item.device_name - @item.FK_device_id</div>
 						<div class="device-status">@item.repair_update_status</div>
 					</div>
 					<div class="timeline">
@@ -204,7 +200,7 @@
 					</div>
 					<div>
 						<label for="deviceID">Mã ID của thiết bị:</label>
-						<input type="text" id="device_id" readonly>
+						<input type="text" id="device_id">
 					</div>
 				</div><br>
 
@@ -274,6 +270,7 @@
 			</div>
 			<div class="modal-body">
 				<form asp-action="Suachua_UpdateStatus" method="post">
+					@* sửa form *@
 					<div class="form-group">
 						<div>
 							<input type="hidden" name="schID" id="modal_repair_id" />
@@ -293,12 +290,28 @@
 							<input type="datetime-local" id="modal_date" name="schdate" required>
 						</div>
 					</div> <br>
+					<div class="form-group">
+						<div style="display: flex; flex-direction: column; gap: 0.25rem;">
+							<div style="display: flex; gap: 0.5rem;">
+								<label for="description">Trạng thái tổng:</label>
+								<select id="modal_total_status" name="totalStatus">
+									<option value="11">Đã xếp lịch sửa chữa</option>
+									<option value="12">Đang sửa chữa</option>
+									<option value="13">Đã sửa chữa xong</option>
+								</select>
+							</div>
+							<div style="color: red; font-size: 0.8rem;">
+								*Lưu ý: Chỉ thay đổi khi thiết bị 'Đang sửa chữa' hoặc 'Đã sửa xong'
+							</div>
+						</div>
+					</div><br>
 					<button type="submit" class="submit-button">Cập nhật trạng thái</button>
 				</form>
 			</div>
 
 		</div>
 	</div>
+
 
 
 	<script>
@@ -405,12 +418,17 @@
 			});
 		});
 
-		function openRepairDetail(id) {
+		function openRepairDetail(id) { //sửa lại function này, copypaste lại đoạn này
 			fetch(`/Management/Suachua_GetById?id=${id}`)
-				.then(response => response.json())
+				.then(response => {
+					if (!response.ok) throw new Error('Network error');
+					return response.json();
+				})
 				.then(data => {
-					console.log("DATA:", data);
-					document.getElementById('device_id').value = data.device_id || '';
+					console.log("Full response data:", data);
+
+					// Set values với fallback
+					document.getElementById('device_id').value = data.device_id || data.FK_device_id || '';
 					document.getElementById('device_name').value = data.device_name || '';
 					document.getElementById('repair_priority').value = data.repair_priority || '';
 					document.getElementById('contact_finance').value = data.contact_finance || '';
@@ -421,44 +439,75 @@
 
 					document.getElementById('broken').value = data.repair_broken?.split('T')[0] || '';
 					document.getElementById('date').value = data.repair_date?.split('T')[0] || '';
-					document.getElementById('repair_update_date').value = data.repair_update_date?.split('T')[0] || '';
+
+					// Sửa xử lý repair_update_date
+					if (data.repair_update_date) {
+						const updateDate = new Date(data.repair_update_date);
+						const formattedDate = updateDate.toISOString().slice(0, 16);
+						document.getElementById('repair_update_date').value = formattedDate;
+					} else {
+						document.getElementById('repair_update_date').value = '';
+					}
 
 					repairDetailModal.style.display = 'flex';
 				})
 		}
-
-
 	</script>
 	<script>
+		//sửa scripts
 		function openRepairModal(repair_id) {
-			// Gọi API lấy chi tiết phiếu sửa chữa
-			fetch(`/Management/Suachua_GetById?id=${repair_id}`)
-				.then(response => response.json())
+			fetch(`/Management/Suachua_GetById?id=${repair_id}&purpose=status_update`)
+				.then(response => {
+					if (!response.ok) throw new Error('Network response was not ok');
+					return response.json();
+				})
 				.then(data => {
-					// Điền thông tin lên các trường trong modal
-					document.getElementById('modal_repair_id').value = data.repair_id || "";
+					if (!data) {
+						alert('Không tìm thấy thông tin sửa chữa');
+						return;
+					}
+
+					document.getElementById('modal_repair_id').value = data.repair_id;
 					document.getElementById('modal_status').value = data.repair_update_status || "";
 					document.getElementById('modal_note').value = data.repair_update_note || "";
-					// Đảm bảo đúng định dạng yyyy-MM-ddTHH:mm cho input datetime-local
-					if (data.repair_update_date) {
-						let dt = new Date(data.repair_update_date);
-						// Convert to 'yyyy-MM-ddTHH:mm' (ISO 8601)
-						let pad = n => n < 10 ? '0' + n : n;
-						let local = dt.getFullYear() + "-" +
-							pad(dt.getMonth() + 1) + "-" +
-							pad(dt.getDate()) + "T" +
-							pad(dt.getHours()) + ":" +
-							pad(dt.getMinutes());
-						document.getElementById('modal_date').value = local;
+
+					// Đặt giá trị cho dropdown trạng thái tổng
+					const statusDropdown = document.getElementById('modal_total_status');
+					if (data.fk_status_id) {
+						statusDropdown.value = data.fk_status_id;
 					} else {
-						document.getElementById('modal_date').value = "";
+						// Giá trị mặc định nếu không có status_id
+						statusDropdown.value = "11"; //Đã xếp lịch sửa chữa
 					}
+
+					// Xử lý ngày tháng
+					const dateValue = data.repair_update_date
+						? new Date(data.repair_update_date).toISOString().slice(0, 16)
+						: new Date().toISOString().slice(0, 16);
+					document.getElementById('modal_date').value = dateValue;
+
 					document.getElementById('repairStatusModal').style.display = 'flex';
 				})
 				.catch(err => {
-					alert('Không lấy được dữ liệu phiếu sửa chữa!');
+					console.error('Error:', err);
+					alert('Lỗi khi tải dữ liệu sửa chữa');
 				});
 		}
+	</script>
+	<script>
+		function updateDeviceOptions() {
+			var nameSelect = document.getElementById("schDevicename");
+			var idSelect = document.getElementById("schDevice");
 
+			var selectedOption = nameSelect.options[nameSelect.selectedIndex];
+			var deviceId = selectedOption.getAttribute("data-id");
+
+			// Cập nhật dropdown ID tương ứng
+			idSelect.innerHTML = `<option value="${deviceId}">${deviceId}</option>`;
+		}
+
+		window.onload = function () {
+			updateDeviceOptions(); // cập nhật khi trang tải nếu muốn
+		};
 	</script>
 </body>
