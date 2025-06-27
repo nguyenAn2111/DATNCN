@@ -649,20 +649,20 @@ namespace Hospital_Test.Controllers
         public JsonResult Suachua_GetById(string id, string purpose = null)
         {
             string query = $@"
-        SELECT
-            re.*,
-            d.device_id,
-            d.device_name,
-            r.room_name,
-            s.status_name,
-            f.contact_finance,
-            f.contact_address
-        FROM dbo.tbl_repair re
-        LEFT JOIN dbo.tbl_device d ON re.FK_device_id = d.device_id
-        LEFT JOIN dbo.tbl_room r ON d.FK_room_id = r.room_id
-        LEFT JOIN dbo.tbl_status s ON d.FK_status_id = s.status_id
-        LEFT JOIN dbo.tbl_contact f ON re.FK_contact_id = f.contact_id
-        WHERE re.repair_id = '{id}'";
+            SELECT
+                re.*,
+                d.device_id,
+                d.device_name,
+                r.room_name,
+                s.status_name,
+                f.contact_finance,
+                f.contact_address
+            FROM dbo.tbl_repair re
+            LEFT JOIN dbo.tbl_device d ON re.FK_device_id = d.device_id
+            LEFT JOIN dbo.tbl_room r ON d.FK_room_id = r.room_id
+            LEFT JOIN dbo.tbl_status s ON d.FK_status_id = s.status_id
+            LEFT JOIN dbo.tbl_contact f ON re.FK_contact_id = f.contact_id
+            WHERE re.repair_id = '{id}'";
 
             var repair = DataProvider<Repair>.Instance.GetListItemQuery(query).FirstOrDefault();
 

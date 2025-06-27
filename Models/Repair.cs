@@ -24,9 +24,11 @@ namespace Hospital_Test.Models
         public string status_name { get; set; }
         public string contact_finance { get; set; } // sửa int thành string
         public string contact_address { get; set; }
+        public string device_id { get; set; } //thêm dòng này
 
         public Repair(DataRow row)
         {
+            this.device_id = row.Table.Columns.Contains("device_id") && row["device_id"] != DBNull.Value ? row["device_id"].ToString() : ""; //thêm dòng 
             this.FK_room_id = row.Table.Columns.Contains("FK_room_id") && row["FK_room_id"] != DBNull.Value ? row["FK_room_id"].ToString() : "";
             this.repair_id = row.Table.Columns.Contains("repair_id") && row["repair_id"] != DBNull.Value ? row["repair_id"].ToString() : "";
 

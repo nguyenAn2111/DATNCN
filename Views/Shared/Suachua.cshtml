@@ -422,12 +422,17 @@
             });
         });
 
-        function openRepairDetail(id) {
+        function openRepairDetail(id) { //sửa lại function này, copypaste lại đoạn này 
             fetch(`/Management/Suachua_GetById?id=${id}`)
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) throw new Error('Network error');
+                    return response.json();
+                })
                 .then(data => {
-                    console.log("DATA:", data);
-                    document.getElementById('device_id').value = data.device_id || '';
+                    console.log("Full response data:", data);
+
+                    // Set values với fallback
+                    document.getElementById('device_id').value = data.device_id || data.FK_device_id || '';
                     document.getElementById('device_name').value = data.device_name || '';
                     document.getElementById('repair_priority').value = data.repair_priority || '';
                     document.getElementById('contact_finance').value = data.contact_finance || '';
@@ -438,7 +443,15 @@
 
                     document.getElementById('broken').value = data.repair_broken?.split('T')[0] || '';
                     document.getElementById('date').value = data.repair_date?.split('T')[0] || '';
-                    document.getElementById('repair_update_date').value = data.repair_update_date?.split('T')[0] || '';
+
+                    // Sửa xử lý repair_update_date
+                    if (data.repair_update_date) {
+                        const updateDate = new Date(data.repair_update_date);
+                        const formattedDate = updateDate.toISOString().slice(0, 16);
+                        document.getElementById('repair_update_date').value = formattedDate;
+                    } else {
+                        document.getElementById('repair_update_date').value = '';
+                    }
 
                     repairDetailModal.style.display = 'flex';
                 })
