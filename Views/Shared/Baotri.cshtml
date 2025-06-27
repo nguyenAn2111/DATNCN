@@ -1,5 +1,9 @@
 ﻿@model MaintainPageViewModel
 
+@if (TempData["msg"] != null)
+{
+    <div class="alert alert-info">@TempData["msg"]</div>
+}
 <!DOCTYPE html>
 <html>
 <!--phần đầu-->
@@ -102,11 +106,6 @@
                                 
                             </tbody>
 
-                        <div id="floatingDropdown" class="floating-dropdown" style="display: none;">
-                            <a href="#">Chi tiết thông tin thiết bị</a>
-                            <a href="#">Chỉnh sửa lịch bảo trì</a>
-                        </div>
-
                     </table>
                     </form>
 @* ------------------------------modal hiển thị chi tiết---------------------------------- *@
@@ -120,18 +119,18 @@
                                     <div>
                                         <label for="deviceName">Tên thiết bị:</label>
                                         <input type="text" id="device_name" readonly>
-                </div>
+                                    </div>
                                     <div>
                                         <label for="deviceID">Mã ID của thiết bị:</label>
                                         <input type="text" id="device_id" readonly>
-            </div>
+                                     </div>
                                 </div><br>
                                 <div class="form-group-title">Trạng thái bảo trì</div>
                                 <div class="form-group">
                                     <div>
                                         <label for="manufacturer">Ngày bảo trì (dự kiến):</label>
                                         <input type="date" id="maintain_date" >
-        </div>
+                                    </div>
                                     <div>
                                         <label for="status-id">Cập nhật trạng thái:</label>
                                         <input type="type" id="status_name" readonly>
@@ -251,7 +250,7 @@
                                 </div>
                                 
                                 <div style="padding-top: 0.5rem;">
-                                    <button type="button" id="popup-button" class="reschedule-btn" onclick="openRescheduleModal('@item.device_name')">📅 Lập lại lịch</button>
+                                    <button type="button" id="popup-button" class="reschedule-btn" onclick="openRescheduleModal('@item.device_id', '@item.device_name')">📅 Cập nhật trạng thái</button>
                                     <button type="button" id="popup-button" onclick="sendReminder('@item.device_name', '@item.maintain_maintenance', '@item.maintain_maintenance_phone')">📩 Gửi nhắc</button>
                                 </div>
                             </div>
@@ -260,7 +259,7 @@
                     else
                     {
                         <div class="device-item">
-                            <p>Không có thiết bị quá hạn bảo trì.</p>
+                            Không có thiết bị quá hạn bảo trì.
                         </div>
                     }
                  </div>
@@ -280,8 +279,8 @@
                                     Vị trí: @item.room_name
                                     </div>
                                     <div style="padding-top: 0.5rem;">
-                                        <button type="button" id="popup-button" class="reschedule-btn" onclick="openRescheduleModal('@item.device_name')">📅 Lập lại lịch</button>
-                                    <button type="button" id="popup-button" onclick="sendReminder('@item.device_name', '@item.maintain_maintenance', '@item.maintain_maintenance_phone')">📩 Gửi nhắc</button>
+                                    <button type="button" id="popup-button" class="reschedule-btn" onclick="openRescheduleModal('@item.device_id', '@item.device_name')">📅 Cập nhật trạng thái</button>
+                                        <button type="button" id="popup-button" onclick="sendReminder('@item.device_name', '@item.maintain_maintenance', '@item.maintain_maintenance_phone')">📩 Gửi nhắc</button>
                                     </div>
                                 </div>
                             }
@@ -289,13 +288,13 @@
                         else
                         {
                             <div class="device-item">
-                                <p>Không có thiết bị sắp đến hạn.</p>
+                                Không có thiết bị sắp đến hạn.
                             </div>
                         }
                     </div>
                 <!-- Đã hoàn thành hoặc lên lịch -->
                 <div class="status-column completed">
-                        <h3>✅ Đã bảo trì / Lên lịch</h3>
+                        <h3>✅ Đã Lên lịch</h3>
                         @if (Model.CompletedList != null && Model.CompletedList.Any())
                         {
                             foreach (var item in Model.CompletedList)
@@ -309,7 +308,7 @@
                                     Người phụ trách: @item.maintain_maintenance
                                     </div>
                                     <div style="padding-top: 0.5rem;">
-                                        <button type="button" id="popup-button" class="reschedule-btn" onclick="openRescheduleModal('@item.device_name')">📅 Lập lại lịch</button>
+                                    <button type="button" id="popup-button" class="reschedule-btn" onclick="openRescheduleModal('@item.device_id', '@item.device_name')">📅 Cập nhật trạng thái</button>
                                         <button type="button" id="popup-button" onclick="sendReminder('@item.device_name', '@item.maintain_maintenance', '@item.maintain_maintenance_phone')">📩 Gửi nhắc</button>
                                     </div>
                                 </div>
@@ -318,53 +317,53 @@
                         else
                         {
                             <div class="device-item">
-                                <p>Không có thiết bị đã bảo trì hoặc lên lịch.</p>
+                                Không có thiết bị đã bảo trì hoặc lên lịch.
                             </div>
                         }
                     </div>
-                <!--Lập lại lịch bảo trì -->
-                <div id="rescheduleModal" class="modal">
-                    <div class="modal-content">
-                        <div style="text-align: center; font-family: Lato; color: #001F54; font-size: 1.5rem; font-weight: 800; text-transform: uppercase;">
-                            Lập lại lịch bảo trì
-                        </div><br>
-                        <form id="rescheduleForm">
-                            <label>Tên thiết bị:</label>
-                            <input type="text" id="deviceName" style="margin-right:1rem;" readonly />
-
-                            <label>Ngày bảo trì mới:</label>
-                            <input type="date" id="newDate" required /><br /><br />
-
-                            <button id="popup-button-reschedule" type="submit">Cập nhật</button>
-                            <button id="popup-button-reschedule" type="button" onclick="closeRescheduleModal()">Huỷ</button>
-                        </form>
-                    </div>
-                </div>
             </div>
             </form>
+            <!--Lập lại lịch bảo trì -->
+            <div id="rescheduleModal" class="modal">
+                <div class="modal-content">
+                    <div style="text-align: center; font-family: Lato; color: #001F54; font-size: 1.5rem; font-weight: 800; text-transform: uppercase;">
+                        Cập nhật trạng thái
+                    </div>
+                    <br>
+                <form method="post" asp-action="Baotri_Update_Status">
+                    <div class="form_group" style="display: flex; column-gap: 3rem;">
+                        <input type="hidden" id="deviceId" name="device_id" />
+                        <div>
+                            <label>Tên thiết bị:</label>
+                        <input type="text" id="deviceName" name="device_name" style="width: 16rem;" disabled />
+                        </div><br />
+                        <div>
+                            <label>Chọn trạng thái:</label>
+                            <select id="statusId" name="fkStatus">
+                                <option value="02">Đang bảo trì</option>
+                                <option value="03">Đã bảo trì xong</option>
+                            </select>
+                        </div>
+                    </div> <br/>
+                    <button class="submit-button" type="submit">Cập nhật</button>
+                    <button class="cancel-button" type="button" onclick="closeRescheduleModal()">Huỷ</button>
+                </form>
+                </div>
+            </div>
         </div>
 
         @*---------vùng scripts------------------------------------------------------------------------- *@
 
         <script>
-            /* modal lập lại lịch */
-            function openRescheduleModal(deviceName) {
+            /* modal Cập nhật trạng thái */
+            function openRescheduleModal(deviceId, deviceName) {
                 document.getElementById("rescheduleModal").style.display = "flex";
+                document.getElementById("deviceId").value = deviceId;
                 document.getElementById("deviceName").value = deviceName;
             }
-
             function closeRescheduleModal() {
                 document.getElementById("rescheduleModal").style.display = "none";
             }
-
-            document.getElementById("rescheduleForm").addEventListener("submit", function (e) {
-                e.preventDefault();
-                const newDate = document.getElementById("newDate").value;
-                const device = document.getElementById("deviceName").value;
-
-                alert(`Đã cập nhật bảo trì cho thiết bị "${device}" vào ngày ${newDate}`);
-                closeRescheduleModal();
-            });
         </script>
 
         <script>
@@ -490,9 +489,7 @@
                     alert("Không thể tải dữ liệu thiết bị.");
                 });
         }
-
-
-        </script>
+    </script>
      
 
 </body>

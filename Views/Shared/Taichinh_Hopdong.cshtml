@@ -85,7 +85,7 @@
 								}
 							}
 						}
-						
+
 						<p style="color: red; font-size:20px; font-weight:bold ; margin-bottom: 1rem;">
 							Tổng chi phí mua sắm: @totalCost1.ToString("#,##0")đ
 						</p>
@@ -113,7 +113,8 @@
 											<td class="facility">@item?.device_name</td>
 											<td class="facility">@item?.device_condition</td>
 											<td class="facility">@item?.device_received_date?.ToString("dd/MM/yyyy")</td>
-											<td class="facility">@item?.contact_finance</td>
+											<td>@(Int32.Parse(item.contact_finance).ToString("N0"))</td>
+											@* <td class="facility">@item?.contact_finance</td> *@
 											<td class="facility">@item?.room_name</td>
 										</tr>
 										stt1++;
@@ -139,7 +140,7 @@
 						<div>
 							<h2>
 								<i class="fa-solid fa-screwdriver-wrench" style="margin-right: 0.2rem;"></i>
-								Chi phí bảo trì 
+								Chi phí bảo trì
 							</h2>
 						</div>
 						@{
@@ -169,10 +170,10 @@
 									<th>STT</th>
 									<th>Mã ID</th>
 									<th>Tên thiết bị<br></th>
-									<th>Tình trạng hiện tại</th>
+									<th>Tình trạng bảo trì</th>
 									<th>Ngày giao dịch</th>
 									<th>Chi phí giao dịch</th>
-									<th>Vị trí hiện tại</th>
+									@* <th>Vị trí hiện tại</th> *@
 								</tr>
 							</thead>
 							<tbody>
@@ -186,8 +187,10 @@
 											<td class="facility">@item.device_name</td>
 											<td class="facility">@item.status_name</td>
 											<td class="facility">@item.maintain_date?.ToString("dd/MM/yyyy")</td>
-											<td class="facility">@item.contact_finance</td>
-											<td class="facility">@item.room_name</td>
+											<td>@(Int32.Parse(item.contact_finance).ToString("N0"))</td>
+											@* 	<td class="facility">@item.contact_finance</td> *@
+
+											@* <td class="facility">@item.FK_room_id</td> *@
 										</tr>
 										stt2++;
 									}
@@ -208,7 +211,7 @@
 							</tbody>
 						</table>
 					</div>
-					 <!-- Phí sua chua-->
+					<!-- Phí sua chua-->
 					<div class="card-group" id="suachua">
 						<div>
 							<h2>
@@ -243,10 +246,10 @@
 									<th>STT</th>
 									<th>Mã ID</th>
 									<th>Tên thiết bị<br></th>
-									<th>Tình trạng hiện tại</th>
+									<th>Tình trạng sửa chữa</th>
 									<th>Ngày giao dịch</th>
 									<th>Chi phí giao dịch</th>
-									<th>Vị trí hiện tại</th>
+									@* <th>Vị trí hiện tại</th> *@
 								</tr>
 							</thead>
 							<tbody>
@@ -259,9 +262,10 @@
 											<td class="facility">@item.FK_device_id</td>
 											<td class="facility">@item.device_name</td>
 											<td class="facility">@item.status_name</td>
-											<td class="facility">@item.repair_date.ToString("dd/MM/yyyy")</td>
-											<td class="facility">@item.contact_finance</td>
-											<td class="facility">@item.room_name</td>
+											<td class="facility">@item.repair_update_date.ToString("dd/MM/yyyy")</td>
+											@* <td class="facility">@item.contact_finance</td> *@
+											<td>@(Int32.Parse(item.contact_finance).ToString("N0"))</td>
+											@* 	<td class="facility">@item.room_name</td> *@
 										</tr>
 										stt3++;
 									}
@@ -292,7 +296,8 @@
 			🗃️ Hợp đồng - Giấy tờ
 		</section>
 		<div>
-			<input type="text" id="searchInputhopdong" placeholder="🔍Tìm kiếm hợp đồng">
+			@* <input type="text" id="searchInputhopdong" placeholder="🔍Tìm kiếm hợp đồng"> *@
+			<input type="text" id="searchInputhopdong" placeholder="🔍Tìm kiếm hợp đồng" style=" width: 30%; margin: 0.5rem 1.5rem;">
 		</div>
 		<div id="hopdongTable">
 
@@ -303,7 +308,7 @@
 					DANH SÁCH HỢP ĐỔNG MUA SẮM
 				</h2>
 			</div>
-			
+
 			<table id="purchaseTable" style="width:100%; margin-bottom: 70px;">
 				<thead>
 					<tr>
@@ -317,8 +322,8 @@
 				</thead>
 				<tbody>
 					@if (Model.DeviceList.PageCount > 0)
-						{
-							int stt4 = 1;
+					{
+						int stt4 = 1;
 						foreach (var item in Model.DeviceList.Items)
 						{
 							<tr>
@@ -488,9 +493,9 @@
 		});
 	</script>
 
-	
+
 	<script>
-		
+
 		// Biểu đồ tròn - Tỉ lệ chi phí
 		const pieCtx = document.getElementById('pieChart').getContext('2d');
 		const pieChart = new Chart(pieCtx, {
