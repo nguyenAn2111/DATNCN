@@ -239,35 +239,6 @@
 							</div>
 						</div>
 
-
-						@* <div class="form-group-title">
-						Lịch sử sử dụng
-						</div>
-						<div class="form-group">
-						<table id="dataTable" style="width:100%;">
-						<thead>
-						<tr>
-						<th>STT</th>
-                                    <th>Ngày nhập kho</th>
-						<th>Ngày xuất kho</th>
-						<th>Vị trí sau khi xuất kho</th>
-						<th>Tình trạng</th>
-						</tr>
-						</thead>
-
-						<tbody>
-						<tr>
-						<td id="facility">1</td>
-                                    <td id="facility"> 12/3/2024 </td>
-						<td id="facility"> 2/3/2025 </td>
-						<td id="facility"> ICU</td>
-						<td id="facility"> hoạt động </td>
-						</tr>
-						</tbody>
-						</table>
-						</div> *@
-
-
 						<div>
 							<label>Mô tả:</label>
 							<input type="text" name="tbiNote" id="devicenote" style="width: 50rem; margin-right: 1rem;" />
@@ -293,8 +264,7 @@
 			<div class="modal-body">
 				<form method="post" asp-action="Thietbi_Add">
 					<div class="deviceAdd-form">
-						<div>
-							<i class="fa-solid fa-info-circle" style="margin-right: 0.5rem;"></i>
+						<div class="form-group-title">
 							Thông tin chung
 						</div>
 					</div>
@@ -314,8 +284,6 @@
 							<input name="tbiType" type="text" style="width: 18rem; margin-right: 1rem;" placeholder="-Nhập mã loại theo phụ lục-">
 						</div>
 
-
-
 						<div>
 							<label>Thuộc nhóm:</label>
 							<select name="tbiGroup">
@@ -332,13 +300,12 @@
 					</div><br>
 
 					<div class="deviceAdd-form">
-						<div>
-							<i class="fa-solid fa-list-ul" style="margin-right: 0.5rem;"></i>
+						<div class="form-group-title">
 							Các mã series
 						</div>
 					</div>
 
-					<div class="form-group d-flex align-items-center gap-2" style="gap: 1rem;">
+					<div class="form-group" style="gap: 1rem;">
 						<label for="seriCount" class="mb-0">Số lượng mã series cần thêm:</label>
 						<input type="number" id="seriCount" min="1" value="1" class="form-control" style="width: 120px;" >
 

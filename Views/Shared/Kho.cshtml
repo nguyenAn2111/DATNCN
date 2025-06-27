@@ -195,29 +195,25 @@
 					<form asp-action="Kho_Import" method="post">
 						<div class="form-group-title">Thông tin thiết bị</div>
 						<div class="form-group">
-							<label for="import-device">Thiết bị:</label>
-							<select id="import-device" name="strDevice" required>
-								<option value="">-- Chọn thiết bị --</option>
-								@foreach (var item in Model.StorageForm.devices_import)
-								{
-									<option value="@item.device_id">
-										@item.device_name (@item.device_id)
-									</option>
-								}
-							</select>
+							<div>
+								<label for="import-device">Thiết bị:</label>
+								<select id="import-device" name="strDevice" required>
+									<option value="">-- Chọn thiết bị --</option>
+									@foreach (var item in Model.StorageForm.devices_import)
+									{
+										<option value="@item.device_id" data-room="@item.FK_room_id">
+											@item.device_id - @item.device_name
+										</option>
+									}
+								</select>
+							</div>
 						</div>
 						<br />
 						<div class="form-group-title">Thông tin nhập kho</div>
 						<div class="form-group">
 							<div>
-								<label for="import-warehouse">Vị trí trước khi nhập về KHO:</label>
-								<select id="import-warehouse" name="strRoom_from">
-									<option value="">-- Chọn phòng --</option>
-									@foreach (var item in Model.StorageForm.rooms_str)
-									{
-										<option value="@item.room_id">@item.room_id </option>
-									}
-								</select>
+								<label for="room-from">Vị trí hiện tại:</label>
+								<input type="text" id="import-room-from" name="strRoom_from" readonly>
 							</div>
 							<div>
 								<label for="import-date">Ngày nhập kho:</label>
@@ -238,22 +234,24 @@
 					<form asp-action="Kho_Export">
 						<div class="form-group-title">Thông tin thiết bị</div>
 						<div class="form-group">
-							<label for="import-device">Thiết bị:</label>
-							<select id="import-device" name="estrDevice" required>
-								<option value="">-- Chọn thiết bị --</option>
-								@foreach (var item in Model.StorageForm.devices_export)
-								{
-									<option value="@item.device_id">
-										@item.device_name (@item.device_id)
-									</option>
-								}
-							</select>
+							<div>
+								<label for="import-device">Thiết bị:</label>
+								<select id="import-device" name="estrDevice" required>
+									<option value="">-- Chọn thiết bị --</option>
+									@foreach (var item in Model.StorageForm.devices_export)
+									{
+										<option value="@item.device_id">
+											@item.device_id - @item.device_name
+										</option>
+									}
+								</select>
+							</div>
 						</div>
 						<br />
-						<div class="form-group-title">Thông tin nhập kho</div>
+						<div class="form-group-title">Thông tin xuất kho</div>
 						<div class="form-group">
 							<div>
-								<label for="import-warehouse">Vị trí trước khi nhập về KHO:</label>
+								<label for="import-warehouse">Vị trí sau khi xuất KHO:</label>
 								<select id="import-warehouse" name="estrRoom_to">
 									<option value="">-- Chọn phòng --</option>
 									@foreach (var item in Model.StorageForm.rooms_str)
@@ -280,20 +278,22 @@
 					<h3>Tạo yêu cầu chuyển thiết bị</h3>
 					<form asp-action="Kho_Transfer" method="post">
 						<div class="form-group">
-							<label for="transfer-device">Thiết bị:</label>
-							<select id="transfer-device" name="strDevice" required>
-								<option value="">-- Chọn thiết bị --</option>
-								@foreach (var item in Model.StorageForm.devices_all)
-								{
-									<option value="@item.device_id" data-room="@item.FK_room_id">
-										@item.device_id - @item.device_name
-									</option>
-								}
-							</select>
+							<div>
+								<label for="transfer-device">Thiết bị:</label>
+								<select id="transfer-device" name="strDevice" required>
+									<option value="">-- Chọn thiết bị --</option>
+									@foreach (var item in Model.StorageForm.devices_all)
+									{
+										<option value="@item.device_id" data-room="@item.FK_room_id">
+											@item.device_id - @item.device_name
+										</option>
+									}
+								</select>
+							</div>
 						</div><br>
 						<div class="form-group">
 							<label for="room-from">Vị trí hiện tại:</label>
-							<input type="text" id="room-from" name="strRoom_from" readonly>
+							<input type="text" id="transfer-room-from" name="strRoom_from" readonly>
 						</div>
 						<div class="form-group">
 							<label for="room-to">Chuyển đến:</label>
@@ -308,8 +308,8 @@
 						<div class="form-group">
 							<label for="transfer-date">Ngày chuyển:</label>
 							<input type="date" id="transfer-date" name="strDate" required />
-						</div>
-						<button type="submit">Ghi nhận chuyển thiết bị</button>
+						</div><br />
+						<button id="popup-button-reschedule" type="submit">Ghi nhận chuyển thiết bị</button>
 					</form>
 				</div>
 			</div>
@@ -327,12 +327,15 @@
 		<div class="function-card">
 			<h3>
 				<i class="fa-solid fa-clock" style="margin-right: 0.3rem;"></i>
-				Lịch sử xuất nhập kho
+				Lịch sử xuất nhập kho và điều chuyển
 			</h3>
-			<table>
+			<div>
+				<input name="searchString" id="searchingHistory" style="width: 24rem;" type="text" placeholder="🔍Tìm kiếm tên thiết bị hoặc mã ID">
+			</div>
+			<table id="historyTable">
 				<thead>
 					<tr>
-						<th>Số thứ tự</th>
+
 						<th>Tên thiết bị</th>
 						<th>Mã ID</th>
 						<th>Ngày xuất/nhập kho</th>
@@ -342,13 +345,14 @@
 					</tr>
 				</thead>
 				<tbody>
-					@foreach (var item in Model.StorageList.Items)
+					@foreach (var item in Model.StorageList.Items.OrderBy(x => x.storage_date))
 					{
+
 						<tr>
-							<td>@item.storage_id</td>
+
 							<td>@item.device_name</td>
 							<td>@item.FK_device_id</td>
-							<td>@item.storage_date.ToString("dd/MM/yyyy")</td>
+							<td data-order="@item.storage_date.ToString("yyyyMMdd")">@item.storage_date.ToString("dd/MM/yyyy")</td>
 							<td>@item.FK_room_id_from</td>
 							<td>@item.FK_room_id_to</td>
 							<td>
@@ -420,22 +424,36 @@
 	</script>
 	<script>
 		document.addEventListener('DOMContentLoaded', function () {
-			const deviceSelect = document.getElementById('transfer-device');
-			const roomFromInput = document.getElementById('room-from');
+			// Script cho modal Import
+			const importDeviceSelect = document.getElementById('import-device');
+			const importRoomFromInput = document.getElementById('import-room-from');
 
-			deviceSelect.addEventListener('change', function () {
-				// Lấy option đang chọn
-				const selectedOption = deviceSelect.options[deviceSelect.selectedIndex];
-				// Lấy data-room của option
-				const currentRoom = selectedOption.getAttribute('data-room') || '';
-				// Hiển thị vào input
-				roomFromInput.value = currentRoom;
-			});
+			if (importDeviceSelect && importRoomFromInput) {
+				importDeviceSelect.addEventListener('change', function () {
+					const selectedOption = importDeviceSelect.options[importDeviceSelect.selectedIndex];
+					importRoomFromInput.value = selectedOption.getAttribute('data-room') || '';
+				});
 
-			// Nếu muốn hiện mặc định ngay khi trang vừa load (trường hợp đã chọn thiết bị từ trước)
-			if (deviceSelect.value) {
-				const selectedOption = deviceSelect.options[deviceSelect.selectedIndex];
-				roomFromInput.value = selectedOption.getAttribute('data-room') || '';
+				if (importDeviceSelect.value) {
+					const selectedOption = importDeviceSelect.options[importDeviceSelect.selectedIndex];
+					importRoomFromInput.value = selectedOption.getAttribute('data-room') || '';
+				}
+			}
+
+			// Script cho modal Transfer
+			const transferDeviceSelect = document.getElementById('transfer-device');
+			const transferRoomFromInput = document.getElementById('transfer-room-from');
+
+			if (transferDeviceSelect && transferRoomFromInput) {
+				transferDeviceSelect.addEventListener('change', function () {
+					const selectedOption = transferDeviceSelect.options[transferDeviceSelect.selectedIndex];
+					transferRoomFromInput.value = selectedOption.getAttribute('data-room') || '';
+				});
+
+				if (transferDeviceSelect.value) {
+					const selectedOption = transferDeviceSelect.options[transferDeviceSelect.selectedIndex];
+					transferRoomFromInput.value = selectedOption.getAttribute('data-room') || '';
+				}
 			}
 		});
 	</script>
@@ -533,4 +551,48 @@
 		});
 	</script>
 
+	<script>
+		document.addEventListener('DOMContentLoaded', function () {
+			const searchInput = document.getElementById('searchingHistory');
+			const table = document.getElementById('historyTable');
+			const rows = table.querySelectorAll('tbody tr');
+
+			// Hàm thực hiện tìm kiếm
+			function performSearch() {
+				const filter = searchInput.value.toUpperCase();
+
+				rows.forEach(row => {
+					const deviceName = row.cells[0].textContent.toUpperCase();
+					const deviceId = row.cells[1].textContent.toUpperCase();
+
+					// Kiểm tra cả tên thiết bị và mã ID
+					if (deviceName.includes(filter) || deviceId.includes(filter)) {
+						row.style.display = '';
+					} else {
+						row.style.display = 'none';
+					}
+				});
+			}
+
+			// Sự kiện khi nhập liệu
+			searchInput.addEventListener('input', performSearch);
+
+			// Sắp xếp theo ngày (mới nhất lên đầu)
+			const tbody = table.querySelector('tbody');
+			const sortedRows = Array.from(rows).sort((a, b) => {
+				const dateA = a.cells[2].getAttribute('data-order');
+				const dateB = b.cells[2].getAttribute('data-order');
+				return dateB.localeCompare(dateA);
+			});
+
+			// Cập nhật lại bảng đã sắp xếp
+			tbody.innerHTML = '';
+			sortedRows.forEach(row => tbody.appendChild(row));
+
+			// Thực hiện tìm kiếm ngay khi trang load nếu có giá trị trong ô tìm kiếm
+			if (searchInput.value) {
+				performSearch();
+			}
+		});
+	</script>
 </body>

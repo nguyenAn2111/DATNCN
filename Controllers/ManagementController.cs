@@ -31,37 +31,37 @@ using DocumentFormat.OpenXml.InkML;
 using DocumentFormat.OpenXml.Bibliography;
 namespace Hospital_Test.Controllers
 {
-    public class ManagementController : Controller
-    {
+	public class ManagementController : Controller
+	{
 		public IActionResult Index()
 		{
 			return RedirectToAction("Trangchu");
 		}
 
 		public IActionResult Trangchu()
-        {
-            try
-            {
-                // Lấy tổng số thiết bị đang quản lý
-                string totalDevicesQuery = "SELECT COUNT(*) AS Count FROM dbo.tbl_device";
-                var totalDevicesResult = DataProvider<Device>.Instance.ExcuteQuery(totalDevicesQuery);
-                int totalDevices = totalDevicesResult.Rows.Count > 0 ? Convert.ToInt32(totalDevicesResult.Rows[0]["Count"]) : 0;
-                ViewBag.TotalDevices = totalDevices;
+		{
+			try
+			{
+				// Lấy tổng số thiết bị đang quản lý
+				string totalDevicesQuery = "SELECT COUNT(*) AS Count FROM dbo.tbl_device";
+				var totalDevicesResult = DataProvider<Device>.Instance.ExcuteQuery(totalDevicesQuery);
+				int totalDevices = totalDevicesResult.Rows.Count > 0 ? Convert.ToInt32(totalDevicesResult.Rows[0]["Count"]) : 0;
+				ViewBag.TotalDevices = totalDevices;
 
-                // Lấy số thiết bị đang sử dụng (trạng thái là "đang sử dụng", giả định FK_status_id = '20')
-                string devicesInUseQuery = "SELECT COUNT(*) AS Count FROM dbo.tbl_device WHERE FK_status_id = '20'";
-                var devicesInUseResult = DataProvider<Device>.Instance.ExcuteQuery(devicesInUseQuery);
-                int devicesInUse = devicesInUseResult.Rows.Count > 0 ? Convert.ToInt32(devicesInUseResult.Rows[0]["Count"]) : 0;
-                ViewBag.DevicesInUse = devicesInUse;
+				// Lấy số thiết bị đang sử dụng (trạng thái là "đang sử dụng", giả định FK_status_id = '20')
+				string devicesInUseQuery = "SELECT COUNT(*) AS Count FROM dbo.tbl_device WHERE FK_status_id = '20'";
+				var devicesInUseResult = DataProvider<Device>.Instance.ExcuteQuery(devicesInUseQuery);
+				int devicesInUse = devicesInUseResult.Rows.Count > 0 ? Convert.ToInt32(devicesInUseResult.Rows[0]["Count"]) : 0;
+				ViewBag.DevicesInUse = devicesInUse;
 
-                // Lấy số thiết bị trong kho (vị trí là "KHO")
-                string devicesInStockQuery = "SELECT COUNT(*) AS Count FROM dbo.tbl_device WHERE FK_room_id = 'KHO'";
-                var devicesInStockResult = DataProvider<Device>.Instance.ExcuteQuery(devicesInStockQuery);
-                int devicesInStock = devicesInStockResult.Rows.Count > 0 ? Convert.ToInt32(devicesInStockResult.Rows[0]["Count"]) : 0;
-                ViewBag.DevicesInStock = devicesInStock;
+				// Lấy số thiết bị trong kho (vị trí là "KHO")
+				string devicesInStockQuery = "SELECT COUNT(*) AS Count FROM dbo.tbl_device WHERE FK_room_id = 'KHO'";
+				var devicesInStockResult = DataProvider<Device>.Instance.ExcuteQuery(devicesInStockQuery);
+				int devicesInStock = devicesInStockResult.Rows.Count > 0 ? Convert.ToInt32(devicesInStockResult.Rows[0]["Count"]) : 0;
+				ViewBag.DevicesInStock = devicesInStock;
 
-                // 2. Lịch sử xuất nhập kho
-                string query_str = @"
+				// 2. Lịch sử xuất nhập kho
+				string query_str = @"
             SELECT
                 st.*,
                 d.device_id,
@@ -73,8 +73,8 @@ namespace Hospital_Test.Controllers
             LEFT JOIN dbo.tbl_room r_from ON st.FK_room_id_from = r_from.room_id
             LEFT JOIN dbo.tbl_room r_to ON st.FK_room_id_to = r_to.room_id";
 
-                var storage = DataProvider<Storage>.Instance.GetListItemQuery(query_str);
-                ViewBag.StorageHistory = storage;
+				var storage = DataProvider<Storage>.Instance.GetListItemQuery(query_str);
+				ViewBag.StorageHistory = storage;
 
 
 
@@ -98,15 +98,18 @@ SELECT r.*, c.contact_finance
 FROM dbo.tbl_repair r
 LEFT JOIN dbo.tbl_contact c ON r.FK_contact_id = c.contact_id";
 				var repair = DataProvider<Repair>.Instance.GetListItemQuery(queryRepair);
-				int totalCost1 = devices.Sum(d => {
+				int totalCost1 = devices.Sum(d =>
+				{
 					int value;
 					return int.TryParse(d.contact_finance, out value) ? value : 0;
 				});
-				int totalCost2 = maintain.Sum(d => {
+				int totalCost2 = maintain.Sum(d =>
+				{
 					int value;
 					return int.TryParse(d.contact_finance, out value) ? value : 0;
 				});
-				int totalCost3 = repair.Sum(d => {
+				int totalCost3 = repair.Sum(d =>
+				{
 					int value;
 					return int.TryParse(d.contact_finance, out value) ? value : 0;
 				});
@@ -114,7 +117,7 @@ LEFT JOIN dbo.tbl_contact c ON r.FK_contact_id = c.contact_id";
 				ViewBag.TotalCost2 = totalCost2;
 				ViewBag.TotalCost3 = totalCost3;
 
-                //Biểu đồ cột theo tháng
+				//Biểu đồ cột theo tháng
 				string chartQuery = @"
         SELECT MonthYear, SUM(TotalFinance) AS TotalFinance
         FROM (
@@ -140,94 +143,94 @@ LEFT JOIN dbo.tbl_contact c ON r.FK_contact_id = c.contact_id";
         GROUP BY MonthYear
         ORDER BY MonthYear DESC";
 
-                var chartData = DataProvider<Contact>.Instance.GetListItemQueryRaw(chartQuery)
-                    .Take(5).OrderBy(d => d["MonthYear"]).ToList();
+				var chartData = DataProvider<Contact>.Instance.GetListItemQueryRaw(chartQuery)
+					.Take(5).OrderBy(d => d["MonthYear"]).ToList();
 
-                ViewBag.ChartLabels = chartData.Select(d => d["MonthYear"].ToString()).ToList();
-                ViewBag.ChartValues = chartData.Select(d => Convert.ToInt32(d["TotalFinance"])).ToList();
-            }
-            catch (Exception ex)
-            {
-                ViewBag.TotalDevices = ViewBag.DevicesInUse = ViewBag.DevicesInStock = 0;
-                ViewBag.StorageHistory = new List<Storage>();
-                ViewBag.ChartLabels = new List<string>();
-                ViewBag.ChartValues = new List<int>();
-            }
+				ViewBag.ChartLabels = chartData.Select(d => d["MonthYear"].ToString()).ToList();
+				ViewBag.ChartValues = chartData.Select(d => Convert.ToInt32(d["TotalFinance"])).ToList();
+			}
+			catch (Exception ex)
+			{
+				ViewBag.TotalDevices = ViewBag.DevicesInUse = ViewBag.DevicesInStock = 0;
+				ViewBag.StorageHistory = new List<Storage>();
+				ViewBag.ChartLabels = new List<string>();
+				ViewBag.ChartValues = new List<int>();
+			}
 
-            return View("~/Views/Shared/Trangchu.cshtml");
+			return View("~/Views/Shared/Trangchu.cshtml");
 
-        }
+		}
 
-        //Form them thiet bi
-        public IActionResult Thietbi_Add()
-        {
-            List<Device> devices;
-            devices = DataProvider<Device>.Instance.GetListItem("tbl_device");
+		//Form them thiet bi
+		public IActionResult Thietbi_Add()
+		{
+			List<Device> devices;
+			devices = DataProvider<Device>.Instance.GetListItem("tbl_device");
 
-            List<Status> statuses;
-            statuses = DataProvider<Status>.Instance.GetListItem("tbl_status");
+			List<Status> statuses;
+			statuses = DataProvider<Status>.Instance.GetListItem("tbl_status");
 
-            List<Room> rooms;
-            rooms = DataProvider<Room>.Instance.GetListItem("tbl_room");
+			List<Room> rooms;
+			rooms = DataProvider<Room>.Instance.GetListItem("tbl_room");
 
-            List<Contact> contacts;
-            contacts = DataProvider<Contact>.Instance.GetListItem("tbl_contact");
+			List<Contact> contacts;
+			contacts = DataProvider<Contact>.Instance.GetListItem("tbl_contact");
 
-            // PHẦN CODE CẬP NHẬT ĐỂ XỬ LÝ MAPPING
-            // 1. Tạo dữ liệu mapping cho JavaScript (key: room_type, value: danh sách room_id)
-            // Giả định class Room của bạn có thuộc tính 'room_type' và 'room_id'
-            var roomMappingData = rooms
-                .GroupBy(r => r.room_type)
-                .ToDictionary(
-                    group => group.Key,
-                    group => group.Select(r => r.room_id).ToList()
-                );
-            // Chuyển đổi mapping thành chuỗi JSON và gửi qua ViewBag
-            ViewBag.RoomMappingJson = JsonSerializer.Serialize(roomMappingData);
+			// PHẦN CODE CẬP NHẬT ĐỂ XỬ LÝ MAPPING
+			// 1. Tạo dữ liệu mapping cho JavaScript (key: room_type, value: danh sách room_id)
+			// Giả định class Room của bạn có thuộc tính 'room_type' và 'room_id'
+			var roomMappingData = rooms
+				.GroupBy(r => r.room_type)
+				.ToDictionary(
+					group => group.Key,
+					group => group.Select(r => r.room_id).ToList()
+				);
+			// Chuyển đổi mapping thành chuỗi JSON và gửi qua ViewBag
+			ViewBag.RoomMappingJson = JsonSerializer.Serialize(roomMappingData);
 
-            // 2. Tạo một danh sách các loại khoa (room_type) duy nhất để hiển thị
-            // Giả định class Room có 'room_type' (mã khoa) và 'room_name' (tên đầy đủ)
-            var distinctRoomTypes = rooms
-                .GroupBy(r => r.room_type) // Nhóm theo mã khoa để lấy duy nhất
-                .Select(g => g.First()) // Lấy phần tử đầu tiên của mỗi nhóm
-                .ToList();
+			// 2. Tạo một danh sách các loại khoa (room_type) duy nhất để hiển thị
+			// Giả định class Room có 'room_type' (mã khoa) và 'room_name' (tên đầy đủ)
+			var distinctRoomTypes = rooms
+				.GroupBy(r => r.room_type) // Nhóm theo mã khoa để lấy duy nhất
+				.Select(g => g.First()) // Lấy phần tử đầu tiên của mỗi nhóm
+				.ToList();
 
-            // Gửi danh sách khoa duy nhất này qua ViewBag
-            ViewBag.DistinctRoomTypes = distinctRoomTypes;
+			// Gửi danh sách khoa duy nhất này qua ViewBag
+			ViewBag.DistinctRoomTypes = distinctRoomTypes;
 
-            DeviceDetail devicedetails = new DeviceDetail();
-            devicedetails.devices_id = devices;
-            devicedetails.statuses_device = statuses;
-            devicedetails.rooms_device = rooms;
-            devicedetails.contacts_device = contacts;
+			DeviceDetail devicedetails = new DeviceDetail();
+			devicedetails.devices_id = devices;
+			devicedetails.statuses_device = statuses;
+			devicedetails.rooms_device = rooms;
+			devicedetails.contacts_device = contacts;
 
-            return View("Thietbi", devicedetails);
-        }
+			return View("Thietbi", devicedetails);
+		}
 
-        [HttpPost]
-        public IActionResult Thietbi_Add(string tbiName, string tbiManufacturer, string[] tbiSeri,
-        string tbiType, string tbiGroup, int tbiMaintenance_cycle, string tbiMaintenance_start, string tbiStockout_date,
-        string tbiCondition, string tbiReceived_date, string tbiNote, int tbiContact_finance, string tbiContact_address, string tbiContact_type, string tbiRoom, string tbiRoom_type, string tbiStatus)
-        {
+		[HttpPost]
+		public IActionResult Thietbi_Add(string tbiName, string tbiManufacturer, string[] tbiSeri,
+		string tbiType, string tbiGroup, int tbiMaintenance_cycle, string tbiMaintenance_start, string tbiStockout_date,
+		string tbiCondition, string tbiReceived_date, string tbiNote, int tbiContact_finance, string tbiContact_address, string tbiContact_type, string tbiRoom, string tbiRoom_type, string tbiStatus)
+		{
 
-            List<Contact> Contacts_device = DataProvider<Contact>.Instance.GetListItem("tbl_contact");
-            int max_contact = 0;
-            foreach (var item in Contacts_device)
-            {
-                int currentId;
-                if (int.TryParse(item.contact_id, out currentId))
-                {
-                    if (currentId > max_contact)
-                    {
-                        max_contact = currentId;
-                    }
-                }
-            }
-            string tbiContact_id = (max_contact + 1).ToString();
+			List<Contact> Contacts_device = DataProvider<Contact>.Instance.GetListItem("tbl_contact");
+			int max_contact = 0;
+			foreach (var item in Contacts_device)
+			{
+				int currentId;
+				if (int.TryParse(item.contact_id, out currentId))
+				{
+					if (currentId > max_contact)
+					{
+						max_contact = currentId;
+					}
+				}
+			}
+			string tbiContact_id = (max_contact + 1).ToString();
 
-            //4. Thêm vào bảng dbo.tbl_contact khi đã có contact_id và địa chỉ, lưu file với contact_type  là "Hợp đồng bảo trì" 
-            string query_contact_device = String.Format("Insert into dbo.tbl_contact (contact_id, contact_type, contact_address, contact_finance)" + "Values ({0} , {1} , N'{2}', {3})", tbiContact_id, tbiContact_type, tbiContact_address, tbiContact_finance);
-            DataProvider<Contact>.Instance.ExcuteQuery(query_contact_device);
+			//4. Thêm vào bảng dbo.tbl_contact khi đã có contact_id và địa chỉ, lưu file với contact_type  là "Hợp đồng bảo trì" 
+			string query_contact_device = String.Format("Insert into dbo.tbl_contact (contact_id, contact_type, contact_address, contact_finance)" + "Values ({0} , {1} , N'{2}', {3})", tbiContact_id, tbiContact_type, tbiContact_address, tbiContact_finance);
+			DataProvider<Contact>.Instance.ExcuteQuery(query_contact_device);
 
 			if (tbiRoom.Trim().ToLower().Contains("kho"))
 			{
@@ -239,80 +242,80 @@ LEFT JOIN dbo.tbl_contact c ON r.FK_contact_id = c.contact_id";
 			}
 
 			foreach (var seri in tbiSeri)
-            {
-                string seriStr = seri.Trim();
-                // Lấy 4 số cuối của mã series
-                string last4Digits = seriStr.Length >= 4 ? seriStr.Substring(seriStr.Length - 4) : seriStr.PadLeft(4, '0');
-                string manufacturerNoSpaces = tbiManufacturer.Replace(" ", "");
-                string first4Letters = manufacturerNoSpaces.Length >= 4 ? manufacturerNoSpaces.Substring(0, 4) : manufacturerNoSpaces;
-                string tbiID = $"{tbiType}-{first4Letters}-{last4Digits}";
+			{
+				string seriStr = seri.Trim();
+				// Lấy 4 số cuối của mã series
+				string last4Digits = seriStr.Length >= 4 ? seriStr.Substring(seriStr.Length - 4) : seriStr.PadLeft(4, '0');
+				string manufacturerNoSpaces = tbiManufacturer.Replace(" ", "");
+				string first4Letters = manufacturerNoSpaces.Length >= 4 ? manufacturerNoSpaces.Substring(0, 4) : manufacturerNoSpaces;
+				string tbiID = $"{tbiType}-{first4Letters}-{last4Digits}";
 
-                string stockoutDateSql = string.IsNullOrEmpty(tbiStockout_date) ? "NULL" : $"'{tbiStockout_date}'";
-
-
-                string query = String.Format(
-                    "INSERT INTO dbo.tbl_device (device_id, device_name, device_manufacturer, device_seri, device_type, device_group, device_maintenance_cycle, device_maintenance_start, device_stockout_date, device_condition, device_received_date, device_note, FK_status_id, FK_room_id, FK_contact_id) " +
-                    "VALUES ('{0}', N'{1}', N'{2}', N'{3}', '{4}', N'{5}', '{6}', '{7}', {8}, N'{9}', '{10}', N'{11}', '{12}', '{13}', '{14}')",
-                    tbiID, tbiName, tbiManufacturer, seriStr, tbiType, tbiGroup, tbiMaintenance_cycle, tbiMaintenance_start, stockoutDateSql, tbiCondition, tbiReceived_date, tbiNote, tbiStatus, tbiRoom, tbiContact_id);
-
-                DataProvider<Device>.Instance.ExcuteQuery(query);
-
-            }
-            return RedirectToAction("Thietbi");
-        }
+				string stockoutDateSql = string.IsNullOrEmpty(tbiStockout_date) ? "NULL" : $"'{tbiStockout_date}'";
 
 
-        public IActionResult Thietbi()
-        {
-            //khởi tạo
-            string field;
-            string sortOrder;
-            string searchField;
-            string searchString;
-            string page;
+				string query = String.Format(
+					"INSERT INTO dbo.tbl_device (device_id, device_name, device_manufacturer, device_seri, device_type, device_group, device_maintenance_cycle, device_maintenance_start, device_stockout_date, device_condition, device_received_date, device_note, FK_status_id, FK_room_id, FK_contact_id) " +
+					"VALUES ('{0}', N'{1}', N'{2}', N'{3}', '{4}', N'{5}', '{6}', '{7}', {8}, N'{9}', '{10}', N'{11}', '{12}', '{13}', '{14}')",
+					tbiID, tbiName, tbiManufacturer, seriStr, tbiType, tbiGroup, tbiMaintenance_cycle, tbiMaintenance_start, stockoutDateSql, tbiCondition, tbiReceived_date, tbiNote, tbiStatus, tbiRoom, tbiContact_id);
 
-            var urlQuery = Request.HttpContext.Request.Query;
-            field = urlQuery["field"];
-            sortOrder = urlQuery["sort"];
-            searchField = urlQuery["searchField"];
-            searchString = urlQuery["SearchString"];
-            page = urlQuery["page"];
+				DataProvider<Device>.Instance.ExcuteQuery(query);
 
-            field = field == null ? "All" : field;
-            sortOrder = sortOrder == null ? "device_received_date" : sortOrder;
-            searchField = searchField == null ? "device_name" : searchField;
-            searchString = searchString == null ? "" : searchString;
-            page = page == null ? "1" : page;
-            int currentPage = Convert.ToInt32(page);
-
-            ItemDisplay<Device> deviceList = new ItemDisplay<Device>();
-            deviceList.SortOrder = sortOrder;
-            deviceList.CurrentSearchField = searchField;
-            deviceList.CurrentSearchString = searchString;
-            deviceList.CurrentPage = currentPage;
+			}
+			return RedirectToAction("Thietbi");
+		}
 
 
-            //Mapping cho room_type và room_id
-            // Lấy danh sách phòng để chuẩn bị dữ liệu cho dropdown
-            List<Room> rooms = DataProvider<Room>.Instance.GetListItem("tbl_room");
+		public IActionResult Thietbi()
+		{
+			//khởi tạo
+			string field;
+			string sortOrder;
+			string searchField;
+			string searchString;
+			string page;
 
-            // 1. Tạo dữ liệu mapping cho JavaScript
-            var roomMappingData = rooms
-                .GroupBy(r => r.room_type)
-                .ToDictionary(
-                    group => group.Key,
-                    group => group.Select(r => r.room_id).ToList()
-                );
-            ViewBag.RoomMappingJson = JsonSerializer.Serialize(roomMappingData);
+			var urlQuery = Request.HttpContext.Request.Query;
+			field = urlQuery["field"];
+			sortOrder = urlQuery["sort"];
+			searchField = urlQuery["searchField"];
+			searchString = urlQuery["SearchString"];
+			page = urlQuery["page"];
 
-            // 2. Tạo một danh sách các loại khoa (room_type) duy nhất
-            var distinctRoomTypes = rooms
-                .GroupBy(r => r.room_type)
-                .Select(g => g.First())
-                .ToList();
-            ViewBag.DistinctRoomTypes = distinctRoomTypes;
+			field = field == null ? "All" : field;
+			sortOrder = sortOrder == null ? "device_received_date" : sortOrder;
+			searchField = searchField == null ? "device_name" : searchField;
+			searchString = searchString == null ? "" : searchString;
+			page = page == null ? "1" : page;
+			int currentPage = Convert.ToInt32(page);
 
-            string query = @"
+			ItemDisplay<Device> deviceList = new ItemDisplay<Device>();
+			deviceList.SortOrder = sortOrder;
+			deviceList.CurrentSearchField = searchField;
+			deviceList.CurrentSearchString = searchString;
+			deviceList.CurrentPage = currentPage;
+
+
+			//Mapping cho room_type và room_id
+			// Lấy danh sách phòng để chuẩn bị dữ liệu cho dropdown
+			List<Room> rooms = DataProvider<Room>.Instance.GetListItem("tbl_room");
+
+			// 1. Tạo dữ liệu mapping cho JavaScript
+			var roomMappingData = rooms
+				.GroupBy(r => r.room_type)
+				.ToDictionary(
+					group => group.Key,
+					group => group.Select(r => r.room_id).ToList()
+				);
+			ViewBag.RoomMappingJson = JsonSerializer.Serialize(roomMappingData);
+
+			// 2. Tạo một danh sách các loại khoa (room_type) duy nhất
+			var distinctRoomTypes = rooms
+				.GroupBy(r => r.room_type)
+				.Select(g => g.First())
+				.ToList();
+			ViewBag.DistinctRoomTypes = distinctRoomTypes;
+
+			string query = @"
                SELECT
                     de.*,
                     r.room_name,
@@ -323,40 +326,40 @@ LEFT JOIN dbo.tbl_contact c ON r.FK_contact_id = c.contact_id";
                 LEFT JOIN dbo.tbl_room r ON de.FK_room_id = r.room_id
                 LEFT JOIN dbo.tbl_status s ON de.FK_status_id = s.status_id";
 
-            List<Device> devices;
-            devices = DataProvider<Device>.Instance.GetListItemQuery(query);
-            devices = Function.Instance.searchItems(devices, deviceList);
-            devices = Function.Instance.sortItems(devices, deviceList.SortOrder);
-            deviceList.Paging(devices, 10);
+			List<Device> devices;
+			devices = DataProvider<Device>.Instance.GetListItemQuery(query);
+			devices = Function.Instance.searchItems(devices, deviceList);
+			devices = Function.Instance.sortItems(devices, deviceList.SortOrder);
+			deviceList.Paging(devices, 10);
 
-            var deviceForm = new DeviceDetail
-            {
-                statuses_device = DataProvider<Status>.Instance.GetListItem("tbl_status"),
-                rooms_device = DataProvider<Room>.Instance.GetListItem("tbl_room"),
-                contacts_device = DataProvider<Contact>.Instance.GetListItem("tbl_contact")
+			var deviceForm = new DeviceDetail
+			{
+				statuses_device = DataProvider<Status>.Instance.GetListItem("tbl_status"),
+				rooms_device = DataProvider<Room>.Instance.GetListItem("tbl_room"),
+				contacts_device = DataProvider<Contact>.Instance.GetListItem("tbl_contact")
 
-            };
+			};
 
-            // Tạo view model tổng hợp
-            var viewTbiModel = new DevicePageViewModel
-            {
-                DeviceList = deviceList,
-                DeviceForm = deviceForm
-            };
+			// Tạo view model tổng hợp
+			var viewTbiModel = new DevicePageViewModel
+			{
+				DeviceList = deviceList,
+				DeviceForm = deviceForm
+			};
 
-            return View("~/Views/Shared/Thietbi.cshtml", viewTbiModel);
-        }
+			return View("~/Views/Shared/Thietbi.cshtml", viewTbiModel);
+		}
 
-        [HttpPost]
-        public IActionResult Thietbi(String sortOrder, String searchString, String searchField, int currentPage = 1)
-        {
-            return RedirectToAction("Thietbi", new { sort = sortOrder, searchField = searchField, searchString = searchString, page = currentPage });
-        }
+		[HttpPost]
+		public IActionResult Thietbi(String sortOrder, String searchString, String searchField, int currentPage = 1)
+		{
+			return RedirectToAction("Thietbi", new { sort = sortOrder, searchField = searchField, searchString = searchString, page = currentPage });
+		}
 
-        [HttpGet]
-        public JsonResult Thietbi_GetById(string id)
-        {
-            string query = $@" 
+		[HttpGet]
+		public JsonResult Thietbi_GetById(string id)
+		{
+			string query = $@" 
             SELECT d.*,
            r.room_name,
            t.room_type,
@@ -375,17 +378,17 @@ LEFT JOIN dbo.tbl_contact c ON r.FK_contact_id = c.contact_id";
           LEFT JOIN dbo.tbl_contact f ON d.FK_contact_id = f.contact_id
           WHERE d.device_id = '{id}'";
 
-            var device = DataProvider<Device>.Instance.GetListItemQuery(query).FirstOrDefault();
-            return Json(device);
-        }
+			var device = DataProvider<Device>.Instance.GetListItemQuery(query).FirstOrDefault();
+			return Json(device);
+		}
 
 
-        [HttpPost]
-        public IActionResult Thietbi_Update(string tbiID, string tbiName, string tbiManufacturer, string tbiSeri,
-        string tbiType, string tbiGroup, int tbiMaintenance_cycle, string tbiMaintenance_start, string tbiStockout_date,
-        string tbiCondition, string tbiReceived_date, string tbiNote, int tbiContact_finance, string tbiContact_address, string tbiContact_type, string tbiContact_id)
-        {
-			string last4Digits = tbiSeri.Length >= 4 ? tbiSeri.Substring(tbiSeri.Length - 4) :  tbiSeri.PadLeft(4, '0');
+		[HttpPost]
+		public IActionResult Thietbi_Update(string tbiID, string tbiName, string tbiManufacturer, string tbiSeri,
+		string tbiType, string tbiGroup, int tbiMaintenance_cycle, string tbiMaintenance_start, string tbiStockout_date,
+		string tbiCondition, string tbiReceived_date, string tbiNote, int tbiContact_finance, string tbiContact_address, string tbiContact_type, string tbiContact_id)
+		{
+			string last4Digits = tbiSeri.Length >= 4 ? tbiSeri.Substring(tbiSeri.Length - 4) : tbiSeri.PadLeft(4, '0');
 			string manufacturerNoSpaces = tbiManufacturer.Replace(" ", "");
 			string first4Letters = manufacturerNoSpaces.Length >= 4 ? manufacturerNoSpaces.Substring(0, 4) : manufacturerNoSpaces;
 			string tbiId = $"{tbiType}-{first4Letters}-{last4Digits}";
@@ -407,146 +410,147 @@ LEFT JOIN dbo.tbl_contact c ON r.FK_contact_id = c.contact_id";
             device_note = N'{tbiNote}'
 
          WHERE device_id = '{tbiID}'";
-            DataProvider<Device>.Instance.ExcuteQuery(query);
-
-         
-            return RedirectToAction("Thietbi");
-        }
-
-        [HttpPost]
-        public JsonResult Thietbi_Delete(string id)
-        {
-            try
-            {
-                string query = $"DELETE FROM dbo.tbl_device WHERE device_id = '{id}'";
-                DataProvider<Device>.Instance.ExcuteQuery(query);
-                return Json(new { success = true });
-            }
-            catch (Exception ex)
-            {
-                return Json(new { success = false, error = ex.Message });
-            }
-        }
-        public IActionResult Baotri_Suachua()
-        {
-            return View("~/Views/Shared/Baotri_Suachua.cshtml");
-        }
-
-        /// //////////////////////////////////////////////////////////////
-        //---------------------------------------Bảo trì--------------------------------
-        public IActionResult Baotri_Add()
-        {
-            List<Maintain> maintains;
-            maintains = DataProvider<Maintain>.Instance.GetListItem("tbl_maintain");
-            List<Device> devices;
-            devices = DataProvider<Device>.Instance.GetListItem("FK_status_id", "00", "tbl_device");
-            List<Room> rooms;
-            rooms = DataProvider<Room>.Instance.GetListItem("tbl_room");
-            List<Contact> contacts;
-            contacts = DataProvider<Contact>.Instance.GetListItem("tbl_contact");
-
-            MaintainDetail maintaindetails = new MaintainDetail();
-            maintaindetails.maintains_id = maintains;
-            maintaindetails.devices_maintain = devices;
-            maintaindetails.rooms_maintain = rooms;
-            maintaindetails.contacts_maintain = contacts;
-
-            return View("Baotri", maintaindetails);
-
-        }
-
-        [HttpPost]
-        public IActionResult Baotri_Add(string btrmaintainID, string btrdevicesname, string Btrdate, string btrDelivery, int btrDeliPhone, string btrMaintainance, int btrMaintainPhone, int btrFinance, int btrContact, string btrStatus, string btrRoom)
-        {
-
-            // 2. đoạn này là tự động cộng id cho maintain_id bằng cách lấy id lớn nhất rồi cộng thêm "1" 
-            List<Maintain> maintainid = DataProvider<Maintain>.Instance.GetListItem("tbl_maintain");
-            int max_maintain = 0;
-            foreach (var item in maintainid)
-            {
-                int currentId;
-                if (int.TryParse(item.maintain_id, out currentId))
-                {
-                    if (currentId > max_maintain)
-                    {
-                        max_maintain = currentId;
-                    }
-                }
-            }
-            string BtrmaintainID = (max_maintain + 1).ToString();
-
-            // 3. đoạn này cũng là tự động cộng id cho contact_id bằng cách lấy id lớn nhất rồi cộng thêm "1" 
-            List<Contact> Contacts_maintain = DataProvider<Contact>.Instance.GetListItem("tbl_contact");
-            int max_contact = 0;
-            foreach (var item in Contacts_maintain)
-            {
-                int currentId;
-                if (int.TryParse(item.contact_id, out currentId))
-                {
-                    if (currentId > max_contact)
-                    {
-                        max_contact = currentId;
-                    }
-                }
-            }
-            string BtrContact_id = (max_contact + 1).ToString();
-
-            //4. Thêm vào bảng dbo.tbl_contact khi đã có contact_id và địa chỉ, lưu file với contact_type  là "Hợp đồng bảo trì", sủa lại 
-            string query_contact_maintain = String.Format("Insert into dbo.tbl_contact (contact_id, contact_type, contact_address, contact_finance)" + "Values ('{0}' , 2 , N'{1}', {2} )", BtrContact_id, btrContact, btrFinance);
-            DataProvider<Contact>.Instance.ExcuteQuery(query_contact_maintain);
+			DataProvider<Device>.Instance.ExcuteQuery(query);
 
 
-            btrStatus = "01";
-            btrRoom = "KHO";
+			return RedirectToAction("Thietbi");
+		}
 
-            string query = String.Format("Insert into dbo.tbl_maintain (maintain_id, maintain_date, maintain_maintenance, maintain_maintenance_phone, maintain_delivery, maintain_delivery_phone, FK_device_id, FK_status_id, FK_room_id, FK_contact_id )"
-            + "values('{0}', '{1}', N'{2}', {3}, N'{4}', {5}, '{6}', '{7}', N'{8}', {9})", BtrmaintainID, Btrdate, btrMaintainance, btrMaintainPhone, btrDelivery, btrDeliPhone, btrdevicesname, btrStatus, btrRoom, BtrContact_id);
-            DataProvider<Maintain>.Instance.ExcuteQuery(query);
+		[HttpPost]
+		public JsonResult Thietbi_Delete(string id)
+		{
+			try
+			{
+				string query = $"DELETE FROM dbo.tbl_device WHERE device_id = '{id}'";
+				DataProvider<Device>.Instance.ExcuteQuery(query);
+				return Json(new { success = true });
+			}
+			catch (Exception ex)
+			{
+				return Json(new { success = false, error = ex.Message });
+			}
+		}
+		public IActionResult Baotri_Suachua()
+		{
+			return View("~/Views/Shared/Baotri_Suachua.cshtml");
+		}
 
-            string updateQuery = String.Format("UPDATE dbo.tbl_device SET FK_room_id = '{0}' WHERE device_id = '{1}'", btrRoom, btrdevicesname);
-            DataProvider<Device>.Instance.ExcuteQuery(updateQuery);
+		/// //////////////////////////////////////////////////////////////
+		//---------------------------------------Bảo trì--------------------------------
+		public IActionResult Baotri_Add()
+		{
+			List<Maintain> maintains;
+			maintains = DataProvider<Maintain>.Instance.GetListItem("tbl_maintain");
+			List<Device> devices;
+			devices = DataProvider<Device>.Instance.GetListItem("FK_status_id", "00", "tbl_device");
+			List<Room> rooms;
+			rooms = DataProvider<Room>.Instance.GetListItem("tbl_room");
+			List<Contact> contacts;
+			contacts = DataProvider<Contact>.Instance.GetListItem("tbl_contact");
 
-            string updateQuery_device = String.Format("UPDATE dbo.tbl_device SET FK_status_id = '{0}' WHERE device_id = '{1}' ", btrStatus, btrdevicesname);
-            DataProvider<Device>.Instance.ExcuteQuery(updateQuery_device);
+			MaintainDetail maintaindetails = new MaintainDetail();
+			maintaindetails.maintains_id = maintains;
+			maintaindetails.devices_maintain = devices;
+			maintaindetails.rooms_maintain = rooms;
+			maintaindetails.contacts_maintain = contacts;
+
+			return View("Baotri", maintaindetails);
+
+		}
+
+		[HttpPost]
+		public IActionResult Baotri_Add(string btrmaintainID, string btrdevicesname, string Btrdate, string btrDelivery, int btrDeliPhone, string btrMaintainance, int btrMaintainPhone, int btrFinance, int btrContact, string btrStatus, string btrRoom)
+		{
+
+			// 2. đoạn này là tự động cộng id cho maintain_id bằng cách lấy id lớn nhất rồi cộng thêm "1" 
+			List<Maintain> maintainid = DataProvider<Maintain>.Instance.GetListItem("tbl_maintain");
+			int max_maintain = 0;
+			foreach (var item in maintainid)
+			{
+				int currentId;
+				if (int.TryParse(item.maintain_id, out currentId))
+				{
+					if (currentId > max_maintain)
+					{
+						max_maintain = currentId;
+					}
+				}
+			}
+			string BtrmaintainID = (max_maintain + 1).ToString();
+
+			// 3. đoạn này cũng là tự động cộng id cho contact_id bằng cách lấy id lớn nhất rồi cộng thêm "1" 
+			List<Contact> Contacts_maintain = DataProvider<Contact>.Instance.GetListItem("tbl_contact");
+			int max_contact = 0;
+			foreach (var item in Contacts_maintain)
+			{
+				int currentId;
+				if (int.TryParse(item.contact_id, out currentId))
+				{
+					if (currentId > max_contact)
+					{
+						max_contact = currentId;
+					}
+				}
+			}
+			string BtrContact_id = (max_contact + 1).ToString();
+
+			//4. Thêm vào bảng dbo.tbl_contact khi đã có contact_id và địa chỉ, lưu file với contact_type  là "Hợp đồng bảo trì", sủa lại 
+			string query_contact_maintain = String.Format("Insert into dbo.tbl_contact (contact_id, contact_type, contact_address, contact_finance)" + "Values ('{0}' , 2 , N'{1}', {2} )", BtrContact_id, btrContact, btrFinance);
+			DataProvider<Contact>.Instance.ExcuteQuery(query_contact_maintain);
 
 
-            return RedirectToAction("Baotri");
-        }
+			btrStatus = "01";
+			btrRoom = "KHO";
 
-        public IActionResult Baotri()
-        {
-            // Lấy tham số từ query như hiện tại
-            string field;
-            string sortOrder;
-            string searchField;
-            string searchString;
-            string page;
+			string query = String.Format("Insert into dbo.tbl_maintain (maintain_id, maintain_date, maintain_maintenance, maintain_maintenance_phone, maintain_delivery, maintain_delivery_phone, FK_device_id, FK_status_id, FK_room_id, FK_contact_id )"
+			+ "values('{0}', '{1}', N'{2}', {3}, N'{4}', {5}, '{6}', '{7}', N'{8}', {9})", BtrmaintainID, Btrdate, btrMaintainance, btrMaintainPhone, btrDelivery, btrDeliPhone, btrdevicesname, btrStatus, btrRoom, BtrContact_id);
+			DataProvider<Maintain>.Instance.ExcuteQuery(query);
 
-            var urlQuery = Request.HttpContext.Request.Query;
-            field = urlQuery["field"];
-            sortOrder = urlQuery["sort"];
-            searchField = urlQuery["searchField"];
-            searchString = urlQuery["SearchString"];
-            page = urlQuery["page"];
+			string updateQuery = String.Format("UPDATE dbo.tbl_device SET FK_room_id = '{0}' WHERE device_id = '{1}'", btrRoom, btrdevicesname);
+			DataProvider<Device>.Instance.ExcuteQuery(updateQuery);
 
-            field = field == null ? "All" : field;
-            sortOrder = sortOrder == null ? "Name" : sortOrder;
-            searchField = searchField == null ? "device_name" : searchField;
-            searchString = searchString == null ? "" : searchString;
-            page = page == null ? "1" : page;
-            int currentPage = Convert.ToInt32(page);
+			string updateQuery_device = String.Format("UPDATE dbo.tbl_device SET FK_status_id = '{0}' WHERE device_id = '{1}' ", btrStatus, btrdevicesname);
+			DataProvider<Device>.Instance.ExcuteQuery(updateQuery_device);
 
-            ItemDisplay<Maintain> maintainList = new ItemDisplay<Maintain>();
-            maintainList.SortOrder = sortOrder;
-            maintainList.CurrentSearchField = searchField;
-            maintainList.CurrentSearchString = searchString;
-            maintainList.CurrentPage = currentPage;
 
-            string query = @"
+			return RedirectToAction("Baotri");
+		}
+
+		public IActionResult Baotri()
+		{
+			// Lấy tham số từ query như hiện tại
+			string field;
+			string sortOrder;
+			string searchField;
+			string searchString;
+			string page;
+
+			var urlQuery = Request.HttpContext.Request.Query;
+			field = urlQuery["field"];
+			sortOrder = urlQuery["sort"];
+			searchField = urlQuery["searchField"];
+			searchString = urlQuery["SearchString"];
+			page = urlQuery["page"];
+
+			field = field == null ? "All" : field;
+			sortOrder = sortOrder == null ? "Name" : sortOrder;
+			searchField = searchField == null ? "device_name" : searchField;
+			searchString = searchString == null ? "" : searchString;
+			page = page == null ? "1" : page;
+			int currentPage = Convert.ToInt32(page);
+
+			ItemDisplay<Maintain> maintainList = new ItemDisplay<Maintain>();
+			maintainList.SortOrder = sortOrder;
+			maintainList.CurrentSearchField = searchField;
+			maintainList.CurrentSearchString = searchString;
+			maintainList.CurrentPage = currentPage;
+
+			string query = @"
                SELECT
                     m.*,
                     d.device_id,
                     d.device_name,
+                    d.FK_status_id,
                     r.room_name,
                     s.status_name
                 FROM dbo.tbl_device d
@@ -554,51 +558,64 @@ LEFT JOIN dbo.tbl_contact c ON r.FK_contact_id = c.contact_id";
                 LEFT JOIN dbo.tbl_room r ON d.FK_room_id = r.room_id 
                 LEFT JOIN dbo.tbl_status s ON d.FK_status_id = s.status_id
                 WHERE d.FK_status_id LIKE '0%'";
-            List<Maintain> maintain = DataProvider<Maintain>.Instance.GetListItemQuery(query);
+			List<Maintain> maintain = DataProvider<Maintain>.Instance.GetListItemQuery(query);
 
-            maintain = Function.Instance.searchItems(maintain, maintainList);
-            maintain = Function.Instance.sortItems(maintain, maintainList.SortOrder);
-            maintainList.Paging(maintain, 10);
+			maintain = Function.Instance.searchItems(maintain, maintainList);
+			maintain = Function.Instance.sortItems(maintain, maintainList.SortOrder);
+			maintainList.Paging(maintain, 10);
 
-            var maintainForm = new MaintainDetail
-            {
-                devices_maintain = DataProvider<Device>.Instance.GetListItem("FK_status_id", "00", "tbl_device"),
-                rooms_maintain = DataProvider<Room>.Instance.GetListItem("tbl_room")
-            };
+			var maintainForm = new MaintainDetail
+			{
+				devices_maintain = DataProvider<Device>.Instance.GetListItem("FK_status_id", "00", "tbl_device"),
+				rooms_maintain = DataProvider<Room>.Instance.GetListItem("tbl_room")
+			};
 
-            DateTime today = DateTime.Today;
-            var overdue = maintain
-                .Where(m => m.maintain_date != null && m.maintain_date.Value.Date < today)
-                .ToList();
+			DateTime today = DateTime.Today;
+			var overdue = maintain
+				.Where(m =>
+					m.maintain_date != null &&
+					m.maintain_date.Value.Date < today
+				)
+				.ToList();
 
-            var comingup = maintain
-                .Where(m => m.maintain_date != null && m.maintain_date.Value.Date >= today && m.maintain_date.Value.Date <= today.AddDays(2))
-                .ToList();
+			var comingup = maintain
+				.Where(m =>
+					m.maintain_date != null &&
+					m.maintain_date.Value.Date >= today &&
+					m.maintain_date.Value.Date <= today.AddDays(2)
+				)
+				.ToList();
 
-            var completed = maintain
-                .Where(m => m.maintain_date != null && m.maintain_date.Value.Date > today.AddDays(2) && m.maintain_date.Value.Date <= today.AddDays(30))
-                .ToList();
+			var completed = maintain
+				.Where(m =>
+						m.maintain_date != null &&
+						m.maintain_date.Value.Date > today.AddDays(2) &&
+						m.maintain_date.Value.Date <= today.AddDays(30)
+				)
+				.ToList();
 
-            // Tạo view model tổng hợp
-            var viewModel = new MaintainPageViewModel
-            {
-                MaintainList = maintainList,
-                MaintainForm = maintainForm,
-                OverdueList = overdue,
-                ComingupList = comingup,
-                CompletedList = completed
-            };
 
-            return View("~/Views/Shared/Baotri.cshtml", viewModel);
-        }
-        [HttpPost]
-        public IActionResult Baotri(String sortOrder, String searchString, String searchField, int currentPage = 1)
-        {
-            return RedirectToAction("Baotri", new { sort = sortOrder, searchField = searchField, searchString = searchString, page = currentPage });
-        }
-        public JsonResult Baotri_GetById(string id)
-        {
-            string query = $@"
+
+			// Tạo view model tổng hợp
+			var viewModel = new MaintainPageViewModel
+			{
+				MaintainList = maintainList,
+				MaintainForm = maintainForm,
+				OverdueList = overdue,
+				ComingupList = comingup,
+				CompletedList = completed
+			};
+
+			return View("~/Views/Shared/Baotri.cshtml", viewModel);
+		}
+		[HttpPost]
+		public IActionResult Baotri(String sortOrder, String searchString, String searchField, int currentPage = 1)
+		{
+			return RedirectToAction("Baotri", new { sort = sortOrder, searchField = searchField, searchString = searchString, page = currentPage });
+		}
+		public JsonResult Baotri_GetById(string id)
+		{
+			string query = $@"
                SELECT 
                     m.*, 
                     d.device_id, 
@@ -610,9 +627,31 @@ LEFT JOIN dbo.tbl_contact c ON r.FK_contact_id = c.contact_id";
                 LEFT JOIN dbo.tbl_room r ON d.FK_room_id = r.room_id
                 LEFT JOIN dbo.tbl_status s ON d.FK_status_id = s.status_id
                 WHERE m.maintain_id = '{id}'";
-            var maintain = DataProvider<Maintain>.Instance.GetListItemQuery(query).FirstOrDefault();
-            return Json(maintain);
-        }
+			var maintain = DataProvider<Maintain>.Instance.GetListItemQuery(query).FirstOrDefault();
+			return Json(maintain);
+		}
+		[HttpPost]
+		public IActionResult Baotri_Update_Status(string fkStatus, string device_id)
+		{
+			Device status_update = DataProvider<Device>.Instance.GetListItem("tbl_device").FirstOrDefault(x => x.device_id == device_id);
+
+			if (status_update == null)
+			{
+				TempData["msg"] = "Không tìm thấy thiết bị!";
+				return RedirectToAction("Suachua");
+			}
+
+			string status_update_query = String.Format(
+				"UPDATE dbo.tbl_device SET FK_status_id = '{0}' WHERE device_id = '{1}'",
+				fkStatus.Replace("'", "''"),
+				device_id.Replace("'", "''")
+			);
+			DataProvider<Device>.Instance.ExcuteQuery(status_update_query);
+
+			TempData["msg"] = "Cập nhật trạng thái thành công!";
+			return RedirectToAction("Baotri");
+		}
+
 
 		//--------------------------------Sửa chữa---------------------------------------
 		public IActionResult Suachua_Add()
@@ -684,8 +723,8 @@ LEFT JOIN dbo.tbl_contact c ON r.FK_contact_id = c.contact_id";
 				SchUpdateDate = DateTime.Now;
 			}
 
-            //SQL trước đang để schUpdateStatus là int, hiện giờ đã đổi sang string cho đồng bộ
-            schUpdateStatus = "Thêm thiết bị sửa chữa";
+			//SQL trước đang để schUpdateStatus là int, hiện giờ đã đổi sang string cho đồng bộ
+			schUpdateStatus = "Thêm thiết bị sửa chữa";
 			schUpdateNote = "Đã thêm thông tin của thiết bị cần sửa chữa";
 			schStatus = "11";
 			schRoom = "KHO";
@@ -832,16 +871,16 @@ LEFT JOIN dbo.tbl_contact c ON r.FK_contact_id = c.contact_id";
 				rooms_repair = DataProvider<Room>.Instance.GetListItem("tbl_room")
 			};
 
-            string repair_id = urlQuery["repair_id"];
-            Repair repairStatus = null;
-            if (!string.IsNullOrEmpty(repair_id))
-            {
-                repairStatus = DataProvider<Repair>.Instance.GetListItem("tbl_repair")
-                    .FirstOrDefault(x => x.repair_id == repair_id);
-            }
+			string repair_id = urlQuery["repair_id"];
+			Repair repairStatus = null;
+			if (!string.IsNullOrEmpty(repair_id))
+			{
+				repairStatus = DataProvider<Repair>.Instance.GetListItem("tbl_repair")
+					.FirstOrDefault(x => x.repair_id == repair_id);
+			}
 
 
-            var viewModel = new RepairPageViewModel
+			var viewModel = new RepairPageViewModel
 			{
 				RepairList = repairList,
 				RepairForm = repairForm,
@@ -856,36 +895,36 @@ LEFT JOIN dbo.tbl_contact c ON r.FK_contact_id = c.contact_id";
 		}
 		//---------------------------------Kho-----------------------------------------------
 		public IActionResult Kho()
-        {
-          
-            string field;
-            string sortOrder;
-            string searchField;
-            string searchString;
-            string page;
+		{
 
-            /// Lấy query, không có => đặt mặc định
-            var urlQuery = Request.HttpContext.Request.Query;
-            field = urlQuery["field"];
-            sortOrder = urlQuery["sort"];
-            searchField = urlQuery["searchField"];
-            searchString = urlQuery["SearchString"];
-            page = urlQuery["page"];
-            field = field == null ? "All" : field;
+			string field;
+			string sortOrder;
+			string searchField;
+			string searchString;
+			string page;
 
-            sortOrder = sortOrder == null ? "Name" : sortOrder; ;
-            searchField = searchField == null ? "device_name" : searchField;
-            searchString = searchString == null ? "" : searchString;
-            page = page == null ? "1" : page;
-            int currentPage = Convert.ToInt32(page);
+			/// Lấy query, không có => đặt mặc định
+			var urlQuery = Request.HttpContext.Request.Query;
+			field = urlQuery["field"];
+			sortOrder = urlQuery["sort"];
+			searchField = urlQuery["searchField"];
+			searchString = urlQuery["SearchString"];
+			page = urlQuery["page"];
+			field = field == null ? "All" : field;
 
-            ItemDisplay<Storage> storageList = new ItemDisplay<Storage>();
-            storageList.SortOrder = sortOrder;
-            storageList.CurrentSearchField = searchField;
-            storageList.CurrentSearchString = searchString;
-            storageList.CurrentPage = currentPage;
+			sortOrder = sortOrder == null ? "Name" : sortOrder; ;
+			searchField = searchField == null ? "device_name" : searchField;
+			searchString = searchString == null ? "" : searchString;
+			page = page == null ? "1" : page;
+			int currentPage = Convert.ToInt32(page);
 
-            string query_str = @"
+			ItemDisplay<Storage> storageList = new ItemDisplay<Storage>();
+			storageList.SortOrder = sortOrder;
+			storageList.CurrentSearchField = searchField;
+			storageList.CurrentSearchString = searchString;
+			storageList.CurrentPage = currentPage;
+
+			string query_str = @"
                SELECT
                 st.*,
                 d.device_id,
@@ -896,207 +935,220 @@ LEFT JOIN dbo.tbl_contact c ON r.FK_contact_id = c.contact_id";
             LEFT JOIN dbo.tbl_device d ON st.FK_device_id = d.device_id
             LEFT JOIN dbo.tbl_room r_from ON st.FK_room_id_from = r_from.room_id
             LEFT JOIN dbo.tbl_room r_to ON st.FK_room_id_to = r_to.room_id";
-            List<Storage> storage = DataProvider<Storage>.Instance.GetListItemQuery(query_str);
-            storage = Function.Instance.searchItems(storage, storageList);
-            storage = Function.Instance.sortItems(storage, storageList.SortOrder);
-            storageList.Paging(storage, 10);
+			List<Storage> storage = DataProvider<Storage>.Instance.GetListItemQuery(query_str);
+			storage = Function.Instance.searchItems(storage, storageList);
+			storage = Function.Instance.sortItems(storage, storageList.SortOrder);
+			storageList.Paging(storage, 10);
 
-            string query = @"
+			string query = @"
             SELECT 
                 d.device_name AS str_device_name,
                 COUNT(CASE WHEN d.FK_room_id = 'KHO' THEN 1 END) AS str_quantity
             FROM tbl_device d
             GROUP BY d.device_name";
-            var dt = DataProvider<System.Data.DataTable>.Instance.ExcuteQuery(query);
+			var dt = DataProvider<System.Data.DataTable>.Instance.ExcuteQuery(query);
 
-            var list = new List<Storage>();
-            if (dt != null && dt.Rows.Count > 0)
-            {
-                foreach (System.Data.DataRow row in dt.Rows)
-                {
-                    list.Add(new Storage
-                    {
-                        device_name = row["str_device_name"].ToString(),
-                        str_quantity = Convert.ToInt32(row["str_quantity"])
-                    });
-                }
-            }
+			var list = new List<Storage>();
+			if (dt != null && dt.Rows.Count > 0)
+			{
+				foreach (System.Data.DataRow row in dt.Rows)
+				{
+					list.Add(new Storage
+					{
+						device_name = row["str_device_name"].ToString(),
+						str_quantity = Convert.ToInt32(row["str_quantity"])
+					});
+				}
+			}
 
-            List<Device> allDevices = DataProvider<Device>.Instance.GetListItem("tbl_device");
-            List<Room> allRooms = DataProvider<Room>.Instance.GetListItem("tbl_room");
+			List<Device> allDevices = DataProvider<Device>.Instance.GetListItem("tbl_device");
+			List<Room> allRooms = DataProvider<Room>.Instance.GetListItem("tbl_room");
 
-            // Lọc thiết bị để nhập kho (chưa ở kho)
-            var devices_import = allDevices
-                .Where(d => !string.Equals(d.FK_room_id ?? "", "KHO", StringComparison.OrdinalIgnoreCase))
-                .ToList();
-            // Lọc thiết bị để xuất kho (đang ở kho)
-            var devices_export = allDevices
-                .Where(d => string.Equals(d.FK_room_id ?? "", "KHO", StringComparison.OrdinalIgnoreCase))
-                .ToList();
+			// Lọc thiết bị để nhập kho (chưa ở kho)
+			var devices_import = allDevices
+				.Where(d => !string.Equals(d.FK_room_id ?? "", "KHO", StringComparison.OrdinalIgnoreCase))
+				.ToList();
+			// Lọc thiết bị để xuất kho (đang ở kho)
+			var devices_export = allDevices
+				.Where(d => string.Equals(d.FK_room_id ?? "", "KHO", StringComparison.OrdinalIgnoreCase))
+				.ToList();
 
-            //Phòng
-            string Roomquery = @"
+			//Phòng
+			string Roomquery = @"
                SELECT
                     r.*
                               FROM dbo.tbl_room r";
 
- ItemDisplay<Room> roomList = new ItemDisplay<Room>();
-            roomList.SortOrder = sortOrder;
-            roomList.CurrentSearchField = searchField;
-            roomList.CurrentSearchString = searchString;
-            roomList.CurrentPage = currentPage;
-            List<Room> rooms;
-            rooms = DataProvider<Room>.Instance.GetListItemQuery(Roomquery);
-            rooms = Function.Instance.searchItems(rooms, roomList);
-            rooms = Function.Instance.sortItems(rooms, roomList.SortOrder);
-            roomList.Paging(rooms, 10);
-           
-
-            var storageforms = new StorageDetail
-            {
-                devices_import = devices_import,
-                devices_export = devices_export,
-                devices_all = allDevices,
-                rooms_str = allRooms
-            };
-
-            var model = new StoragePageViewModel
-            {
-                StorageList = storageList,
-                StorageForm = storageforms,
-                DeviceInStockList = list,
-                RoomList = roomList // Gán RoomList vào model
-            };
+			ItemDisplay<Room> roomList = new ItemDisplay<Room>();
+			roomList.SortOrder = sortOrder;
+			roomList.CurrentSearchField = searchField;
+			roomList.CurrentSearchString = searchString;
+			roomList.CurrentPage = currentPage;
+			List<Room> rooms;
+			rooms = DataProvider<Room>.Instance.GetListItemQuery(Roomquery);
+			rooms = Function.Instance.searchItems(rooms, roomList);
+			rooms = Function.Instance.sortItems(rooms, roomList.SortOrder);
+			roomList.Paging(rooms, 10);
 
 
-            return View("~/Views/Shared/Kho.cshtml", model);
-        }
-        [HttpPost]
-        public IActionResult Kho(String sortOrder, String searchString, String searchField, int currentPage = 1)
-        {
-            return RedirectToAction("Kho", new { sort = sortOrder, searchField = searchField, searchString = searchString, page = currentPage });
-        }
-        
-        [HttpPost]
-        public IActionResult Kho_Import(int strID, string strDate, string strRoom_from, string strRoom_to, string strDevice )
-        {
-            List<Storage> storages = DataProvider<Storage>.Instance.GetListItem("tbl_storage");
-            int maxID = 0;
-            foreach (var item in storages)
-            {
-                int id;
-                if (int.TryParse(item.storage_id.ToString(), out id))
-                {
-                    if (id > maxID)
-                        maxID = id;
-                }
-            }
-            // storage_id mới = maxID + 1
-            int newstrID = maxID + 1;
+			var storageforms = new StorageDetail
+			{
+				devices_import = devices_import,
+				devices_export = devices_export,
+				devices_all = allDevices,
+				rooms_str = allRooms
+			};
 
-            strRoom_to = "KHO";
+			var model = new StoragePageViewModel
+			{
+				StorageList = storageList,
+				StorageForm = storageforms,
+				DeviceInStockList = list,
+				RoomList = roomList // Gán RoomList vào model
+			};
 
-            string query = String.Format(
-                "INSERT INTO dbo.tbl_storage (storage_date, FK_device_id, FK_room_id_from, FK_room_id_to) " +
-                    "VALUES ('{0}', '{1}', '{2}', '{3}')", strDate, strDevice, strRoom_from, strRoom_to );
-                DataProvider<Storage>.Instance.ExcuteQuery(query);
 
-            string updateQuery_device = String.Format("UPDATE dbo.tbl_device SET FK_room_id = '{0}' WHERE device_id = '{1}' ", strRoom_to, strDevice);
-            DataProvider<Device>.Instance.ExcuteQuery(updateQuery_device);
+			return View("~/Views/Shared/Kho.cshtml", model);
+		}
+		[HttpPost]
+		public IActionResult Kho(String sortOrder, String searchString, String searchField, int currentPage = 1)
+		{
+			return RedirectToAction("Kho", new { sort = sortOrder, searchField = searchField, searchString = searchString, page = currentPage });
+		}
 
-            return RedirectToAction("Kho");
-        }
+		[HttpPost]
+		public IActionResult Kho_Import(int strID, string strDate, string strRoom_from, string strRoom_to, string strDevice, string status_id)
+		{
+			var allDevices = DataProvider<Device>.Instance.GetListItem("tbl_device");
+			var device = allDevices.FirstOrDefault(d => d.device_id == strDevice);
+			string room_from = device?.FK_room_id ?? "";
 
-        [HttpPost]
-        public IActionResult Kho_Export(int estrID, string estrDate, string estrRoom_from, string estrRoom_to, string estrDevice)
-        {
-            List<Storage> storages = DataProvider<Storage>.Instance.GetListItem("tbl_storage");
-            int maxID = 0;
-            foreach (var item in storages)
-            {
-                int id;
-                if (int.TryParse(item.storage_id.ToString(), out id))
-                {
-                    if (id > maxID)
-                        maxID = id;
-                }
-            }
-            // storage_id mới = maxID + 1
-            int newstrID = maxID + 1;
+			List<Storage> storages = DataProvider<Storage>.Instance.GetListItem("tbl_storage");
+			int maxID = 0;
+			foreach (var item in storages)
+			{
+				int id;
+				if (int.TryParse(item.storage_id.ToString(), out id))
+				{
+					if (id > maxID)
+						maxID = id;
+				}
+			}
+			// storage_id mới = maxID + 1
+			int newstrID = maxID + 1;
 
-            estrRoom_from = "KHO";
+			strRoom_to = "KHO";
 
-            string query = String.Format(
-                "INSERT INTO dbo.tbl_storage (storage_date, FK_device_id, FK_room_id_from, FK_room_id_to) " +
-                    "VALUES ('{0}', '{1}', '{2}', '{3}')", estrDate, estrDevice, estrRoom_from, estrRoom_to);
-            DataProvider<Storage>.Instance.ExcuteQuery(query);
+			string query = String.Format(
+				"INSERT INTO dbo.tbl_storage (storage_date, FK_device_id, FK_room_id_from, FK_room_id_to) " +
+					"VALUES ('{0}', '{1}', '{2}', '{3}')", strDate, strDevice, strRoom_from, strRoom_to);
+			DataProvider<Storage>.Instance.ExcuteQuery(query);
 
-            string updateQuery_device = String.Format("UPDATE dbo.tbl_device SET FK_room_id = '{0}' WHERE device_id = '{1}' ", estrRoom_to, estrDevice);
-            DataProvider<Device>.Instance.ExcuteQuery(updateQuery_device);
+			status_id = "21";
+			string updateStatus_device = String.Format("UPDATE dbo.tbl_device SET FK_status_id = '{0}' WHERE device_id = '{1}' ", status_id, strDevice);
+			DataProvider<Device>.Instance.ExcuteQuery(updateStatus_device);
 
-            return RedirectToAction("Kho");
-        }
-        [HttpPost]
-        public IActionResult Kho_Transfer(string strDevice, string strRoom_to ,string strDate)
-        {
-            // Lấy vị trí hiện tại của thiết bị
-            var allDevices = DataProvider<Device>.Instance.GetListItem("tbl_device");
-            var device = allDevices.FirstOrDefault(d => d.device_id == strDevice);
-            string room_from = device?.FK_room_id ?? "";
+			string updateQuery_device = String.Format("UPDATE dbo.tbl_device SET FK_room_id = '{0}' WHERE device_id = '{1}' ", strRoom_to, strDevice);
+			DataProvider<Device>.Instance.ExcuteQuery(updateQuery_device);
 
-            // Cập nhật thiết bị sang vị trí mới
-            string updateQuery = String.Format(
-                "UPDATE dbo.tbl_device SET FK_room_id = '{0}' WHERE device_id = '{1}'",
-                strRoom_to, strDevice
-            );
-            DataProvider<Device>.Instance.ExcuteQuery(updateQuery);
+			return RedirectToAction("Kho");
+		}
 
-            // Lưu lịch sử vào tbl_storage
-            string insertHistory = String.Format(
-                "INSERT INTO dbo.tbl_storage (storage_date, FK_device_id, FK_room_id_from, FK_room_id_to) " +
-                "VALUES ('{0}', '{1}', '{2}', '{3}')", strDate, strDevice, room_from, strRoom_to
-            );
-            DataProvider<Storage>.Instance.ExcuteQuery(insertHistory);
+		[HttpPost]
+		public IActionResult Kho_Export(int estrID, string estrDate, string estrRoom_from, string estrRoom_to, string estrDevice, string status_id)
+		{
+			List<Storage> storages = DataProvider<Storage>.Instance.GetListItem("tbl_storage");
+			int maxID = 0;
+			foreach (var item in storages)
+			{
+				int id;
+				if (int.TryParse(item.storage_id.ToString(), out id))
+				{
+					if (id > maxID)
+						maxID = id;
+				}
+			}
+			// storage_id mới = maxID + 1
+			int newstrID = maxID + 1;
 
-            return RedirectToAction("Kho");
-        }
-        public IActionResult Kho_Delete()
-        {
-            var urlQuery = Request.HttpContext.Request.Query;
-            string storage_id_del = urlQuery["storage_id"];
-            DataProvider<Storage>.Instance.ExcuteQuery(String.Format("DELETE FROM dbo.tbl_storage WHERE storage_id = {0}", storage_id_del));
-        
+			estrRoom_from = "KHO";
 
-            return RedirectToAction("Kho");
-        }
-        public IActionResult Taichinh_Hopdong()
-        {
-            string field, sortOrder, searchField, searchString, page;
-            var urlQuery = Request.HttpContext.Request.Query;
+			string query = String.Format(
+				"INSERT INTO dbo.tbl_storage (storage_date, FK_device_id, FK_room_id_from, FK_room_id_to) " +
+					"VALUES ('{0}', '{1}', '{2}', '{3}')", estrDate, estrDevice, estrRoom_from, estrRoom_to);
+			DataProvider<Storage>.Instance.ExcuteQuery(query);
 
-            field = urlQuery["field"];
-            sortOrder = urlQuery["sort"];
-            searchField = urlQuery["searchField"];
-            searchString = urlQuery["SearchString"];
-            page = urlQuery["page"];
+			string updateQuery_device = String.Format("UPDATE dbo.tbl_device SET FK_room_id = '{0}' WHERE device_id = '{1}' ", estrRoom_to, estrDevice);
+			DataProvider<Device>.Instance.ExcuteQuery(updateQuery_device);
 
-            field ??= "All";
-            sortOrder ??= "device_received_date";
-            searchField ??= "device_name";
-            searchString ??= "";
-            page ??= "1";
-            int currentPage = Convert.ToInt32(page);
+			status_id = "20";
 
-            // === 1. DỮ LIỆU MUA SẮM (DEVICE) ===
-            var deviceList = new ItemDisplay<Device>
-            {
-                SortOrder = sortOrder,
-                CurrentSearchField = searchField,
-                CurrentSearchString = searchString,
-                CurrentPage = currentPage
-            };
+			string updateStatus_device = String.Format("UPDATE dbo.tbl_device SET FK_status_id = '{0}' WHERE device_id = '{1}' ", status_id, estrDevice);
+			DataProvider<Device>.Instance.ExcuteQuery(updateStatus_device);
 
-            string query = @"
+			return RedirectToAction("Kho");
+		}
+		[HttpPost]
+		public IActionResult Kho_Transfer(string strDevice, string strRoom_to, string strDate)
+		{
+			// Lấy vị trí hiện tại của thiết bị
+			var allDevices = DataProvider<Device>.Instance.GetListItem("tbl_device");
+			var device = allDevices.FirstOrDefault(d => d.device_id == strDevice);
+			string room_from = device?.FK_room_id ?? "";
+
+			// Cập nhật thiết bị sang vị trí mới
+			string updateQuery = String.Format(
+				"UPDATE dbo.tbl_device SET FK_room_id = '{0}' WHERE device_id = '{1}'",
+				strRoom_to, strDevice
+			);
+			DataProvider<Device>.Instance.ExcuteQuery(updateQuery);
+
+			// Lưu lịch sử vào tbl_storage
+			string insertHistory = String.Format(
+				"INSERT INTO dbo.tbl_storage (storage_date, FK_device_id, FK_room_id_from, FK_room_id_to) " +
+				"VALUES ('{0}', '{1}', '{2}', '{3}')", strDate, strDevice, room_from, strRoom_to
+			);
+			DataProvider<Storage>.Instance.ExcuteQuery(insertHistory);
+
+			return RedirectToAction("Kho");
+		}
+		public IActionResult Kho_Delete()
+		{
+			var urlQuery = Request.HttpContext.Request.Query;
+			string storage_id_del = urlQuery["storage_id"];
+			DataProvider<Storage>.Instance.ExcuteQuery(String.Format("DELETE FROM dbo.tbl_storage WHERE storage_id = {0}", storage_id_del));
+			return RedirectToAction("Kho");
+		}
+
+		//Tài chính hợp đồng
+		public IActionResult Taichinh_Hopdong()
+		{
+			string field, sortOrder, searchField, searchString, page;
+			var urlQuery = Request.HttpContext.Request.Query;
+
+			field = urlQuery["field"];
+			sortOrder = urlQuery["sort"];
+			searchField = urlQuery["searchField"];
+			searchString = urlQuery["SearchString"];
+			page = urlQuery["page"];
+
+			field ??= "All";
+			sortOrder ??= "device_received_date";
+			searchField ??= "device_name";
+			searchString ??= "";
+			page ??= "1";
+			int currentPage = Convert.ToInt32(page);
+
+			// === 1. DỮ LIỆU MUA SẮM (DEVICE) ===
+			var deviceList = new ItemDisplay<Device>
+			{
+				SortOrder = sortOrder,
+				CurrentSearchField = searchField,
+				CurrentSearchString = searchString,
+				CurrentPage = currentPage
+			};
+
+			string query = @"
         SELECT
             de.*,
             r.room_name,
@@ -1112,28 +1164,28 @@ LEFT JOIN dbo.tbl_contact c ON r.FK_contact_id = c.contact_id";
         LEFT JOIN dbo.tbl_contact ct ON de.FK_contact_id = ct.contact_id
         WHERE ct.contact_type LIKE '1%'";
 
-            var devices = DataProvider<Device>.Instance.GetListItemQuery(query);
-            devices = Function.Instance.searchItems(devices, deviceList);
-            devices = Function.Instance.sortItems(devices, deviceList.SortOrder);
-            deviceList.Paging(devices, 10);
+			var devices = DataProvider<Device>.Instance.GetListItemQuery(query);
+			devices = Function.Instance.searchItems(devices, deviceList);
+			devices = Function.Instance.sortItems(devices, deviceList.SortOrder);
+			deviceList.Paging(devices, 10);
 
-            var deviceForm = new DeviceDetail
-            {
-                statuses_device = DataProvider<Status>.Instance.GetListItem("tbl_status"),
-                rooms_device = DataProvider<Room>.Instance.GetListItem("tbl_room"),
-                contacts_device = DataProvider<Contact>.Instance.GetListItem("tbl_contact")
-            };
+			var deviceForm = new DeviceDetail
+			{
+				statuses_device = DataProvider<Status>.Instance.GetListItem("tbl_status"),
+				rooms_device = DataProvider<Room>.Instance.GetListItem("tbl_room"),
+				contacts_device = DataProvider<Contact>.Instance.GetListItem("tbl_contact")
+			};
 
-            // === 2. DỮ LIỆU BẢO TRÌ (MAINTAIN) ===
-            var maintainList = new ItemDisplay<Maintain>
-            {
-                SortOrder = sortOrder,
-                CurrentSearchField = searchField,
-                CurrentSearchString = searchString,
-                CurrentPage = currentPage
-            };
+			// === 2. DỮ LIỆU BẢO TRÌ (MAINTAIN) ===
+			var maintainList = new ItemDisplay<Maintain>
+			{
+				SortOrder = sortOrder,
+				CurrentSearchField = searchField,
+				CurrentSearchString = searchString,
+				CurrentPage = currentPage
+			};
 
-            string maintainquery = @"
+			string maintainquery = @"
         SELECT
             m.*,
             id.device_id,
@@ -1151,21 +1203,21 @@ LEFT JOIN dbo.tbl_contact c ON m.FK_contact_id = c.contact_id
         LEFT JOIN dbo.tbl_contact cf ON m.FK_contact_id = cf.contact_id
         WHERE m.FK_status_id = '03'";
 
-            var maintain = DataProvider<Maintain>.Instance.GetListItemQuery(maintainquery);
-            maintain = Function.Instance.searchItems(maintain, maintainList);
-            maintain = Function.Instance.sortItems(maintain, maintainList.SortOrder);
-            maintainList.Paging(maintain, 10);
+			var maintain = DataProvider<Maintain>.Instance.GetListItemQuery(maintainquery);
+			maintain = Function.Instance.searchItems(maintain, maintainList);
+			maintain = Function.Instance.sortItems(maintain, maintainList.SortOrder);
+			maintainList.Paging(maintain, 10);
 
-            var maintainForm = new MaintainDetail
-            {
-                devices_maintain = DataProvider<Device>.Instance.GetListItem("FK_status_id", "00", "tbl_device"),
-                rooms_maintain = DataProvider<Room>.Instance.GetListItem("tbl_room")
-            };
+			var maintainForm = new MaintainDetail
+			{
+				devices_maintain = DataProvider<Device>.Instance.GetListItem("FK_status_id", "00", "tbl_device"),
+				rooms_maintain = DataProvider<Room>.Instance.GetListItem("tbl_room")
+			};
 
-            DateTime today = DateTime.Today;
-            var overdue = maintain.Where(m => m.maintain_date != null && m.maintain_date.Value.Date < today).ToList();
-            var comingup = maintain.Where(m => m.maintain_date != null && m.maintain_date.Value.Date >= today && m.maintain_date.Value.Date <= today.AddDays(2)).ToList();
-            var completed = maintain.Where(m => m.maintain_date != null && m.maintain_date.Value.Date > today.AddDays(2) && m.maintain_date.Value.Date <= today.AddDays(30)).ToList();
+			DateTime today = DateTime.Today;
+			var overdue = maintain.Where(m => m.maintain_date != null && m.maintain_date.Value.Date < today).ToList();
+			var comingup = maintain.Where(m => m.maintain_date != null && m.maintain_date.Value.Date >= today && m.maintain_date.Value.Date <= today.AddDays(2)).ToList();
+			var completed = maintain.Where(m => m.maintain_date != null && m.maintain_date.Value.Date > today.AddDays(2) && m.maintain_date.Value.Date <= today.AddDays(30)).ToList();
 
 
 			// === 3. DỮ LIỆU SỬA CHỮA  ===
@@ -1203,21 +1255,21 @@ FROM dbo.tbl_repair re
 				devices_repair = DataProvider<Device>.Instance.GetListItem("tbl_device"),
 				rooms_repair = DataProvider<Room>.Instance.GetListItem("tbl_room")
 			};
-			
+
 
 			// === 4. GỘP VÀO MODEL CHUNG ===
 			var viewTC_HDModel = new ContactPageViewModel
-            {
-                DeviceList = deviceList,
-                DeviceForm = deviceForm,
-                MaintainList = maintainList,
-                MaintainForm = maintainForm,
-                OverdueList = overdue,
-                ComingupList = comingup,
-                CompletedList = completed,
-                RepairList = repairList,
-                RepairForm = repairForm,
-            };
+			{
+				DeviceList = deviceList,
+				DeviceForm = deviceForm,
+				MaintainList = maintainList,
+				MaintainForm = maintainForm,
+				OverdueList = overdue,
+				ComingupList = comingup,
+				CompletedList = completed,
+				RepairList = repairList,
+				RepairForm = repairForm,
+			};
 
 			string chartQuery = @"
 SELECT MonthYear, SUM(TotalFinance) AS TotalFinance
@@ -1260,7 +1312,7 @@ ORDER BY MonthYear DESC";
 
 			return View("~/Views/Shared/Taichinh_Hopdong.cshtml", viewTC_HDModel);
 
-        }
+		}
 
 		[HttpPost]
 		public JsonResult Phong_Delete(string id)
@@ -1291,7 +1343,10 @@ ORDER BY MonthYear DESC";
 				return Json(new { success = false, error = ex.Message });
 			}
 		}
+		public IActionResult Phuluc()
+		{
+			return View("~/Views/Shared/Phuluc.cshtml");
+		}
 
-	
 	}
 }
