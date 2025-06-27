@@ -223,6 +223,8 @@ namespace Hospital_Test.Controllers
                 DeviceForm = deviceForm
             };
 
+            CheckAllDevicesMaintenanceStatus();
+
             return View("~/Views/Shared/Thietbi.cshtml", viewTbiModel);
         }
 
@@ -309,7 +311,7 @@ namespace Hospital_Test.Controllers
 
                     // Nếu ngày hiện tại >= ngày hết hạn và trạng thái chưa phải "00"
                     if (currentDate >= expirationDate 
-                        && deviceRow["FK_status_id"].ToString() != "20") //chỉ lọc những thiết bị có trạng thái là đang sử dụng
+                        && deviceRow["FK_status_id"].ToString() == "20") //chỉ lọc những thiết bị có trạng thái là đang sử dụng
                     {
                         string updateStatusQuery = $"UPDATE dbo.tbl_device SET FK_status_id = '00' WHERE device_id = '{deviceId}'";
                         DataProvider<Device>.Instance.ExcuteQuery(updateStatusQuery);
@@ -505,8 +507,6 @@ namespace Hospital_Test.Controllers
                 CompletedList = completed
             };
 
-            CheckAllDevicesMaintenanceStatus();// chuyển từ Thietbi về Baotri
-
             return View("~/Views/Shared/Baotri.cshtml", viewModel);
         }
         [HttpPost]
@@ -548,6 +548,13 @@ namespace Hospital_Test.Controllers
                 device_id.Replace("'", "''")
             );
             DataProvider<Device>.Instance.ExcuteQuery(status_update_query);
+
+            string status_update_maintain = String.Format(
+                "UPDATE dbo.tbl_maintain SET FK_status_id = '{0}' WHERE FK_device_id = '{1}'",
+                fkStatus.Replace("'", "''"),
+                device_id.Replace("'", "''")
+            );
+            DataProvider<Maintain>.Instance.ExcuteQuery(status_update_maintain);
 
             TempData["msg"] = "Cập nhật trạng thái thành công!";
             return RedirectToAction("Baotri");
