@@ -223,8 +223,6 @@ namespace Hospital_Test.Controllers
                 DeviceForm = deviceForm
             };
 
-            CheckAllDevicesMaintenanceStatus();
-
             return View("~/Views/Shared/Thietbi.cshtml", viewTbiModel);
         }
 
@@ -310,10 +308,13 @@ namespace Hospital_Test.Controllers
                     DateTime expirationDate = maintenanceStart.AddDays(maintenanceCycleDays).Date;
 
                     // Nếu ngày hiện tại >= ngày hết hạn và trạng thái chưa phải "00"
-                    if (currentDate >= expirationDate && deviceRow["FK_status_id"].ToString() != "00")
+                    if (currentDate >= expirationDate 
+                        && deviceRow["FK_status_id"].ToString() != "20") //chỉ lọc những thiết bị có trạng thái là đang sử dụng
                     {
                         string updateStatusQuery = $"UPDATE dbo.tbl_device SET FK_status_id = '00' WHERE device_id = '{deviceId}'";
                         DataProvider<Device>.Instance.ExcuteQuery(updateStatusQuery);
+                        string updateStatusQuery_maintain = $"UPDATE dbo.tbl_maintain SET FK_status_id = '00' WHERE FK_device_id = '{deviceId}'"; //thêm dòng để dồng bộ Status maintain với device
+                        DataProvider<Device>.Instance.ExcuteQuery(updateStatusQuery_maintain);
                     }
                 }
             }
@@ -503,6 +504,8 @@ namespace Hospital_Test.Controllers
                 ComingupList = comingup,
                 CompletedList = completed
             };
+
+            CheckAllDevicesMaintenanceStatus();// chuyển từ Thietbi về Baotri
 
             return View("~/Views/Shared/Baotri.cshtml", viewModel);
         }
@@ -996,6 +999,9 @@ namespace Hospital_Test.Controllers
             DataProvider<Storage>.Instance.ExcuteQuery(query);
 
             string updateQuery_device = String.Format("UPDATE dbo.tbl_device SET FK_room_id = '{0}' WHERE device_id = '{1}' ", estrRoom_to, estrDevice);
+            DataProvider<Device>.Instance.ExcuteQuery(updateQuery_device);
+
+            string updateQuery_maintaindate = String.Format("UPDATE dbo.tbl_device SET device_maintenance_start = '{0}' WHERE device_id = '{1}' ", estrDate, estrDevice); //set lại ngày bắt đầu bảo trì
             DataProvider<Device>.Instance.ExcuteQuery(updateQuery_device);
 
             status_id = "20";
