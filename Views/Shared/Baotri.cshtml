@@ -78,7 +78,7 @@
                                             <td id="facility">@item.device_name</td>
                                             <td id="facility">@(item.maintain_date?.ToString("dd/MM/yyyy") ?? "Chưa xếp lịch")</td>
                                             <td id="facility">@item.room_name</td>
-                                            <td id="facility">@item.status_name</td>
+                                            <td id="status-cell">@item.status_name</td> @* đổi id *@
                                             <td id="facility">
                                                 <div class="dropdown">
                                                     <a style="cursor: pointer;" id="detailMaintainLink" onclick="openMaintainDetail('@item.maintain_id')"> <i class="fa-solid fa-circle-info"></i> </a>
@@ -95,7 +95,7 @@
                                         <td id="facility">NOT FOUND </td>
                                         <td id="facility">NOT FOUND </td>
                                         <td id="facility">NOT FOUND </td>
-                                        <td id="facility">NOT FOUND </td>
+                                        <td id="status-cell">NOT FOUND </td> @* //đổi id  *@
                                         <td id="facility">
                                             <div class="dropdown">
                                                 <i class="bi bi-three-dots dropdown-toggle-icon" style="cursor: pointer;"></i>
@@ -489,8 +489,32 @@
                     alert("Không thể tải dữ liệu thiết bị.");
                 });
         }
+        </script>
+        <script> //thêm cripts đổi màu 
+        document.addEventListener('DOMContentLoaded', function () {
+            const statusCells = document.querySelectorAll('.status-cell'); // Chọn các ô có class="status-cell"
 
+            statusCells.forEach(cell => {
+                const statusText = cell.textContent.trim();
 
+                switch (statusText) {
+                    case "Chưa xếp lịch":
+                        cell.style.backgroundColor = '#FF6969';
+                        break;
+                    case "Đã xếp lịch bảo trì":
+                        cell.style.backgroundColor = '#F7D060';
+                        break;
+                    case "Đang bảo trì":
+                        cell.style.backgroundColor = '#95E1D3';
+                        break;
+                    case "Đã bảo trì xong":
+                        cell.style.backgroundColor = '#9ADCFF';
+                        break;
+                    default:
+                        break;
+                }
+            });
+        });
         </script>
      
 

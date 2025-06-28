@@ -223,7 +223,7 @@ namespace Hospital_Test.Controllers
                 DeviceForm = deviceForm
             };
 
-            CheckAllDevicesMaintenanceStatus();
+            CheckAllDevicesMaintenanceStatus(); //dòng này đang trong Baotri, chuyển về Thietbi
 
             return View("~/Views/Shared/Thietbi.cshtml", viewTbiModel);
         }
@@ -975,8 +975,15 @@ namespace Hospital_Test.Controllers
             string updateStatus_device = String.Format("UPDATE dbo.tbl_device SET FK_status_id = '{0}' WHERE device_id = '{1}' ", status_id, strDevice);
             DataProvider<Device>.Instance.ExcuteQuery(updateStatus_device);
 
+
+            //cập nhật vị trí
             string updateQuery_device = String.Format("UPDATE dbo.tbl_device SET FK_room_id = '{0}' WHERE device_id = '{1}' ", strRoom_to, strDevice);
             DataProvider<Device>.Instance.ExcuteQuery(updateQuery_device);
+            string update_Location_maintain = String.Format("UPDATE dbo.tbl_maintain SET FK_room_id = '{0}' WHERE FK_device_id = '{1}' ", strRoom_to, strDevice);
+            DataProvider<Maintain>.Instance.ExcuteQuery(update_Location_maintain);
+            string update_Location_repair = String.Format("UPDATE dbo.tbl_repair SET FK_room_id = '{0}' WHERE FK_device_id = '{1}' ", strRoom_to, strDevice);
+            DataProvider<Repair>.Instance.ExcuteQuery(update_Location_repair);
+
 
             return RedirectToAction("Kho");
         }
@@ -1005,11 +1012,18 @@ namespace Hospital_Test.Controllers
                     "VALUES ('{0}', '{1}', '{2}', '{3}')", estrDate, estrDevice, estrRoom_from, estrRoom_to);
             DataProvider<Storage>.Instance.ExcuteQuery(query);
 
+
+            //cập nhật vị trí
             string updateQuery_device = String.Format("UPDATE dbo.tbl_device SET FK_room_id = '{0}' WHERE device_id = '{1}' ", estrRoom_to, estrDevice);
             DataProvider<Device>.Instance.ExcuteQuery(updateQuery_device);
+            string update_Location_maintain = String.Format("UPDATE dbo.tbl_maintain SET FK_room_id = '{0}' WHERE FK_device_id = '{1}' ", estrRoom_to, estrDevice);
+            DataProvider<Maintain>.Instance.ExcuteQuery(update_Location_maintain);
+            string update_Location_repair = String.Format("UPDATE dbo.tbl_repair SET FK_room_id = '{0}' WHERE FK_device_id = '{1}' ", estrRoom_to, estrDevice);
+            DataProvider<Repair>.Instance.ExcuteQuery(update_Location_repair);
 
-            string updateQuery_maintaindate = String.Format("UPDATE dbo.tbl_device SET device_maintenance_start = '{0}' WHERE device_id = '{1}' ", estrDate, estrDevice); //set lại ngày bắt đầu bảo trì
-            DataProvider<Device>.Instance.ExcuteQuery(updateQuery_device);
+            //cập nhật ngày bảo trì ==> ngày xuất kho 
+            string updateQuery_maintaindate = String.Format("UPDATE dbo.tbl_device " + "SET device_maintenance_start = '{0}' " + "WHERE device_id = '{1}' AND FK_status_id = '03'", estrDate, estrDevice );
+            DataProvider<Device>.Instance.ExcuteQuery(updateQuery_maintaindate);  
 
             status_id = "20";
 
