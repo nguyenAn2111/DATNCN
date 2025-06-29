@@ -49,49 +49,47 @@
                                 Tìm Kiếm
                             </button>
                         </div>
-                    <form asp-action="Suachua" method="post">
-                        <table id="dataTable" style="width:100%;">
-                            <thead>
-                                <tr>
-                                    <th>STT</th>
-                                    <th>Mã id thiết bị</th>
-                                    <th>Tên thiết bị<br></th>
-                                    <th>Ngày hỏng</th>
-                                    <th>Ngày sửa chữa (dự kiến)</th>
-                                    <th>Vị trí hiện tại</th>
-                                    <th>Tình trạng</th>
-                                    <th> Xem thêm </th>
-                                </tr>
-                            </thead>
+                        <form asp-action="Suachua" method="post">
+                            <table id="dataTable" style="width:100%;">
+                                <thead>
+                                    <tr>
+                                        <th>STT</th>
+                                        <th>Mã id thiết bị</th>
+                                        <th>Tên thiết bị<br></th>
+                                        <th>Ngày hỏng</th>
+                                        <th>Ngày sửa chữa (dự kiến)</th>
+                                        <th>Vị trí hiện tại</th>
+                                        <th>Tình trạng</th>
+                                        <th> Xem thêm </th>
+                                    </tr>
+                                </thead>
 
-                            <tbody>
-                                @if (Model.RepairList.PageCount > 0) 
-                                    {
-                                    foreach (var item in Model.RepairList.Items)
+                                <tbody>
+                                    @if (Model.RepairList.PageCount > 0) 
                                         {
-                                            <tr>
-                                                <td>@item.repair_id</td>
-                                                <td> @item.FK_device_id</td>
-                                                <td> @item.device_name</td>
-                                                <td> @item.repair_broken.ToString("dd-MM-yyyy")</td>
-                                                <td> @item.repair_date.ToString("dd-MM-yyyy")</td>
-                                                <td> @item.room_name</td>
-                                                <td> @item.status_name</td>
-                                                <td>
-                                                    <div class="dropdown">
-                                                    <a style="cursor: pointer;" class="detailRepairLink" onclick="openRepairDetail('@item.repair_id')"> <i class="fa-solid fa-circle-info"></i> </a>
-                                                    </div>
-                                                </td>
-                                        </tr>
+                                        foreach (var item in Model.RepairList.Items)
+                                            {
+                                                <tr>
+                                                    <td>@item.repair_id</td>
+                                                    <td> @item.FK_device_id</td>
+                                                    <td> @item.device_name</td>
+                                                    <td> @item.repair_broken.ToString("dd-MM-yyyy")</td>
+                                                    <td> @item.repair_date.ToString("dd-MM-yyyy")</td>
+                                                    <td> @item.room_name</td>
+                                                    <td id="status-cell"> @item.status_name</td>@*  //thêm id cho ô này *@
+                                                    <td>
+                                                        <div class="dropdown">
+                                                        <a style="cursor: pointer;" class="detailRepairLink" onclick="openRepairDetail('@item.repair_id')"> <i class="fa-solid fa-circle-info"></i> </a>
+                                                        </div>
+                                                    </td>
+                                            </tr>
+                                        }
                                     }
-                                }
-                            </tbody>
+                                </tbody>
 
-                        </table>
-                    </form>
-                        </div>
-
-                    </table>
+                            </table>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
@@ -496,5 +494,40 @@
                     alert('Lỗi khi tải dữ liệu sửa chữa');
                 });
         }
+        </script>
+        <script>
+        // Script đổi màu ô trạng thái (sửa lại)
+            document.addEventListener('DOMContentLoaded', function () {
+                // Chọn tất cả các ô có id là "status-cell"
+                const statusCells = document.querySelectorAll('[id="status-cell"]');
+
+                statusCells.forEach(cell => {
+                    const statusText = cell.textContent.trim();
+
+                    // Reset style trước khi áp dụng mới
+                    cell.style.color = '#000'; // Màu chữ mặc định
+                    cell.style.fontWeight = 'normal';
+                    cell.style.padding = '5px';
+                    cell.style.textAlign = 'center';
+
+                    switch (statusText) {
+                        case "Đã xếp lịch sửa chữa":
+                            cell.style.backgroundColor = '#ffd5c2';
+                            cell.style.color = '#000';
+                            break;
+                        case "Đang sửa chữa":
+                        cell.style.backgroundColor = '#ade8f4';
+                            cell.style.color = '#000';
+                            break;
+                        case "Đã sửa xong":
+                            cell.style.backgroundColor = '#9fffcb';
+                            cell.style.color = '#000';
+                            break;
+                        default:
+                            cell.style.backgroundColor = '#F5F5F5';
+                            break;
+                    }
+                });
+            });
         </script>
 </body>

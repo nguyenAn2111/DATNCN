@@ -431,61 +431,61 @@
             }
         </script>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const floatingDropdown = document.getElementById('floatingDropdown');
-            const detailLink = document.getElementById('detailMaintainLink');
-            const maintainDetailModal = document.getElementById('maintainDetailModal');
-            const closeBtn = document.getElementById('closeMaintainDetailModal');
-            const cancelBtn = document.getElementById('cancelMaintainDetailModal');
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const floatingDropdown = document.getElementById('floatingDropdown');
+                const detailLink = document.getElementById('detailMaintainLink');
+                const maintainDetailModal = document.getElementById('maintainDetailModal');
+                const closeBtn = document.getElementById('closeMaintainDetailModal');
+                const cancelBtn = document.getElementById('cancelMaintainDetailModal');
 
-            // Mở modal khi click vào "Chi tiết thông tin thiết bị"
-            detailLink.addEventListener('click', function (event) {
-                event.preventDefault(); // Ngăn link chuyển trang
-                floatingDropdown.style.display = 'none'; // Ẩn dropdown
-                maintainDetailModal.style.display = 'flex';
-            });
-
-            // Đóng modal khi nhấn nút đóng (x)
-            closeBtn.addEventListener('click', function () {
-                maintainDetailModal.style.display = 'none';
-            });
-
-            // Đóng modal khi nhấn nút Thoát
-            cancelBtn.addEventListener('click', function () {
-                maintainDetailModal.style.display = 'none';
-            });
-
-            // Đóng modal khi click ra ngoài vùng modal-content
-            window.addEventListener('click', function (event) {
-                if (event.target === maintainDetailModal) {
-                    maintainDetailModal.style.display = 'none';
-                }
-            });
-        });
-        function openMaintainDetail(id) {
-            fetch(`/Management/Baotri_GetById?id=${id}`)
-                .then(response => response.json())
-                .then(data => {
-                    console.log("DATA:", data);
-
-                    // Gán dữ liệu vào các input trong modal
-                    document.getElementById('device_id').value = data.device_id || '';
-                    document.getElementById('device_name').value = data.device_name || '';
-                    document.getElementById('status_name').value = data.status_name || '';
-                    document.getElementById('maintain_delivery').value = data.maintain_delivery || '';
-                    document.getElementById('maintain_delivery_phone').value = data.maintain_delivery_phone || '';
-                    document.getElementById('maintain_maintenance').value = data.maintain_maintenance || '';
-                    document.getElementById('maintain_maintenance_phone').value = data.maintain_maintenance_phone || '';
-                    document.getElementById('maintain_date').value = data.maintain_date?.split('T')[0] || '';
-                    // Hiển thị modal
-                    document.getElementById('maintainDetailModal').style.display = 'flex';
-                })
-                .catch(error => {
-                    console.error("Lỗi lấy dữ liệu thiết bị:", error);
-                    alert("Không thể tải dữ liệu thiết bị.");
+                // Mở modal khi click vào "Chi tiết thông tin thiết bị"
+                detailLink.addEventListener('click', function (event) {
+                    event.preventDefault(); // Ngăn link chuyển trang
+                    floatingDropdown.style.display = 'none'; // Ẩn dropdown
+                    maintainDetailModal.style.display = 'flex';
                 });
-        }
+
+                // Đóng modal khi nhấn nút đóng (x)
+                closeBtn.addEventListener('click', function () {
+                    maintainDetailModal.style.display = 'none';
+                });
+
+                // Đóng modal khi nhấn nút Thoát
+                cancelBtn.addEventListener('click', function () {
+                    maintainDetailModal.style.display = 'none';
+                });
+
+                // Đóng modal khi click ra ngoài vùng modal-content
+                window.addEventListener('click', function (event) {
+                    if (event.target === maintainDetailModal) {
+                        maintainDetailModal.style.display = 'none';
+                    }
+                });
+            });
+            function openMaintainDetail(id) {
+                fetch(`/Management/Baotri_GetById?id=${id}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log("DATA:", data);
+
+                        // Gán dữ liệu vào các input trong modal
+                        document.getElementById('device_id').value = data.device_id || '';
+                        document.getElementById('device_name').value = data.device_name || '';
+                        document.getElementById('status_name').value = data.status_name || '';
+                        document.getElementById('maintain_delivery').value = data.maintain_delivery || '';
+                        document.getElementById('maintain_delivery_phone').value = data.maintain_delivery_phone || '';
+                        document.getElementById('maintain_maintenance').value = data.maintain_maintenance || '';
+                        document.getElementById('maintain_maintenance_phone').value = data.maintain_maintenance_phone || '';
+                        document.getElementById('maintain_date').value = data.maintain_date?.split('T')[0] || '';
+                        // Hiển thị modal
+                        document.getElementById('maintainDetailModal').style.display = 'flex';
+                    })
+                    .catch(error => {
+                        console.error("Lỗi lấy dữ liệu thiết bị:", error);
+                        alert("Không thể tải dữ liệu thiết bị.");
+                    });
+            }
         </script>
         <script>
             // Script đổi màu ô trạng thái (sửa lại)
@@ -500,7 +500,6 @@
                     cell.style.color = '#000'; // Màu chữ mặc định
                     cell.style.fontWeight = 'normal';
                     cell.style.padding = '5px';
-                    cell.style.borderRadius = '4px';
                     cell.style.textAlign = 'center';
 
                     switch (statusText) {
@@ -513,12 +512,12 @@
                             cell.style.color = '#000';
                             break;
                         case "Đang bảo trì":
-                            cell.style.backgroundColor = '#95E1D3';
+                        cell.style.backgroundColor = '#7ae582';
                             cell.style.color = '#000';
                             break;
                         case "Đã bảo trì xong":
-                            cell.style.backgroundColor = '#9ADCFF';
-                            cell.style.color = '#000';
+                        cell.style.backgroundColor = '#25a18e';
+                            cell.style.color = '#FFF';
                             break;
                         default:
                             cell.style.backgroundColor = '#F5F5F5';

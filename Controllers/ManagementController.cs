@@ -755,9 +755,7 @@ namespace Hospital_Test.Controllers
                 totalStatus.Replace("'", "''"),
                 schID.Replace("'", "''"),
                 repairs_update.FK_device_id?.Replace("'", "''") ?? ""
-            );
-
-            DataProvider<Repair>.Instance.ExcuteQuery(repair_update);
+            ); DataProvider<Repair>.Instance.ExcuteQuery(repair_update);
 
             return RedirectToAction("Suachua");
         }
