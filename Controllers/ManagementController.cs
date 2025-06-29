@@ -288,7 +288,7 @@ namespace Hospital_Test.Controllers
 
             return RedirectToAction("Thietbi");
         }
-        public void CheckAllDevicesMaintenanceStatus() //thêm hàm tính ngày bảo trì
+        public void CheckAllDevicesMaintenanceStatus() //sửa lại cách tính chu kì bằng Tháng
         {
             // Lấy danh sách tất cả thiết bị
             string getAllDevicesQuery = "SELECT device_id, device_maintenance_start, device_maintenance_cycle, FK_status_id FROM dbo.tbl_device";
@@ -304,19 +304,19 @@ namespace Hospital_Test.Controllers
                 {
                     string deviceId = deviceRow["device_id"].ToString();
                     DateTime maintenanceStart = Convert.ToDateTime(deviceRow["device_maintenance_start"]);
-                    int maintenanceCycleDays = Convert.ToInt32(deviceRow["device_maintenance_cycle"]); // Giờ là số ngày
+                    int maintenanceCycle = Convert.ToInt32(deviceRow["device_maintenance_cycle"]);
 
-                    // Tính ngày hết hạn (thêm số NGÀY của chu kỳ vào ngày bắt đầu)
-                    DateTime expirationDate = maintenanceStart.AddDays(maintenanceCycleDays).Date;
+                    // Tính ngày hết hạn (thêm số tháng của chu kỳ vào ngày bắt đầu)
+                    DateTime expirationDate = maintenanceStart.AddMonths(maintenanceCycle).Date;
 
                     // Nếu ngày hiện tại >= ngày hết hạn và trạng thái chưa phải "00"
-                    if (currentDate >= expirationDate 
-                        && deviceRow["FK_status_id"].ToString() == "20") //chỉ lọc những thiết bị có trạng thái là đang sử dụng
+                    if (currentDate >= expirationDate && deviceRow["FK_status_id"].ToString() == "20")
                     {
                         string updateStatusQuery = $"UPDATE dbo.tbl_device SET FK_status_id = '00' WHERE device_id = '{deviceId}'";
                         DataProvider<Device>.Instance.ExcuteQuery(updateStatusQuery);
-                        string updateStatusQuery_maintain = $"UPDATE dbo.tbl_maintain SET FK_status_id = '00' WHERE FK_device_id = '{deviceId}'"; //thêm dòng để dồng bộ Status maintain với device
-                        DataProvider<Device>.Instance.ExcuteQuery(updateStatusQuery_maintain);
+
+                        // Có thể thêm log ở đây
+                        Console.WriteLine($"Đã cập nhật thiết bị {deviceId} sang trạng thái bảo trì");
                     }
                 }
             }

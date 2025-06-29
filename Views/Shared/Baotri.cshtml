@@ -58,7 +58,6 @@
                         <table id="dataTable" style="width:100%;">
                             <thead>
                                 <tr>
-                                    <th>STT</th>
                                     <th>Mã ID</th>
                                     <th>Tên thiết bị<br></th>
                                     <th>Ngày bảo trì (dự kiến)</th>
@@ -73,7 +72,6 @@
                                     foreach (var item in Model.MaintainList.Items)
                                     {
                                         <tr>
-                                            <td id="facility">@(string.IsNullOrEmpty(item.maintain_id) ? "Chưa xếp lịch" : item.maintain_id)</td>
                                             <td id="faccility">@item.device_id</td>
                                             <td id="facility">@item.device_name</td>
                                             <td id="facility">@(item.maintain_date?.ToString("dd/MM/yyyy") ?? "Chưa xếp lịch")</td>
@@ -90,7 +88,6 @@
                                 else
                                 {
                                     <tr>
-                                        <td id="facility">NOT FOUND </td>
                                         <td id="facility">NOT FOUND </td>
                                         <td id="facility">NOT FOUND </td>
                                         <td id="facility">NOT FOUND </td>
@@ -235,7 +232,7 @@
             <div class="maintenance-dashboard">
                 <!-- Quá hạn -->
                 <div class="status-column overdue">
-                    <h3> ⛔ Quá hạn bảo trì</h3>
+                    <h3> ⛔ Quá ngày bảo trì</h3>
                     @if (Model.OverdueList != null && Model.OverdueList.Any())
                     {
                         foreach (var item in Model.OverdueList)
@@ -265,7 +262,7 @@
                  </div>
                 <!-- Sắp đến hạn -->
                 <div class="status-column comingup">
-                        <h3>🕒 Sắp đến hạn</h3>
+                        <h3>🕒 Sắp đến ngày bảo trì</h3>
                         @if (Model.ComingupList != null && Model.ComingupList.Any())
                         {
                             foreach (var item in Model.ComingupList)
@@ -294,7 +291,7 @@
                     </div>
                 <!-- Đã hoàn thành hoặc lên lịch -->
                 <div class="status-column completed">
-                        <h3>✅ Đã Lên lịch</h3>
+                        <h3>✅ Đã Lên lịch bảo trì</h3>
                         @if (Model.CompletedList != null && Model.CompletedList.Any())
                         {
                             foreach (var item in Model.CompletedList)
@@ -490,31 +487,158 @@
                 });
         }
         </script>
-        <script> //thêm cripts đổi màu 
+        <script>
+            // Script đổi màu ô trạng thái (sửa lại)
+            document.addEventListener('DOMContentLoaded', function () {
+                // Chọn tất cả các ô có id là "status-cell"
+                const statusCells = document.querySelectorAll('[id="status-cell"]');
+
+                statusCells.forEach(cell => {
+                    const statusText = cell.textContent.trim();
+
+                    // Reset style trước khi áp dụng mới
+                    cell.style.color = '#000'; // Màu chữ mặc định
+                    cell.style.fontWeight = 'normal';
+                    cell.style.padding = '5px';
+                    cell.style.borderRadius = '4px';
+                    cell.style.textAlign = 'center';
+
+                    switch (statusText) {
+                        case "Chưa xếp lịch":
+                            cell.style.backgroundColor = '#ea8e8c';
+                            cell.style.color = '#000';
+                            break;
+                        case "Đã xếp lịch bảo trì":
+                            cell.style.backgroundColor = '#FFEB3B';
+                            cell.style.color = '#000';
+                            break;
+                        case "Đang bảo trì":
+                            cell.style.backgroundColor = '#95E1D3';
+                            cell.style.color = '#000';
+                            break;
+                        case "Đã bảo trì xong":
+                            cell.style.backgroundColor = '#9ADCFF';
+                            cell.style.color = '#000';
+                            break;
+                        default:
+                            cell.style.backgroundColor = '#F5F5F5';
+                            break;
+                    }
+                });
+            });
+        </script>
+        <script> @* hàm sắp xếp ngỳ bảo trì  *@
+            document.addEventListener('DOMContentLoaded', function () {
+                sortMaintenanceTable();
+            });
+
+            function sortMaintenanceTable() {
+                const table = document.getElementById('dataTable');
+                if (!table) return;
+
+                const tbody = table.querySelector('tbody');
+                const rows = Array.from(tbody.querySelectorAll('tr'));
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+
+                rows.sort((a, b) => {
+                    const statusA = a.querySelector('#status-cell').textContent.trim();
+                    const statusB = b.querySelector('#status-cell').textContent.trim();
+
+                    // 1. Ưu tiên "Chưa xếp lịch" lên đầu
+                    if (statusA === "Chưa xếp lịch" && statusB !== "Chưa xếp lịch") return -1;
+                    if (statusA !== "Chưa xếp lịch" && statusB === "Chưa xếp lịch") return 1;
+                    if (statusA === "Chưa xếp lịch" && statusB === "Chưa xếp lịch") return 0;
+
+                    // 2. Lấy ngày bảo trì (cột thứ 3)
+                    const dateTextA = a.querySelector('td:nth-child(3)').textContent.trim();
+                    const dateTextB = b.querySelector('td:nth-child(3)').textContent.trim();
+
+                    // 3. Chuyển đổi ngày từ dd/MM/yyyy sang Date object
+                    const dateA = parseDate(dateTextA);
+                    const dateB = parseDate(dateTextB);
+
+                    // 4. Sắp xếp: ngày xa nhất trong tương lai lên đầu
+                    return dateB - dateA;
+                });
+
+                // Xóa và thêm lại các dòng đã sắp xếp
+                while (tbody.firstChild) {
+                    tbody.removeChild(tbody.firstChild);
+                }
+                rows.forEach(row => {
+                    tbody.appendChild(row);
+                });
+            }
+
+            function parseDate(dateString) {
+                if (!dateString || dateString === "Chưa xếp lịch") return new Date(0);
+                const parts = dateString.split('/');
+                return new Date(parts[2], parts[1] - 1, parts[0]);
+            }
+        </script> 
+        <script>
+        // ========== LỌC THEO THÁNG ==========
         document.addEventListener('DOMContentLoaded', function () {
-            const statusCells = document.querySelectorAll('.status-cell'); // Chọn các ô có class="status-cell"
+            setupMonthFilter();
+        });
 
-            statusCells.forEach(cell => {
-                const statusText = cell.textContent.trim();
+        function setupMonthFilter() {
+            const monthFilter = document.getElementById('filter-date');
+            const searchButton = document.querySelector('.searchingpatient');
 
-                switch (statusText) {
-                    case "Chưa xếp lịch":
-                        cell.style.backgroundColor = '#FF6969';
-                        break;
-                    case "Đã xếp lịch bảo trì":
-                        cell.style.backgroundColor = '#F7D060';
-                        break;
-                    case "Đang bảo trì":
-                        cell.style.backgroundColor = '#95E1D3';
-                        break;
-                    case "Đã bảo trì xong":
-                        cell.style.backgroundColor = '#9ADCFF';
-                        break;
-                    default:
-                        break;
+            if (monthFilter) {
+                monthFilter.addEventListener('change', function () {
+                    filterByMonth(this.value);
+                });
+            }
+
+            if (searchButton) {
+                searchButton.addEventListener('click', function () {
+                    const monthYear = document.getElementById('filter-date').value;
+                    filterByMonth(monthYear);
+                });
+            }
+        }
+
+        function filterByMonth(monthYear) {
+            const rows = document.querySelectorAll('#dataTable tbody tr');
+
+            if (!monthYear) {
+                // Hiển thị tất cả nếu không chọn tháng
+                rows.forEach(row => row.style.display = '');
+                return;
+            }
+
+            const [year, month] = monthYear.split('-');
+
+            rows.forEach(row => {
+                const dateText = row.querySelector('td:nth-child(3)').textContent.trim();
+                const statusText = row.querySelector('#status-cell').textContent.trim();
+
+                // Luôn hiển thị thiết bị chưa xếp lịch
+                if (statusText === "Chưa xếp lịch") {
+                    row.style.display = '';
+                    return;
+                }
+
+                // Ẩn nếu không có ngày
+                if (dateText === "Chưa xếp lịch" || !dateText) {
+                    row.style.display = 'none';
+                    return;
+                }
+
+                // Kiểm tra tháng/năm
+                const parts = dateText.split('/');
+                const rowDate = new Date(parts[2], parts[1] - 1, parts[0]);
+
+                if (rowDate.getFullYear() == year && (rowDate.getMonth() + 1) == month) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
                 }
             });
-        });
+        }
         </script>
      
 
