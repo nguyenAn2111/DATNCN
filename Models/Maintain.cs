@@ -23,6 +23,10 @@ namespace Hospital_Test.Models
         public string status_name { get; set; }
 		public string contact_finance { get; set; }
 		public string contact_address { get; set; }
+		public DateTime? device_maintenance_start { get; set; }
+		public int? device_maintenance_cycle { get; set; }
+		public DateTime? expiration_date { get; set; }
+		public string DeviceStatusId { get; set; }
 		public Maintain(DataRow row)
         {
             if (row["maintain_date"] != DBNull.Value)
@@ -46,6 +50,20 @@ namespace Hospital_Test.Models
 			contact_address = row.Table.Columns.Contains("contact_address") && row["contact_address"] != DBNull.Value
 			  ? row["contact_address"].ToString()
 			  : "";
+			device_maintenance_start = row.Table.Columns.Contains("device_maintenance_start") && row["device_maintenance_start"] != DBNull.Value
+	? (DateTime?)row["device_maintenance_start"]
+	: null;
+
+			device_maintenance_cycle = row.Table.Columns.Contains("device_maintenance_cycle") && row["device_maintenance_cycle"] != DBNull.Value
+				? Convert.ToInt32(row["device_maintenance_cycle"])
+				: null;
+
+			expiration_date = row.Table.Columns.Contains("expiration_date") && row["expiration_date"] != DBNull.Value
+				? (DateTime?)row["expiration_date"]
+				: null;
+			FK_status_id = row.Table.Columns.Contains("FK_status_id") && row["FK_status_id"] != DBNull.Value
+	? row["FK_status_id"].ToString()
+	: "";
 		}
     }
 

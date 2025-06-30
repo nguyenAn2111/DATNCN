@@ -77,7 +77,7 @@
 											<td id="facility">@item.device_name</td>
 											<td id="facility">@(item.maintain_date?.ToString("dd/MM/yyyy") ?? "Chưa xếp lịch")</td>
 											<td id="facility">@item.room_name</td>
-											<td id="facility">@item.status_name</td>
+											<td id="status-cell">@item.status_name</td> @* đổi id *@
 											<td id="facility">
 												<div class="dropdown">
 													<a style="cursor: pointer;" id="detailMaintainLink" onclick="openMaintainDetail('@item.maintain_id')"> <i class="fa-solid fa-circle-info"></i> </a>
@@ -94,7 +94,7 @@
 										<td id="facility">NOT FOUND </td>
 										<td id="facility">NOT FOUND </td>
 										<td id="facility">NOT FOUND </td>
-										<td id="facility">NOT FOUND </td>
+										<td id="status-cell">NOT FOUND </td> @* //đổi id  *@
 										<td id="facility">
 											<div class="dropdown">
 												<i class="bi bi-three-dots dropdown-toggle-icon" style="cursor: pointer;"></i>
@@ -180,7 +180,7 @@
 						}
 					</select>
 
-					<label>Mã series (mã thiết bị)</label>
+					<label>Mã ID</label>
 					<select id="deviceIdSelect" name="btrID" style="width: 18rem; margin-right: 1rem;">
 						<option value="">-- Chọn thiết bị --</option>
 					</select>
@@ -215,7 +215,7 @@
 					<input type="number" name="btrFinance" style="margin-left: 0.25rem;" />
 
 					<label>Hóa đơn_Hợp đồng:</label>
-					<input type="text" name="btrContact" />
+					<input type="file" name="btrContact" />
 				</div>
 				<button type="submit">Lưu</button>
 			</form>
@@ -231,21 +231,20 @@
 				<!-- Quá hạn -->
 				<div class="status-column overdue">
 					<h3> ⛔ Quá hạn bảo trì</h3>
-					@if (Model.OverdueList != null && Model.OverdueList.Any())
+					@if (Model.OverdueList != null && Model.OverdueList.Any(item => item.status_name == "Chưa xếp lịch"))
 					{
-						foreach (var item in Model.OverdueList)
+						@foreach (var item in Model.OverdueList.Where(item => item.status_name == "Chưa xếp lịch"))
 						{
 							<div class="device-item">
-								<strong>@item.device_name</strong>
+								<strong>@item.device_name (@item.device_id)</strong>
 								<div>
-									Hạn: @item.maintain_date?.ToString("dd/MM/yyyy")
+									Hạn: @item.expiration_date?.ToString("dd/MM/yyyy")
 								</div>
 								<div>
 									Vị trí: @item.room_name
 								</div>
-
+								
 								<div style="padding-top: 0.5rem;">
-									<button type="button" id="popup-button" class="reschedule-btn" onclick="openRescheduleModal('@item.device_id', '@item.device_name')">📅 Cập nhật trạng thái</button>
 									<button type="button" id="popup-button" onclick="sendReminder('@item.device_name', '@item.maintain_maintenance', '@item.maintain_maintenance_phone')">📩 Gửi nhắc</button>
 								</div>
 							</div>
@@ -258,23 +257,24 @@
 						</div>
 					}
 				</div>
+
 				<!-- Sắp đến hạn -->
 				<div class="status-column comingup">
-					<h3>🕒 Sắp đến hạn</h3>
-					@if (Model.ComingupList != null && Model.ComingupList.Any())
+					<h3>🕒 Đang chờ lên lịch</h3>
+					@if (Model.ComingupList != null && Model.ComingupList.Any(item => item.status_name == "Chưa xếp lịch"))
 					{
-						foreach (var item in Model.ComingupList)
+						@foreach (var item in Model.ComingupList .Where(item => item.status_name == "Chưa xếp lịch") )
 						{
 							<div class="device-item">
-								<strong>@item.device_name</strong>
+								<strong>@item.device_name (@item.device_id)</strong>
 								<div>
-									Hạn: @item.maintain_date?.ToString("dd/MM/yyyy")
+									Hạn: @item.expiration_date?.ToString("dd/MM/yyyy")
 								</div>
 								<div>
 									Vị trí: @item.room_name
 								</div>
 								<div style="padding-top: 0.5rem;">
-									<button type="button" id="popup-button" class="reschedule-btn" onclick="openRescheduleModal('@item.device_id', '@item.device_name')">📅 Cập nhật trạng thái</button>
+									@* <button type="button" id="popup-button" class="reschedule-btn" onclick="openRescheduleModal('@item.device_id', '@item.device_name')">📅 Cập nhật trạng thái</button> *@
 									<button type="button" id="popup-button" onclick="sendReminder('@item.device_name', '@item.maintain_maintenance', '@item.maintain_maintenance_phone')">📩 Gửi nhắc</button>
 								</div>
 							</div>
@@ -295,16 +295,19 @@
 						foreach (var item in Model.CompletedList)
 						{
 							<div class="device-item">
-								<strong>@item.device_name</strong>
+								<strong>@item.device_name (@item.device_id)</strong>
 								<div>
 									Đã bảo trì ngày: @item.maintain_date?.ToString("dd/MM/yyyy")
 								</div>
 								<div>
 									Người phụ trách: @item.maintain_maintenance
 								</div>
+								<div>
+									Trạng thái hiện tại: @item.status_name
+								</div>
 								<div style="padding-top: 0.5rem;">
 									<button type="button" id="popup-button" class="reschedule-btn" onclick="openRescheduleModal('@item.device_id', '@item.device_name')">📅 Cập nhật trạng thái</button>
-									<button type="button" id="popup-button" onclick="sendReminder('@item.device_name', '@item.maintain_maintenance', '@item.maintain_maintenance_phone')">📩 Gửi nhắc</button>
+									@* <button type="button" id="popup-button" onclick="sendReminder('@item.device_name', '@item.maintain_maintenance', '@item.maintain_maintenance_phone')">📩 Gửi nhắc</button> *@
 								</div>
 							</div>
 						}
@@ -502,6 +505,184 @@
 			syncDeviceId(); // Nếu muốn hiển thị sẵn mã ID ngay khi trang tải
 		};
 	</script>
+	<script>
+		//thêm cripts đổi màu
+		document.addEventListener('DOMContentLoaded', function () {
+			const statusCells = document.querySelectorAll('.status-cell'); // Chọn các ô có class="status-cell"
 
+			statusCells.forEach(cell => {
+				const statusText = cell.textContent.trim();
 
+				switch (statusText) {
+					case "Chưa xếp lịch":
+						cell.style.backgroundColor = '#FF6969';
+						break;
+					case "Đã xếp lịch bảo trì":
+						cell.style.backgroundColor = '#F7D060';
+						break;
+					case "Đang bảo trì":
+						cell.style.backgroundColor = '#95E1D3';
+						break;
+					case "Đã bảo trì xong":
+						cell.style.backgroundColor = '#9ADCFF';
+						break;
+					default:
+						break;
+				}
+			});
+		});
+	</script>
+	<script>
+		// Script đổi màu ô trạng thái (sửa lại)
+		document.addEventListener('DOMContentLoaded', function () {
+			// Chọn tất cả các ô có id là "status-cell"
+			const statusCells = document.querySelectorAll('[id="status-cell"]');
+
+			statusCells.forEach(cell => {
+				const statusText = cell.textContent.trim();
+
+				// Reset style trước khi áp dụng mới
+				cell.style.color = '#000'; // Màu chữ mặc định
+				cell.style.fontWeight = 'normal';
+				cell.style.padding = '5px';
+				cell.style.textAlign = 'center';
+
+				switch (statusText) {
+					case "Chưa xếp lịch":
+						cell.style.backgroundColor = '#ea8e8c';
+						cell.style.color = '#000';
+						break;
+					case "Đã xếp lịch bảo trì":
+						cell.style.backgroundColor = '#FFEB3B';
+						cell.style.color = '#000';
+						break;
+					case "Đang bảo trì":
+						cell.style.backgroundColor = '#7ae582';
+						cell.style.color = '#000';
+						break;
+					case "Đã bảo trì xong":
+						cell.style.backgroundColor = '#25a18e';
+						cell.style.color = '#FFF';
+						break;
+					default:
+						cell.style.backgroundColor = '#F5F5F5';
+						break;
+				}
+			});
+		});
+	</script>
+	<script>
+		@* hàm sắp xếp ngỳ bảo trì  *@
+			document.addEventListener('DOMContentLoaded', function () {
+				sortMaintenanceTable();
+			});
+
+		function sortMaintenanceTable() {
+			const table = document.getElementById('dataTable');
+			if (!table) return;
+
+			const tbody = table.querySelector('tbody');
+			const rows = Array.from(tbody.querySelectorAll('tr'));
+			const today = new Date();
+			today.setHours(0, 0, 0, 0);
+
+			rows.sort((a, b) => {
+				const statusA = a.querySelector('#status-cell').textContent.trim();
+				const statusB = b.querySelector('#status-cell').textContent.trim();
+
+				// 1. Ưu tiên "Chưa xếp lịch" lên đầu
+				if (statusA === "Chưa xếp lịch" && statusB !== "Chưa xếp lịch") return -1;
+				if (statusA !== "Chưa xếp lịch" && statusB === "Chưa xếp lịch") return 1;
+				if (statusA === "Chưa xếp lịch" && statusB === "Chưa xếp lịch") return 0;
+
+				// 2. Lấy ngày bảo trì (cột thứ 3)
+				const dateTextA = a.querySelector('td:nth-child(3)').textContent.trim();
+				const dateTextB = b.querySelector('td:nth-child(3)').textContent.trim();
+
+				// 3. Chuyển đổi ngày từ dd/MM/yyyy sang Date object
+				const dateA = parseDate(dateTextA);
+				const dateB = parseDate(dateTextB);
+
+				// 4. Sắp xếp: ngày xa nhất trong tương lai lên đầu
+				return dateB - dateA;
+			});
+
+			// Xóa và thêm lại các dòng đã sắp xếp
+			while (tbody.firstChild) {
+				tbody.removeChild(tbody.firstChild);
+			}
+			rows.forEach(row => {
+				tbody.appendChild(row);
+			});
+		}
+
+		function parseDate(dateString) {
+			if (!dateString || dateString === "Chưa xếp lịch") return new Date(0);
+			const parts = dateString.split('/');
+			return new Date(parts[2], parts[1] - 1, parts[0]);
+		}
+	</script>
+	<script>
+		// ========== LỌC THEO THÁNG ==========
+		document.addEventListener('DOMContentLoaded', function () {
+			setupMonthFilter();
+		});
+
+		function setupMonthFilter() {
+			const monthFilter = document.getElementById('filter-date');
+			const searchButton = document.querySelector('.searchingpatient');
+
+			if (monthFilter) {
+				monthFilter.addEventListener('change', function () {
+					filterByMonth(this.value);
+				});
+			}
+
+			if (searchButton) {
+				searchButton.addEventListener('click', function () {
+					const monthYear = document.getElementById('filter-date').value;
+					filterByMonth(monthYear);
+				});
+			}
+		}
+
+		function filterByMonth(monthYear) {
+			const rows = document.querySelectorAll('#dataTable tbody tr');
+
+			if (!monthYear) {
+				// Hiển thị tất cả nếu không chọn tháng
+				rows.forEach(row => row.style.display = '');
+				return;
+			}
+
+			const [year, month] = monthYear.split('-');
+
+			rows.forEach(row => {
+				const dateText = row.querySelector('td:nth-child(3)').textContent.trim();
+				const statusText = row.querySelector('#status-cell').textContent.trim();
+
+				// Luôn hiển thị thiết bị chưa xếp lịch
+				if (statusText === "Chưa xếp lịch") {
+					row.style.display = '';
+					return;
+				}
+
+				// Ẩn nếu không có ngày
+				if (dateText === "Chưa xếp lịch" || !dateText) {
+					row.style.display = 'none';
+					return;
+				}
+
+				// Kiểm tra tháng/năm
+				const parts = dateText.split('/');
+				const rowDate = new Date(parts[2], parts[1] - 1, parts[0]);
+
+				if (rowDate.getFullYear() == year && (rowDate.getMonth() + 1) == month) {
+					row.style.display = '';
+				} else {
+					row.style.display = 'none';
+				}
+			});
+		}
+	</script>
 </body>

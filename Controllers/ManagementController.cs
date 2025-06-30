@@ -425,41 +425,41 @@ namespace Hospital_Test.Controllers
 
 			return RedirectToAction("Thietbi");
 		}
-        public void CheckAllDevicesMaintenanceStatus() //thêm hàm tính ngày bảo trì
-        {
-            // Lấy danh sách tất cả thiết bị
-            string getAllDevicesQuery = "SELECT device_id, device_maintenance_start, device_maintenance_cycle, FK_status_id FROM dbo.tbl_device";
-            var dt = DataProvider<Device>.Instance.ExcuteQuery(getAllDevicesQuery);
+		public void CheckAllDevicesMaintenanceStatus() //sửa lại cách tính chu kì bằng Tháng
+		{
+			// Lấy danh sách tất cả thiết bị
+			string getAllDevicesQuery = "SELECT device_id, device_maintenance_start, device_maintenance_cycle, FK_status_id FROM dbo.tbl_device";
+			var dt = DataProvider<Device>.Instance.ExcuteQuery(getAllDevicesQuery);
 
-            DateTime currentDate = DateTime.Today;
+			DateTime currentDate = DateTime.Today;
 
-            foreach (DataRow deviceRow in dt.Rows)
-            {
-                // Kiểm tra null trước khi convert
-                if (deviceRow["device_maintenance_start"] != DBNull.Value &&
-                    deviceRow["device_maintenance_cycle"] != DBNull.Value)
-                {
-                    string deviceId = deviceRow["device_id"].ToString();
-                    DateTime maintenanceStart = Convert.ToDateTime(deviceRow["device_maintenance_start"]);
-                    int maintenanceCycleDays = Convert.ToInt32(deviceRow["device_maintenance_cycle"]); // Giờ là số ngày
+			foreach (DataRow deviceRow in dt.Rows)
+			{
+				// Kiểm tra null trước khi convert
+				if (deviceRow["device_maintenance_start"] != DBNull.Value &&
+					deviceRow["device_maintenance_cycle"] != DBNull.Value)
+				{
+					string deviceId = deviceRow["device_id"].ToString();
+					DateTime maintenanceStart = Convert.ToDateTime(deviceRow["device_maintenance_start"]);
+					int maintenanceCycle = Convert.ToInt32(deviceRow["device_maintenance_cycle"]);
 
-                    // Tính ngày hết hạn (thêm số NGÀY của chu kỳ vào ngày bắt đầu)
-                    DateTime expirationDate = maintenanceStart.AddDays(maintenanceCycleDays).Date;
+					// Tính ngày hết hạn (thêm số tháng của chu kỳ vào ngày bắt đầu)
+					DateTime expirationDate = maintenanceStart.AddMonths(maintenanceCycle).Date;
 
-                    // Nếu ngày hiện tại >= ngày hết hạn và trạng thái chưa phải "00"
-                    if (currentDate >= expirationDate
-                        && deviceRow["FK_status_id"].ToString() == "20") //chỉ lọc những thiết bị có trạng thái là đang sử dụng
-                    {
-                        string updateStatusQuery = $"UPDATE dbo.tbl_device SET FK_status_id = '00' WHERE device_id = '{deviceId}'";
-                        DataProvider<Device>.Instance.ExcuteQuery(updateStatusQuery);
-                        string updateStatusQuery_maintain = $"UPDATE dbo.tbl_maintain SET FK_status_id = '00' WHERE FK_device_id = '{deviceId}'"; //thêm dòng để dồng bộ Status maintain với device
-                        DataProvider<Device>.Instance.ExcuteQuery(updateStatusQuery_maintain);
-                    }
-                }
-            }
-        }
+					// Nếu ngày hiện tại >= ngày hết hạn và trạng thái chưa phải "00"
+					if (currentDate >= expirationDate && deviceRow["FK_status_id"].ToString() == "20")
+					{
+						string updateStatusQuery = $"UPDATE dbo.tbl_device SET FK_status_id = '00' WHERE device_id = '{deviceId}'";
+						DataProvider<Device>.Instance.ExcuteQuery(updateStatusQuery);
 
-        [HttpPost]
+						// Có thể thêm log ở đây
+						Console.WriteLine($"Đã cập nhật thiết bị {deviceId} sang trạng thái bảo trì");
+					}
+				}
+			}
+		}
+
+		[HttpPost]
 		public JsonResult Thietbi_Delete(string id)
 		{
 			try
@@ -502,7 +502,7 @@ namespace Hospital_Test.Controllers
 		}
 
 		[HttpPost]
-		public IActionResult Baotri_Add(string btrmaintainID, string btrdevicesname, string Btrdate, string btrDelivery, int btrDeliPhone, string btrMaintainance, int btrMaintainPhone, int btrFinance, int btrContact, string btrStatus, string btrRoom)
+		public IActionResult Baotri_Add(string btrmaintainID, string btrdevicesname, string Btrdate, string btrDelivery, int btrDeliPhone, string btrMaintainance, int btrMaintainPhone, int btrFinance, string btrContact, string btrStatus, string btrRoom)
 		{
 
 			// 2. đoạn này là tự động cộng id cho maintain_id bằng cách lấy id lớn nhất rồi cộng thêm "1" 
@@ -589,18 +589,21 @@ namespace Hospital_Test.Controllers
 			maintainList.CurrentPage = currentPage;
 
 			string query = @"
-               SELECT
-                    m.*,
-                    d.device_id,
-                    d.device_name,
-                    d.FK_status_id,
-                    r.room_name,
-                    s.status_name
-                FROM dbo.tbl_device d
-                LEFT JOIN dbo.tbl_maintain m ON m.FK_device_id = d.device_id
-                LEFT JOIN dbo.tbl_room r ON d.FK_room_id = r.room_id 
-                LEFT JOIN dbo.tbl_status s ON d.FK_status_id = s.status_id
-                WHERE d.FK_status_id LIKE '0%'";
+              SELECT 
+    m.*, 
+    d.device_id, 
+    d.device_name, 
+    d.device_maintenance_start, 
+    d.device_maintenance_cycle,
+DATEADD(MONTH, d.device_maintenance_cycle, d.device_maintenance_start) AS expiration_date,
+    d.FK_status_id, 
+    r.room_name, 
+    s.status_name
+FROM dbo.tbl_device d
+LEFT JOIN dbo.tbl_maintain m ON m.FK_device_id = d.device_id
+LEFT JOIN dbo.tbl_room r ON d.FK_room_id = r.room_id
+LEFT JOIN dbo.tbl_status s ON d.FK_status_id = s.status_id
+WHERE d.FK_status_id LIKE '0%'";
 			List<Maintain> maintain = DataProvider<Maintain>.Instance.GetListItemQuery(query);
 
 			maintain = Function.Instance.searchItems(maintain, maintainList);
@@ -614,28 +617,22 @@ namespace Hospital_Test.Controllers
 			};
 
 			DateTime today = DateTime.Today;
+
 			var overdue = maintain
-				.Where(m =>
-					m.maintain_date != null &&
-					m.maintain_date.Value.Date < today
-				)
+				.Where(m => m.expiration_date != null && m.expiration_date.Value.Date < today)
 				.ToList();
 
 			var comingup = maintain
-				.Where(m =>
-					m.maintain_date != null &&
-					m.maintain_date.Value.Date >= today &&
-					m.maintain_date.Value.Date <= today.AddDays(2)
-				)
+				.Where(m => m.expiration_date != null &&
+							m.expiration_date.Value.Date == today )
+							
 				.ToList();
 
 			var completed = maintain
-				.Where(m =>
-						m.maintain_date != null &&
-						m.maintain_date.Value.Date > today.AddDays(2) &&
-						m.maintain_date.Value.Date <= today.AddDays(30)
-				)
+				.Where(m => m.maintain_date != null &&
+				m.maintain_date.Value.Date <= today.AddDays(10))
 				.ToList();
+
 
 
 
@@ -1138,8 +1135,15 @@ namespace Hospital_Test.Controllers
 			string updateStatus_device = String.Format("UPDATE dbo.tbl_device SET FK_status_id = '{0}' WHERE device_id = '{1}' ", status_id, strDevice);
 			DataProvider<Device>.Instance.ExcuteQuery(updateStatus_device);
 
+
+			//cập nhật vị trí
 			string updateQuery_device = String.Format("UPDATE dbo.tbl_device SET FK_room_id = '{0}' WHERE device_id = '{1}' ", strRoom_to, strDevice);
 			DataProvider<Device>.Instance.ExcuteQuery(updateQuery_device);
+			string update_Location_maintain = String.Format("UPDATE dbo.tbl_maintain SET FK_room_id = '{0}' WHERE FK_device_id = '{1}' ", strRoom_to, strDevice);
+			DataProvider<Maintain>.Instance.ExcuteQuery(update_Location_maintain);
+			string update_Location_repair = String.Format("UPDATE dbo.tbl_repair SET FK_room_id = '{0}' WHERE FK_device_id = '{1}' ", strRoom_to, strDevice);
+			DataProvider<Repair>.Instance.ExcuteQuery(update_Location_repair);
+
 
 			return RedirectToAction("Kho");
 		}
@@ -1168,13 +1172,20 @@ namespace Hospital_Test.Controllers
 					"VALUES ('{0}', '{1}', '{2}', '{3}')", estrDate, estrDevice, estrRoom_from, estrRoom_to);
 			DataProvider<Storage>.Instance.ExcuteQuery(query);
 
+
+			//cập nhật vị trí
 			string updateQuery_device = String.Format("UPDATE dbo.tbl_device SET FK_room_id = '{0}' WHERE device_id = '{1}' ", estrRoom_to, estrDevice);
 			DataProvider<Device>.Instance.ExcuteQuery(updateQuery_device);
+			string update_Location_maintain = String.Format("UPDATE dbo.tbl_maintain SET FK_room_id = '{0}' WHERE FK_device_id = '{1}' ", estrRoom_to, estrDevice);
+			DataProvider<Maintain>.Instance.ExcuteQuery(update_Location_maintain);
+			string update_Location_repair = String.Format("UPDATE dbo.tbl_repair SET FK_room_id = '{0}' WHERE FK_device_id = '{1}' ", estrRoom_to, estrDevice);
+			DataProvider<Repair>.Instance.ExcuteQuery(update_Location_repair);
 
-            string updateQuery_maintaindate = String.Format("UPDATE dbo.tbl_device SET device_maintenance_start = '{0}' WHERE device_id = '{1}' ", estrDate, estrDevice); //set lại ngày bắt đầu bảo trì
-            DataProvider<Device>.Instance.ExcuteQuery(updateQuery_device);
+			//cập nhật ngày bảo trì ==> ngày xuất kho 
+			string updateQuery_maintaindate = String.Format("UPDATE dbo.tbl_device " + "SET device_maintenance_start = '{0}' " + "WHERE device_id = '{1}' AND FK_status_id = '03'", estrDate, estrDevice);
+			DataProvider<Device>.Instance.ExcuteQuery(updateQuery_maintaindate);
 
-            status_id = "20";
+			status_id = "20";
 
 			string updateStatus_device = String.Format("UPDATE dbo.tbl_device SET FK_status_id = '{0}' WHERE device_id = '{1}' ", status_id, estrDevice);
 			DataProvider<Device>.Instance.ExcuteQuery(updateStatus_device);
