@@ -42,124 +42,134 @@ namespace Hospital_Test.Controllers
 		{
 			try
 			{
-				// Lấy tổng số thiết bị đang quản lý
+				// 1. Tổng số thiết bị
 				string totalDevicesQuery = "SELECT COUNT(*) AS Count FROM dbo.tbl_device";
 				var totalDevicesResult = DataProvider<Device>.Instance.ExcuteQuery(totalDevicesQuery);
 				int totalDevices = totalDevicesResult.Rows.Count > 0 ? Convert.ToInt32(totalDevicesResult.Rows[0]["Count"]) : 0;
 				ViewBag.TotalDevices = totalDevices;
+				Console.WriteLine($"Total Devices: {totalDevices}");
 
-				// Lấy số thiết bị đang sử dụng (trạng thái là "đang sử dụng", giả định FK_status_id = '20')
+				// 2. Thiết bị đang sử dụng
 				string devicesInUseQuery = "SELECT COUNT(*) AS Count FROM dbo.tbl_device WHERE FK_status_id = '20'";
 				var devicesInUseResult = DataProvider<Device>.Instance.ExcuteQuery(devicesInUseQuery);
 				int devicesInUse = devicesInUseResult.Rows.Count > 0 ? Convert.ToInt32(devicesInUseResult.Rows[0]["Count"]) : 0;
 				ViewBag.DevicesInUse = devicesInUse;
+				Console.WriteLine($"Devices In Use: {devicesInUse}");
 
-				// Lấy số thiết bị trong kho (vị trí là "KHO")
+				// 3. Thiết bị trong kho
 				string devicesInStockQuery = "SELECT COUNT(*) AS Count FROM dbo.tbl_device WHERE FK_room_id = 'KHO'";
 				var devicesInStockResult = DataProvider<Device>.Instance.ExcuteQuery(devicesInStockQuery);
 				int devicesInStock = devicesInStockResult.Rows.Count > 0 ? Convert.ToInt32(devicesInStockResult.Rows[0]["Count"]) : 0;
 				ViewBag.DevicesInStock = devicesInStock;
+				Console.WriteLine($"Devices In Stock: {devicesInStock}");
 
-				// 2. Lịch sử xuất nhập kho
+				// 4. Lịch sử điều chuyển
 				string query_str = @"
-            SELECT
-                st.*,
-                d.device_id,
-                d.device_name,
-                r_from.room_name AS room_from_name,
-                r_to.room_name AS room_to_name
-            FROM dbo.tbl_storage st
-            LEFT JOIN dbo.tbl_device d ON st.FK_device_id = d.device_id
-            LEFT JOIN dbo.tbl_room r_from ON st.FK_room_id_from = r_from.room_id
-            LEFT JOIN dbo.tbl_room r_to ON st.FK_room_id_to = r_to.room_id";
+			SELECT
+				st.*,
+				d.device_id,
+				d.device_name,
+				r_from.room_name AS room_from_name,
+				r_to.room_name AS room_to_name
+			FROM dbo.tbl_storage st
+			LEFT JOIN dbo.tbl_device d ON st.FK_device_id = d.device_id
+			LEFT JOIN dbo.tbl_room r_from ON st.FK_room_id_from = r_from.room_id
+			LEFT JOIN dbo.tbl_room r_to ON st.FK_room_id_to = r_to.room_id";
 
 				var storage = DataProvider<Storage>.Instance.GetListItemQuery(query_str);
 				ViewBag.StorageHistory = storage;
+				Console.WriteLine($"Storage History Count: {storage.Count}");
 
-
-
-				// 3. Biểu đồ tài chính (lấy từ Taichinh_Hopdong.cs)
+				// 5. Tài chính – tổng chi phí
 				string queryDevice = @"
-SELECT d.*, c.contact_finance
-FROM dbo.tbl_device d
-LEFT JOIN dbo.tbl_contact c ON d.FK_contact_id = c.contact_id";
+			SELECT d.*, c.contact_finance
+			FROM dbo.tbl_device d
+			LEFT JOIN dbo.tbl_contact c ON d.FK_contact_id = c.contact_id";
 				var devices = DataProvider<Device>.Instance.GetListItemQuery(queryDevice);
 
-				// Lấy danh sách bảo trì
 				string queryMaintain = @"
-SELECT m.*, c.contact_finance
-FROM dbo.tbl_maintain m
-LEFT JOIN dbo.tbl_contact c ON m.FK_contact_id = c.contact_id";
+			SELECT m.*, c.contact_finance
+			FROM dbo.tbl_maintain m
+			LEFT JOIN dbo.tbl_contact c ON m.FK_contact_id = c.contact_id";
 				var maintain = DataProvider<Maintain>.Instance.GetListItemQuery(queryMaintain);
 
-				// Lấy danh sách sửa chữa
 				string queryRepair = @"
-SELECT r.*, c.contact_finance
-FROM dbo.tbl_repair r
-LEFT JOIN dbo.tbl_contact c ON r.FK_contact_id = c.contact_id";
+			SELECT r.*, c.contact_finance
+			FROM dbo.tbl_repair r
+			LEFT JOIN dbo.tbl_contact c ON r.FK_contact_id = c.contact_id";
 				var repair = DataProvider<Repair>.Instance.GetListItemQuery(queryRepair);
-				int totalCost1 = devices.Sum(d =>
+
+				long totalCost1 = devices.Sum(d =>
 				{
-					int value;
-					return int.TryParse(d.contact_finance, out value) ? value : 0;
+					if (string.IsNullOrWhiteSpace(d.contact_finance)) return 0;
+					return long.TryParse(d.contact_finance, out long val) ? val : 0;
 				});
-				int totalCost2 = maintain.Sum(d =>
+				long totalCost2 = maintain.Sum(d =>
 				{
-					int value;
-					return int.TryParse(d.contact_finance, out value) ? value : 0;
+					if (string.IsNullOrWhiteSpace(d.contact_finance)) return 0;
+					return long.TryParse(d.contact_finance, out long val) ? val : 0;
 				});
-				int totalCost3 = repair.Sum(d =>
+				long totalCost3 = repair.Sum(d =>
 				{
-					int value;
-					return int.TryParse(d.contact_finance, out value) ? value : 0;
+					if (string.IsNullOrWhiteSpace(d.contact_finance)) return 0;
+					return long.TryParse(d.contact_finance, out long val) ? val : 0;
 				});
+
 				ViewBag.TotalCost1 = totalCost1;
 				ViewBag.TotalCost2 = totalCost2;
 				ViewBag.TotalCost3 = totalCost3;
+				
 
-				//Biểu đồ cột theo tháng
+				// 6. Biểu đồ theo tháng
 				string chartQuery = @"
-        SELECT MonthYear, SUM(TotalFinance) AS TotalFinance
-        FROM (
-            SELECT FORMAT(d.device_received_date, 'yyyy-MM') AS MonthYear, ISNULL(c.contact_finance, 0) AS TotalFinance
-            FROM dbo.tbl_device d
-            LEFT JOIN dbo.tbl_contact c ON d.FK_contact_id = c.contact_id
-            WHERE d.device_received_date IS NOT NULL
+			SELECT MonthYear, SUM(TotalFinance) AS TotalFinance
+			FROM (
+				SELECT FORMAT(d.device_received_date, 'yyyy-MM') AS MonthYear, ISNULL(c.contact_finance, 0) AS TotalFinance
+				FROM dbo.tbl_device d
+				LEFT JOIN dbo.tbl_contact c ON d.FK_contact_id = c.contact_id
+				WHERE d.device_received_date IS NOT NULL
 
-            UNION ALL
+				UNION ALL
 
-            SELECT FORMAT(m.maintain_date, 'yyyy-MM') AS MonthYear, ISNULL(c.contact_finance, 0) AS TotalFinance
-            FROM dbo.tbl_maintain m
-            LEFT JOIN dbo.tbl_contact c ON m.FK_contact_id = c.contact_id
-            WHERE m.maintain_date IS NOT NULL
+				SELECT FORMAT(m.maintain_date, 'yyyy-MM') AS MonthYear, ISNULL(c.contact_finance, 0) AS TotalFinance
+				FROM dbo.tbl_maintain m
+				LEFT JOIN dbo.tbl_contact c ON m.FK_contact_id = c.contact_id
+				WHERE m.maintain_date IS NOT NULL
 
-            UNION ALL
+				UNION ALL
 
-            SELECT FORMAT(r.repair_date, 'yyyy-MM') AS MonthYear, ISNULL(c.contact_finance, 0) AS TotalFinance
-            FROM dbo.tbl_repair r
-            LEFT JOIN dbo.tbl_contact c ON r.FK_contact_id = c.contact_id
-            WHERE r.repair_date IS NOT NULL
-        ) AS Combined
-        GROUP BY MonthYear
-        ORDER BY MonthYear DESC";
+				SELECT FORMAT(r.repair_date, 'yyyy-MM') AS MonthYear, ISNULL(c.contact_finance, 0) AS TotalFinance
+				FROM dbo.tbl_repair r
+				LEFT JOIN dbo.tbl_contact c ON r.FK_contact_id = c.contact_id
+				WHERE r.repair_date IS NOT NULL
+			) AS Combined
+			GROUP BY MonthYear
+			ORDER BY MonthYear DESC";
 
 				var chartData = DataProvider<Contact>.Instance.GetListItemQueryRaw(chartQuery)
 					.Take(5).OrderBy(d => d["MonthYear"]).ToList();
 
 				ViewBag.ChartLabels = chartData.Select(d => d["MonthYear"].ToString()).ToList();
-				ViewBag.ChartValues = chartData.Select(d => Convert.ToInt32(d["TotalFinance"])).ToList();
+				ViewBag.ChartValues = chartData.Select(d =>
+				{
+					var val = d["TotalFinance"];
+					return val != DBNull.Value ? Convert.ToInt64(val) : 0;
+				}).ToList();
 			}
 			catch (Exception ex)
 			{
+				Console.WriteLine("LỖI: " + ex.ToString());
+
 				ViewBag.TotalDevices = ViewBag.DevicesInUse = ViewBag.DevicesInStock = 0;
 				ViewBag.StorageHistory = new List<Storage>();
 				ViewBag.ChartLabels = new List<string>();
 				ViewBag.ChartValues = new List<int>();
+				ViewBag.TotalCost1 = ViewBag.TotalCost2 = ViewBag.TotalCost3 = 0;
 			}
 
 			return View("~/Views/Shared/Trangchu.cshtml");
-
 		}
+
 
 		//Form them thiet bi
 		public IActionResult Thietbi_Add()
@@ -346,7 +356,7 @@ LEFT JOIN dbo.tbl_contact c ON r.FK_contact_id = c.contact_id";
 				DeviceList = deviceList,
 				DeviceForm = deviceForm
 			};
-
+			CheckAllDevicesMaintenanceStatus();// chuyển từ Thietbi về Baotri
 			return View("~/Views/Shared/Thietbi.cshtml", viewTbiModel);
 		}
 
@@ -415,6 +425,39 @@ LEFT JOIN dbo.tbl_contact c ON r.FK_contact_id = c.contact_id";
 
 			return RedirectToAction("Thietbi");
 		}
+		public void CheckAllDevicesMaintenanceStatus() //sửa lại cách tính chu kì bằng Tháng
+		{
+			// Lấy danh sách tất cả thiết bị
+			string getAllDevicesQuery = "SELECT device_id, device_maintenance_start, device_maintenance_cycle, FK_status_id FROM dbo.tbl_device";
+			var dt = DataProvider<Device>.Instance.ExcuteQuery(getAllDevicesQuery);
+
+			DateTime currentDate = DateTime.Today;
+
+			foreach (DataRow deviceRow in dt.Rows)
+			{
+				// Kiểm tra null trước khi convert
+				if (deviceRow["device_maintenance_start"] != DBNull.Value &&
+					deviceRow["device_maintenance_cycle"] != DBNull.Value)
+				{
+					string deviceId = deviceRow["device_id"].ToString();
+					DateTime maintenanceStart = Convert.ToDateTime(deviceRow["device_maintenance_start"]);
+					int maintenanceCycle = Convert.ToInt32(deviceRow["device_maintenance_cycle"]);
+
+					// Tính ngày hết hạn (thêm số tháng của chu kỳ vào ngày bắt đầu)
+					DateTime expirationDate = maintenanceStart.AddMonths(maintenanceCycle).Date;
+
+					// Nếu ngày hiện tại >= ngày hết hạn và trạng thái chưa phải "00"
+					if (currentDate >= expirationDate && deviceRow["FK_status_id"].ToString() == "20")
+					{
+						string updateStatusQuery = $"UPDATE dbo.tbl_device SET FK_status_id = '00' WHERE device_id = '{deviceId}'";
+						DataProvider<Device>.Instance.ExcuteQuery(updateStatusQuery);
+
+						// Có thể thêm log ở đây
+						Console.WriteLine($"Đã cập nhật thiết bị {deviceId} sang trạng thái bảo trì");
+					}
+				}
+			}
+		}
 
 		[HttpPost]
 		public JsonResult Thietbi_Delete(string id)
@@ -459,7 +502,7 @@ LEFT JOIN dbo.tbl_contact c ON r.FK_contact_id = c.contact_id";
 		}
 
 		[HttpPost]
-		public IActionResult Baotri_Add(string btrmaintainID, string btrdevicesname, string Btrdate, string btrDelivery, int btrDeliPhone, string btrMaintainance, int btrMaintainPhone, int btrFinance, int btrContact, string btrStatus, string btrRoom)
+		public IActionResult Baotri_Add(string btrmaintainID, string btrdevicesname, string Btrdate, string btrDelivery, int btrDeliPhone, string btrMaintainance, int btrMaintainPhone, int btrFinance, string btrContact, string btrStatus, string btrRoom)
 		{
 
 			// 2. đoạn này là tự động cộng id cho maintain_id bằng cách lấy id lớn nhất rồi cộng thêm "1" 
@@ -546,18 +589,21 @@ LEFT JOIN dbo.tbl_contact c ON r.FK_contact_id = c.contact_id";
 			maintainList.CurrentPage = currentPage;
 
 			string query = @"
-               SELECT
-                    m.*,
-                    d.device_id,
-                    d.device_name,
-                    d.FK_status_id,
-                    r.room_name,
-                    s.status_name
-                FROM dbo.tbl_device d
-                LEFT JOIN dbo.tbl_maintain m ON m.FK_device_id = d.device_id
-                LEFT JOIN dbo.tbl_room r ON d.FK_room_id = r.room_id 
-                LEFT JOIN dbo.tbl_status s ON d.FK_status_id = s.status_id
-                WHERE d.FK_status_id LIKE '0%'";
+              SELECT 
+    m.*, 
+    d.device_id, 
+    d.device_name, 
+    d.device_maintenance_start, 
+    d.device_maintenance_cycle,
+DATEADD(MONTH, d.device_maintenance_cycle, d.device_maintenance_start) AS expiration_date,
+    d.FK_status_id, 
+    r.room_name, 
+    s.status_name
+FROM dbo.tbl_device d
+LEFT JOIN dbo.tbl_maintain m ON m.FK_device_id = d.device_id
+LEFT JOIN dbo.tbl_room r ON d.FK_room_id = r.room_id
+LEFT JOIN dbo.tbl_status s ON d.FK_status_id = s.status_id
+WHERE d.FK_status_id LIKE '0%'";
 			List<Maintain> maintain = DataProvider<Maintain>.Instance.GetListItemQuery(query);
 
 			maintain = Function.Instance.searchItems(maintain, maintainList);
@@ -571,28 +617,22 @@ LEFT JOIN dbo.tbl_contact c ON r.FK_contact_id = c.contact_id";
 			};
 
 			DateTime today = DateTime.Today;
+
 			var overdue = maintain
-				.Where(m =>
-					m.maintain_date != null &&
-					m.maintain_date.Value.Date < today
-				)
+				.Where(m => m.expiration_date != null && m.expiration_date.Value.Date < today)
 				.ToList();
 
 			var comingup = maintain
-				.Where(m =>
-					m.maintain_date != null &&
-					m.maintain_date.Value.Date >= today &&
-					m.maintain_date.Value.Date <= today.AddDays(2)
-				)
+				.Where(m => m.expiration_date != null &&
+							m.expiration_date.Value.Date == today )
+							
 				.ToList();
 
 			var completed = maintain
-				.Where(m =>
-						m.maintain_date != null &&
-						m.maintain_date.Value.Date > today.AddDays(2) &&
-						m.maintain_date.Value.Date <= today.AddDays(30)
-				)
+				.Where(m => m.maintain_date != null &&
+				m.maintain_date.Value.Date <= today.AddDays(10))
 				.ToList();
+
 
 
 
@@ -605,8 +645,9 @@ LEFT JOIN dbo.tbl_contact c ON r.FK_contact_id = c.contact_id";
 				ComingupList = comingup,
 				CompletedList = completed
 			};
+          
 
-			return View("~/Views/Shared/Baotri.cshtml", viewModel);
+            return View("~/Views/Shared/Baotri.cshtml", viewModel);
 		}
 		[HttpPost]
 		public IActionResult Baotri(String sortOrder, String searchString, String searchField, int currentPage = 1)
@@ -647,7 +688,12 @@ LEFT JOIN dbo.tbl_contact c ON r.FK_contact_id = c.contact_id";
 				device_id.Replace("'", "''")
 			);
 			DataProvider<Device>.Instance.ExcuteQuery(status_update_query);
-
+			string status_update_maintain = String.Format(
+			  "UPDATE dbo.tbl_maintain SET FK_status_id = '{0}' WHERE FK_device_id = '{1}'",
+			  fkStatus.Replace("'", "''"),
+			  device_id.Replace("'", "''")
+		  );
+			DataProvider<Maintain>.Instance.ExcuteQuery(status_update_maintain);
 			TempData["msg"] = "Cập nhật trạng thái thành công!";
 			return RedirectToAction("Baotri");
 		}
@@ -748,26 +794,45 @@ LEFT JOIN dbo.tbl_contact c ON r.FK_contact_id = c.contact_id";
 		}
 
 		[HttpGet]
-		public JsonResult Suachua_GetById(string id)
+		public JsonResult Suachua_GetById(string id, string purpose = null)
 		{
 			string query = $@"
-               SELECT
-                  re.*,
-                  d.device_id,
-                  d.device_name,
-                  r.room_name,
-                  s.status_name,
-                  f.contact_finance,
-                  f.contact_address
-                FROM dbo.tbl_repair re
-                LEFT JOIN dbo.tbl_device d ON re.FK_device_id = d.device_id
-                LEFT JOIN dbo.tbl_room r ON d.FK_room_id = r.room_id
-                LEFT JOIN dbo.tbl_status s ON d.FK_status_id = s.status_id
-                LEFT JOIN dbo.tbl_contact f ON re.FK_contact_id = f.contact_id
-                WHERE re.repair_id = '{id}'";
+            SELECT
+                re.*,
+                d.device_id,
+                d.device_name,
+                r.room_name,
+                s.status_name,
+                f.contact_finance,
+                f.contact_address
+            FROM dbo.tbl_repair re
+            LEFT JOIN dbo.tbl_device d ON re.FK_device_id = d.device_id
+            LEFT JOIN dbo.tbl_room r ON d.FK_room_id = r.room_id
+            LEFT JOIN dbo.tbl_status s ON d.FK_status_id = s.status_id
+            LEFT JOIN dbo.tbl_contact f ON re.FK_contact_id = f.contact_id
+            WHERE re.repair_id = '{id}'";
+
 			var repair = DataProvider<Repair>.Instance.GetListItemQuery(query).FirstOrDefault();
+
+			if (repair == null)
+				return Json(new { success = false, message = "Không tìm thấy thông tin sửa chữa" });
+
+			if (purpose == "status_update")
+			{
+				return Json(new
+				{
+					success = true,
+					repair_id = repair.repair_id,
+					repair_update_status = repair.repair_update_status,
+					repair_update_note = repair.repair_update_note,
+					repair_update_date = repair.repair_update_date,
+					fk_status_id = repair.FK_status_id // Sửa thành chữ thường để nhất quán, thêm dòng 
+				});
+			}
+
 			return Json(repair);
 		}
+
 
 		[HttpGet]
 		public IActionResult Suachua_UpdateStatus(string repair_id)
@@ -788,32 +853,54 @@ LEFT JOIN dbo.tbl_contact c ON r.FK_contact_id = c.contact_id";
 		}
 
 		[HttpPost]
-		public IActionResult Suachua_UpdateStatus(string repair_id, string repair_update_status, string repair_update_note, DateTime repair_update_date)
+		public IActionResult Suachua_UpdateStatus(string schID, string schstatus, string schnote, DateTime schdate, string totalStatus)
 		{
-
-			Repair repairs_update = DataProvider<Repair>.Instance.GetListItem("tbl_repair").FirstOrDefault(x => x.repair_id == repair_id);
+			// Lấy thông tin sửa chữa
+			Repair repairs_update = DataProvider<Repair>.Instance.GetListItem("tbl_repair")
+				.FirstOrDefault(x => x.repair_id == schID);
 
 			if (repairs_update == null)
 			{
 				return NotFound();
 			}
 
-			// Cập nhật thông tin
-			repairs_update.repair_update_status = repair_update_status;
-			repairs_update.repair_update_note = repair_update_note;
-			repairs_update.repair_update_date = repair_update_date;
+			// Lấy thông tin thiết bị tương ứng
+			var device = DataProvider<Device>.Instance.GetListItem("tbl_device")
+				.FirstOrDefault(x => x.device_id == repairs_update.FK_device_id);
 
+			if (device == null)
+			{
+				return NotFound("Không tìm thấy thiết bị tương ứng");
+			}
+
+			// Cập nhật thông tin sửa chữa
+			repairs_update.repair_update_status = schstatus;
+			repairs_update.repair_update_note = schnote;
+			repairs_update.repair_update_date = schdate;
+			repairs_update.FK_status_id = totalStatus;
+
+			// Cập nhật trạng thái thiết bị
+			device.FK_status_id = totalStatus;
+
+			// Tạo transaction để đảm bảo cả 2 bảng cùng được cập nhật
 			string repair_update = String.Format(
-				"UPDATE dbo.tbl_repair SET repair_update_date = '{0}', repair_update_note = N'{1}', repair_update_status = N'{2}' WHERE repair_id = '{3}'",
-				repair_update_date.ToString("yyyy-MM-dd HH:mm:ss"),
-				repair_update_note.Replace("'", "''"),
-				repair_update_status.Replace("'", "''"),
-				repair_id.Replace("'", "''")
+				"BEGIN TRANSACTION; " +
+				"UPDATE dbo.tbl_repair SET repair_update_date = '{0}', repair_update_note = N'{1}', repair_update_status = N'{2}', FK_status_id = '{3}' WHERE repair_id = '{4}'; " +
+				"UPDATE dbo.tbl_device SET FK_status_id = '{3}' WHERE device_id = '{5}'; " +
+				"COMMIT;",
+				schdate.ToString("yyyy-MM-dd HH:mm:ss"),
+				schnote.Replace("'", "''"),
+				schstatus.Replace("'", "''"),
+				totalStatus.Replace("'", "''"),
+				schID.Replace("'", "''"),
+				repairs_update.FK_device_id?.Replace("'", "''") ?? ""
 			);
+
 			DataProvider<Repair>.Instance.ExcuteQuery(repair_update);
 
 			return RedirectToAction("Suachua");
 		}
+
 
 		public IActionResult Suachua()
 		{
@@ -1048,8 +1135,15 @@ LEFT JOIN dbo.tbl_contact c ON r.FK_contact_id = c.contact_id";
 			string updateStatus_device = String.Format("UPDATE dbo.tbl_device SET FK_status_id = '{0}' WHERE device_id = '{1}' ", status_id, strDevice);
 			DataProvider<Device>.Instance.ExcuteQuery(updateStatus_device);
 
+
+			//cập nhật vị trí
 			string updateQuery_device = String.Format("UPDATE dbo.tbl_device SET FK_room_id = '{0}' WHERE device_id = '{1}' ", strRoom_to, strDevice);
 			DataProvider<Device>.Instance.ExcuteQuery(updateQuery_device);
+			string update_Location_maintain = String.Format("UPDATE dbo.tbl_maintain SET FK_room_id = '{0}' WHERE FK_device_id = '{1}' ", strRoom_to, strDevice);
+			DataProvider<Maintain>.Instance.ExcuteQuery(update_Location_maintain);
+			string update_Location_repair = String.Format("UPDATE dbo.tbl_repair SET FK_room_id = '{0}' WHERE FK_device_id = '{1}' ", strRoom_to, strDevice);
+			DataProvider<Repair>.Instance.ExcuteQuery(update_Location_repair);
+
 
 			return RedirectToAction("Kho");
 		}
@@ -1078,8 +1172,18 @@ LEFT JOIN dbo.tbl_contact c ON r.FK_contact_id = c.contact_id";
 					"VALUES ('{0}', '{1}', '{2}', '{3}')", estrDate, estrDevice, estrRoom_from, estrRoom_to);
 			DataProvider<Storage>.Instance.ExcuteQuery(query);
 
+
+			//cập nhật vị trí
 			string updateQuery_device = String.Format("UPDATE dbo.tbl_device SET FK_room_id = '{0}' WHERE device_id = '{1}' ", estrRoom_to, estrDevice);
 			DataProvider<Device>.Instance.ExcuteQuery(updateQuery_device);
+			string update_Location_maintain = String.Format("UPDATE dbo.tbl_maintain SET FK_room_id = '{0}' WHERE FK_device_id = '{1}' ", estrRoom_to, estrDevice);
+			DataProvider<Maintain>.Instance.ExcuteQuery(update_Location_maintain);
+			string update_Location_repair = String.Format("UPDATE dbo.tbl_repair SET FK_room_id = '{0}' WHERE FK_device_id = '{1}' ", estrRoom_to, estrDevice);
+			DataProvider<Repair>.Instance.ExcuteQuery(update_Location_repair);
+
+			//cập nhật ngày bảo trì ==> ngày xuất kho 
+			string updateQuery_maintaindate = String.Format("UPDATE dbo.tbl_device " + "SET device_maintenance_start = '{0}' " + "WHERE device_id = '{1}' AND FK_status_id = '03'", estrDate, estrDevice);
+			DataProvider<Device>.Instance.ExcuteQuery(updateQuery_maintaindate);
 
 			status_id = "20";
 
@@ -1119,9 +1223,9 @@ LEFT JOIN dbo.tbl_contact c ON r.FK_contact_id = c.contact_id";
 			DataProvider<Storage>.Instance.ExcuteQuery(String.Format("DELETE FROM dbo.tbl_storage WHERE storage_id = {0}", storage_id_del));
 			return RedirectToAction("Kho");
 		}
-
-		//Tài chính hợp đồng
-		public IActionResult Taichinh_Hopdong()
+ //-------------------------Tài chính - Hợp đồng-----------------------------------------
+        //Tài chính hợp đồng
+        public IActionResult Taichinh_Hopdong()
 		{
 			string field, sortOrder, searchField, searchString, page;
 			var urlQuery = Request.HttpContext.Request.Query;
@@ -1308,8 +1412,7 @@ ORDER BY MonthYear DESC";
 				.ToList();
 
 			ViewBag.ChartLabels = chartData.Select(d => d["MonthYear"].ToString()).ToList();
-			ViewBag.ChartValues = chartData.Select(d => Convert.ToInt32(d["TotalFinance"])).ToList();
-
+			ViewBag.ChartValues = chartData.Select(d => Convert.ToInt64(d["TotalFinance"])).ToList();
 			return View("~/Views/Shared/Taichinh_Hopdong.cshtml", viewTC_HDModel);
 
 		}

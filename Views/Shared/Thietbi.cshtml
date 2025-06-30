@@ -215,10 +215,10 @@
 								<label>Giá sản phẩm/đơn vị:</label>
 								<input type="text" name="tbiContact_finance" id="finance" style="width: 10rem; margin-right: 1rem;" readonly tabindex="-1" class="readonly-input">
 							</div>
-							<div>
+							@* <div>
 								<label>Ngày xuất kho:</label>
 								<input name="tbiStockout_date" type="date" id="stockoutdate">
-							</div>
+							</div> *@
 						</div><br>
 
 						<div class="form-group-title">
@@ -350,10 +350,10 @@
 							<label for="deviceType">Giá sản phẩm/đơn vị:</label>
 							<input type="text" name="tbiContact_finance" style="width: 18rem; margin-right: 1rem;">
 						</div>
-						<div>
+						@* <div>
 							<label for="maintenancePeriod">Ngày xuất kho:</label>
 							<input name="tbiStockout_date" type="date" />
-						</div>
+						</div> *@
 					</div><br>
 
 					<div class="form-group-title">
@@ -572,9 +572,9 @@
                     document.getElementById('finance').value = data.contact_finance || '';
 
                     const stockoutRaw = data.device_stockout_date;
-document.getElementById('stockoutdate').value =stockoutRaw && !stockoutRaw.includes("1900-01-01")
-        ? stockoutRaw.split('T')[0]
-        : '';
+// document.getElementById('stockoutdate').value =stockoutRaw && !stockoutRaw.includes("1900-01-01")
+//         ? stockoutRaw.split('T')[0]
+//         : '';
 					document.getElementById('contact_id').value = data.FK_contact_id || '';
                     // document.getElementById('contactType').value = data.contact_type || '';
 					document.getElementById('devicenote').value = data.device_note || '';

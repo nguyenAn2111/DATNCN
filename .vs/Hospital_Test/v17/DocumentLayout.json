@@ -1,0 +1,189 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\Lenovo\\OneDrive\\Desktop\\\u0110ATNCN\\srcDATN\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{BE7D7811-E103-4EC3-9FC5-D895B7C3E3BF}|Hospital_Test.csproj|c:\\users\\lenovo\\onedrive\\desktop\\\u0111atncn\\srcdatn\\models\\itemdisplay.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{BE7D7811-E103-4EC3-9FC5-D895B7C3E3BF}|Hospital_Test.csproj|solutionrelative:models\\itemdisplay.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{BE7D7811-E103-4EC3-9FC5-D895B7C3E3BF}|Hospital_Test.csproj|c:\\users\\lenovo\\onedrive\\desktop\\\u0111atncn\\srcdatn\\views\\shared\\kho.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{BE7D7811-E103-4EC3-9FC5-D895B7C3E3BF}|Hospital_Test.csproj|solutionrelative:views\\shared\\kho.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{BE7D7811-E103-4EC3-9FC5-D895B7C3E3BF}|Hospital_Test.csproj|c:\\users\\lenovo\\onedrive\\desktop\\\u0111atncn\\srcdatn\\views\\shared\\thietbi.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{BE7D7811-E103-4EC3-9FC5-D895B7C3E3BF}|Hospital_Test.csproj|solutionrelative:views\\shared\\thietbi.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{BE7D7811-E103-4EC3-9FC5-D895B7C3E3BF}|Hospital_Test.csproj|c:\\users\\lenovo\\onedrive\\desktop\\\u0111atncn\\srcdatn\\views\\shared\\trangchu.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{BE7D7811-E103-4EC3-9FC5-D895B7C3E3BF}|Hospital_Test.csproj|solutionrelative:views\\shared\\trangchu.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{BE7D7811-E103-4EC3-9FC5-D895B7C3E3BF}|Hospital_Test.csproj|c:\\users\\lenovo\\onedrive\\desktop\\\u0111atncn\\srcdatn\\views\\shared\\login\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{BE7D7811-E103-4EC3-9FC5-D895B7C3E3BF}|Hospital_Test.csproj|solutionrelative:views\\shared\\login\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{BE7D7811-E103-4EC3-9FC5-D895B7C3E3BF}|Hospital_Test.csproj|c:\\users\\lenovo\\onedrive\\desktop\\\u0111atncn\\srcdatn\\models\\maintain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{BE7D7811-E103-4EC3-9FC5-D895B7C3E3BF}|Hospital_Test.csproj|solutionrelative:models\\maintain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{BE7D7811-E103-4EC3-9FC5-D895B7C3E3BF}|Hospital_Test.csproj|c:\\users\\lenovo\\onedrive\\desktop\\\u0111atncn\\srcdatn\\views\\shared\\suachua.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{BE7D7811-E103-4EC3-9FC5-D895B7C3E3BF}|Hospital_Test.csproj|solutionrelative:views\\shared\\suachua.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{BE7D7811-E103-4EC3-9FC5-D895B7C3E3BF}|Hospital_Test.csproj|c:\\users\\lenovo\\onedrive\\desktop\\\u0111atncn\\srcdatn\\views\\shared\\baotri.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{BE7D7811-E103-4EC3-9FC5-D895B7C3E3BF}|Hospital_Test.csproj|solutionrelative:views\\shared\\baotri.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{BE7D7811-E103-4EC3-9FC5-D895B7C3E3BF}|Hospital_Test.csproj|c:\\users\\lenovo\\onedrive\\desktop\\\u0111atncn\\srcdatn\\controllers\\managementcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{BE7D7811-E103-4EC3-9FC5-D895B7C3E3BF}|Hospital_Test.csproj|solutionrelative:controllers\\managementcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 1,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedHeight": 268,
+          "SelectedChildIndex": 11,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "ManagementController.cs",
+              "DocumentMoniker": "C:\\Users\\Lenovo\\OneDrive\\Desktop\\\u0110ATNCN\\srcDATN\\Controllers\\ManagementController.cs",
+              "RelativeDocumentMoniker": "Controllers\\ManagementController.cs",
+              "ToolTip": "C:\\Users\\Lenovo\\OneDrive\\Desktop\\\u0110ATNCN\\srcDATN\\Controllers\\ManagementController.cs",
+              "RelativeToolTip": "Controllers\\ManagementController.cs",
+              "ViewState": "AgIAABECAAAAAAAAAAAewCYCAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-27T16:16:15.096Z",
+              "IsPinned": true,
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "Baotri.cshtml",
+              "DocumentMoniker": "C:\\Users\\Lenovo\\OneDrive\\Desktop\\\u0110ATNCN\\srcDATN\\Views\\Shared\\Baotri.cshtml",
+              "RelativeDocumentMoniker": "Views\\Shared\\Baotri.cshtml",
+              "ToolTip": "C:\\Users\\Lenovo\\OneDrive\\Desktop\\\u0110ATNCN\\srcDATN\\Views\\Shared\\Baotri.cshtml",
+              "RelativeToolTip": "Views\\Shared\\Baotri.cshtml",
+              "ViewState": "AgIAAMUAAAAAAAAAAAAcwNkAAAAWAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-06-29T09:51:20.734Z",
+              "IsPinned": true,
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "Suachua.cshtml",
+              "DocumentMoniker": "C:\\Users\\Lenovo\\OneDrive\\Desktop\\\u0110ATNCN\\srcDATN\\Views\\Shared\\Suachua.cshtml",
+              "RelativeDocumentMoniker": "Views\\Shared\\Suachua.cshtml",
+              "ToolTip": "C:\\Users\\Lenovo\\OneDrive\\Desktop\\\u0110ATNCN\\srcDATN\\Views\\Shared\\Suachua.cshtml",
+              "RelativeToolTip": "Views\\Shared\\Suachua.cshtml",
+              "ViewState": "AgIAAJgAAAAAAAAAAAAMwI4AAAAsAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-06-29T10:52:35.562Z",
+              "IsPinned": true,
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "Maintain.cs",
+              "DocumentMoniker": "C:\\Users\\Lenovo\\OneDrive\\Desktop\\\u0110ATNCN\\srcDATN\\Models\\Maintain.cs",
+              "RelativeDocumentMoniker": "Models\\Maintain.cs",
+              "ToolTip": "C:\\Users\\Lenovo\\OneDrive\\Desktop\\\u0110ATNCN\\srcDATN\\Models\\Maintain.cs",
+              "RelativeToolTip": "Models\\Maintain.cs",
+              "ViewState": "AgIAABsAAAAAAAAAAIAwwCoAAABSAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-29T14:48:12.637Z",
+              "IsPinned": true,
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:128:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:128:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{b1e99781-ab81-11d0-b683-00aa00a3ee26}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "Index.cshtml",
+              "DocumentMoniker": "C:\\Users\\Lenovo\\OneDrive\\Desktop\\\u0110ATNCN\\srcDATN\\Views\\Shared\\Login\\Index.cshtml",
+              "RelativeDocumentMoniker": "Views\\Shared\\Login\\Index.cshtml",
+              "ToolTip": "C:\\Users\\Lenovo\\OneDrive\\Desktop\\\u0110ATNCN\\srcDATN\\Views\\Shared\\Login\\Index.cshtml",
+              "RelativeToolTip": "Views\\Shared\\Login\\Index.cshtml",
+              "ViewState": "AgIAAA8AAAAAAAAAAAAAACEAAABOAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-06-29T17:07:26.521Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Trangchu.cshtml",
+              "DocumentMoniker": "C:\\Users\\Lenovo\\OneDrive\\Desktop\\\u0110ATNCN\\srcDATN\\Views\\Shared\\Trangchu.cshtml",
+              "RelativeDocumentMoniker": "Views\\Shared\\Trangchu.cshtml",
+              "ToolTip": "C:\\Users\\Lenovo\\OneDrive\\Desktop\\\u0110ATNCN\\srcDATN\\Views\\Shared\\Trangchu.cshtml",
+              "RelativeToolTip": "Views\\Shared\\Trangchu.cshtml",
+              "ViewState": "AgIAAFMAAAAAAAAAAAAYwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-06-29T14:49:44.019Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Thietbi.cshtml",
+              "DocumentMoniker": "C:\\Users\\Lenovo\\OneDrive\\Desktop\\\u0110ATNCN\\srcDATN\\Views\\Shared\\Thietbi.cshtml",
+              "RelativeDocumentMoniker": "Views\\Shared\\Thietbi.cshtml",
+              "ToolTip": "C:\\Users\\Lenovo\\OneDrive\\Desktop\\\u0110ATNCN\\srcDATN\\Views\\Shared\\Thietbi.cshtml",
+              "RelativeToolTip": "Views\\Shared\\Thietbi.cshtml",
+              "ViewState": "AgIAAIYBAAAAAAAAAAAMwDcCAAA/AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-06-29T10:42:05.575Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Kho.cshtml",
+              "DocumentMoniker": "C:\\Users\\Lenovo\\OneDrive\\Desktop\\\u0110ATNCN\\srcDATN\\Views\\Shared\\Kho.cshtml",
+              "RelativeDocumentMoniker": "Views\\Shared\\Kho.cshtml",
+              "ToolTip": "C:\\Users\\Lenovo\\OneDrive\\Desktop\\\u0110ATNCN\\srcDATN\\Views\\Shared\\Kho.cshtml",
+              "RelativeToolTip": "Views\\Shared\\Kho.cshtml",
+              "ViewState": "AgIAACMCAAAAAAAAAAAMwC8CAAAcAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-06-27T16:15:04.33Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "ItemDisplay.cs",
+              "DocumentMoniker": "C:\\Users\\Lenovo\\OneDrive\\Desktop\\\u0110ATNCN\\srcDATN\\Models\\ItemDisplay.cs",
+              "RelativeDocumentMoniker": "Models\\ItemDisplay.cs",
+              "ToolTip": "C:\\Users\\Lenovo\\OneDrive\\Desktop\\\u0110ATNCN\\srcDATN\\Models\\ItemDisplay.cs",
+              "RelativeToolTip": "Models\\ItemDisplay.cs",
+              "ViewState": "AgIAADgAAAAAAAAAAAAQwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-27T14:54:08.561Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

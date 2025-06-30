@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "cczvhvgSnddOhrkaRCHBsM/7MfpcuxeXwq1qpfCph78=",
+  "Hash": "m/L7yMf3DhqYfNtvDfaq+TVujDoN6m563s9UkSQRwp0=",
   "Source": "Hospital_Test",
   "BasePath": "_content/Hospital_Test",
   "Mode": "Default",
@@ -72,25 +72,6 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\favicon.ico"
-    },
-    {
-      "Identity": "C:\\Users\\Lenovo\\OneDrive\\Desktop\\ĐATNCN\\srcDATN\\wwwroot\\js\\site.js",
-      "SourceId": "Hospital_Test",
-      "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\Lenovo\\OneDrive\\Desktop\\ĐATNCN\\srcDATN\\wwwroot\\",
-      "BasePath": "_content/Hospital_Test",
-      "RelativePath": "js/site.js",
-      "AssetKind": "All",
-      "AssetMode": "All",
-      "AssetRole": "Primary",
-      "AssetMergeBehavior": "PreferTarget",
-      "AssetMergeSource": "",
-      "RelatedAsset": "",
-      "AssetTraitName": "",
-      "AssetTraitValue": "",
-      "CopyToOutputDirectory": "Never",
-      "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "wwwroot\\js\\site.js"
     },
     {
       "Identity": "C:\\Users\\Lenovo\\OneDrive\\Desktop\\ĐATNCN\\srcDATN\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.css",
