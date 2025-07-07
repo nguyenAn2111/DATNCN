@@ -135,10 +135,11 @@
 					<label for="roomType" style="font-weight: bold;">Chức năng phòng (Thuộc khoa):</label><br />
 					<select id="roomType" name="room_type" required style="width: 100%; padding: 6px;">
 						<option value="">----- Chọn chức năng phòng -----</option>
+						<option value="Điều trị">Khu điều trị</option>
 						<option value="Phòng khám">Phòng khám</option>
 						<option value="Phòng mổ">Phòng mổ</option>
 						<option value="Cấp cứu">Khoa cấp cứu</option>
-						<option value="Xét nghiệm">Khoa xét nghiệm</option>
+						<option value="Xét nghiệm">Khu xét nghiệm</option>
 						<option value="Hồi sức tích cực">Hồi sức tích cực</option>
 						<option value="Khoa nhi">Khoa nhi</option>
 						<option value="Khoa nội">Khoa nội</option>
@@ -261,7 +262,7 @@
 								</select>
 							</div>
 							<div>
-								<label for="import-date">Ngày nhập kho:</label>
+								<label for="import-date">Ngày xuất kho:</label>
 								<input type="date" id="export-date" name="estrDate" required>
 							</div>
 						</div>
@@ -335,13 +336,12 @@
 			<table id="historyTable">
 				<thead>
 					<tr>
-
-						<th>Tên thiết bị</th>
-						<th>Mã ID</th>
-						<th>Ngày xuất/nhập kho</th>
-						<th>Vị trí nguồn</th>
-						<th>Vị trí đích (Vị trí hiện tại) </th>
-						<th>Xóa lịch sử điều chuyển</th>
+						<th style="text-align: center;">Tên thiết bị</th>
+						<th style="text-align: center;">Mã ID</th>
+						<th style="text-align: center;">Ngày xuất/nhập kho - điều chuyển</th>
+						<th style="text-align: center;">Vị trí nguồn</th>
+						<th style="text-align: center;">Vị trí đích</th>
+						<th style="text-align: center;">Xóa lịch sử điều chuyển</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -350,12 +350,12 @@
 
 						<tr>
 
-							<td>@item.device_name</td>
-							<td>@item.FK_device_id</td>
-							<td data-order="@item.storage_date.ToString("yyyyMMdd")">@item.storage_date.ToString("dd/MM/yyyy")</td>
-							<td>@item.FK_room_id_from</td>
-							<td>@item.FK_room_id_to</td>
-							<td>
+							<td >@item.device_name</td>
+							<td style="text-align: center;">@item.FK_device_id</td>
+							<td style="text-align: center;" data-order="@item.storage_date.ToString("yyyyMMdd")">@item.storage_date.ToString("dd/MM/yyyy")</td>
+							<td style="text-align: center;">@item.FK_room_id_from</td>
+							<td style="text-align: center;">@item.FK_room_id_to</td>
+							<td style="text-align: center;">
 								<a href="#" class="delete-btn" data-id="@item.storage_id">
 									<i class="fa-solid fa-trash-can"></i>
 								</a>

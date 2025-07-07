@@ -125,38 +125,35 @@
 		<!-- Căn giữa và mở rộng bảng -->
 		<div style="display: flex; justify-content: center;">
 			<div style="width: 60%;">
-				<table class="table table-bordered text-center">
-					<thead class="table-info">
+				<table style="width: 100%; border-collapse: collapse;" border="1">
+					<thead style="background-color: #d1ecf1;">
 						<tr>
-
-							<th>Tên thiết bị</th>
-							<th>Mã ID</th>
-							<th>Ngày xuất/nhập kho</th>
-							<th>Vị trí nguồn</th>
-							<th>Vị trí đích</th>
+							<th style="text-align: center;">Tên thiết bị</th>
+							<th style="text-align: center;">Mã ID</th>
+							<th style="text-align: center;">Ngày xuất/nhập kho - điều chuyển</th>
+							<th style="text-align: center;">Vị trí nguồn</th>
+							<th style="text-align: center;">Vị trí đích</th>
 						</tr>
 					</thead>
 					<tbody>
 						@if (ViewBag.StorageHistory != null)
 						{
-
 							@foreach (var item in ((IEnumerable<dynamic>)ViewBag.StorageHistory).OrderBy(x => x.storage_date))
 							{
 								<tr>
-
 									<td>@item.device_name</td>
 									<td>@item.FK_device_id</td>
-									<td>@item.storage_date?.ToString("dd/MM/yyyy")</td>
-									<td>@item.FK_room_id_from</td>
-									<td>@item.FK_room_id_to</td>
+									<td style="text-align: center;">@item.storage_date?.ToString("dd/MM/yyyy")</td>
+									<td style="text-align: center;">@item.FK_room_id_from</td>
+									<td style="text-align: center;">@item.FK_room_id_to</td>
 								</tr>
-
 							}
 						}
 					</tbody>
 				</table>
 			</div>
 		</div>
+
 	</div>
 
 

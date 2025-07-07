@@ -170,7 +170,7 @@ namespace Hospital_Test.Controllers
 			return View("~/Views/Shared/Trangchu.cshtml");
 		}
 
-
+		//-------------Thiết bị---------------------
 		//Form them thiet bi
 		public IActionResult Thietbi_Add()
 		{
@@ -424,7 +424,23 @@ namespace Hospital_Test.Controllers
 
 
 			return RedirectToAction("Thietbi");
+
 		}
+		[HttpPost]
+		public JsonResult Thietbi_Delete(string id)
+		{
+			try
+			{
+				string query = $"DELETE FROM dbo.tbl_device WHERE device_id = '{id}'";
+				DataProvider<Device>.Instance.ExcuteQuery(query);
+				return Json(new { success = true });
+			}
+			catch (Exception ex)
+			{
+				return Json(new { success = false, error = ex.Message });
+			}
+		}
+
 		public void CheckAllDevicesMaintenanceStatus() //sửa lại cách tính chu kì bằng Tháng
 		{
 			// Lấy danh sách tất cả thiết bị
@@ -459,25 +475,10 @@ namespace Hospital_Test.Controllers
 			}
 		}
 
-		[HttpPost]
-		public JsonResult Thietbi_Delete(string id)
-		{
-			try
-			{
-				string query = $"DELETE FROM dbo.tbl_device WHERE device_id = '{id}'";
-				DataProvider<Device>.Instance.ExcuteQuery(query);
-				return Json(new { success = true });
-			}
-			catch (Exception ex)
-			{
-				return Json(new { success = false, error = ex.Message });
-			}
-		}
 		public IActionResult Baotri_Suachua()
 		{
 			return View("~/Views/Shared/Baotri_Suachua.cshtml");
 		}
-
 		/// //////////////////////////////////////////////////////////////
 		//---------------------------------------Bảo trì--------------------------------
 		public IActionResult Baotri_Add()
@@ -980,6 +981,8 @@ WHERE d.FK_status_id LIKE '0%'";
 		{
 			return RedirectToAction("Suachua", new { sort = sortOrder, searchField = searchField, searchString = searchString, page = currentPage });
 		}
+
+
 		//---------------------------------Kho-----------------------------------------------
 		public IActionResult Kho()
 		{
@@ -1223,6 +1226,8 @@ WHERE d.FK_status_id LIKE '0%'";
 			DataProvider<Storage>.Instance.ExcuteQuery(String.Format("DELETE FROM dbo.tbl_storage WHERE storage_id = {0}", storage_id_del));
 			return RedirectToAction("Kho");
 		}
+
+
  //-------------------------Tài chính - Hợp đồng-----------------------------------------
         //Tài chính hợp đồng
         public IActionResult Taichinh_Hopdong()

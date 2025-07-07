@@ -43,14 +43,14 @@
                     <table id="dataTable" style="width:100%;">
                         <thead>
                             <tr>
-                                <th>Mã ID thiết bị</th>
-                                <th>Mã series thiết bị </th>
-                                <th>Tên thiết bị</th>
-                                <th>Vị trí hiện tại</th>
-                                <th>Trạng thái hiện tại</th>
-                                <th>Ngày nhập về</th>
-                                <th>Chi tiết</th>
-                                <th>Xóa</th>
+							<th style="text-align: center;">Mã ID thiết bị</th>
+							<th style="text-align: center;">Mã series thiết bị </th>
+							<th style="text-align: center;">Tên thiết bị</th>
+							<th style="text-align: center;">Vị trí hiện tại</th>
+							<th style="text-align: center;">Trạng thái hiện tại</th>
+							<th style="text-align: center;">Ngày nhập về</th>
+							<th style="text-align: center;">Chi tiết</th>
+							<th style="text-align: center;">Xóa</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -60,19 +60,19 @@
 							{
 								<tr>
 									<td class="facility"> @item.device_id</td>
-									<td class="facility"> @item.device_seri</td>
+									<td style="text-align: center;" class="facility"> @item.device_seri</td>
 									<td class="facility"> @item.device_name</td>
-									<td class="facility"> @item.room_name</td>
-									<td class="facility"> @item.status_name</td>
-									<td class="facility"> @item.device_received_date?.ToString("dd/MM/yyyy")</td>
+									<td style="text-align: center;" class="facility"> @item.room_name</td>
+									<td style="text-align: center;" class="facility"> @item.status_name</td>
+									<td style="text-align: center;" class="facility"> @item.device_received_date?.ToString("dd/MM/yyyy")</td>
 
-									<td class="detaiil">
+									<td style="text-align: center;" class="detaiil">
 										<button class="detaiil-btn" data-device-id="@item.device_id">
 											<a href="#" class="fa-solid fa-circle-info" onclick="openDeviceDetail('@item.device_id')"></a>
 										</button>
 									</td>
 
-									<td class="delete">
+									<td style="text-align: center;" class="delete">
 										<button type="button" class="del-btn" data-device-id="@item.device_id">
 											<i class="fa-solid fa-trash"></i>
 										</button>

@@ -1,1 +1,323 @@
-[]
+[
+  {
+    "ContainingType": "Hospital_Test.Controllers.ApiController.DeviceApiController",
+    "Method": "GetAllDevices",
+    "RelativePath": "api/DeviceApi",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Hospital_Test.Controllers.ApiController.DeviceApiController",
+    "Method": "CreateDevice",
+    "RelativePath": "api/DeviceApi",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "device",
+        "Type": "Hospital_Test.Models.DeviceCreateModel",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Hospital_Test.Controllers.ApiController.DeviceApiController",
+    "Method": "GetDeviceById",
+    "RelativePath": "api/DeviceApi/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Hospital_Test.Controllers.ApiController.DeviceApiController",
+    "Method": "UpdateDevice",
+    "RelativePath": "api/DeviceApi/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.String",
+        "IsRequired": true
+      },
+      {
+        "Name": "device",
+        "Type": "Hospital_Test.Models.Device",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Hospital_Test.Controllers.ApiController.DeviceApiController",
+    "Method": "DeleteDevice",
+    "RelativePath": "api/DeviceApi/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Hospital_Test.Controllers.Api.MaintainApiController",
+    "Method": "GetAllMaintains",
+    "RelativePath": "api/MaintainApi",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Hospital_Test.Controllers.Api.MaintainApiController",
+    "Method": "CreateMaintain",
+    "RelativePath": "api/MaintainApi",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "maintain",
+        "Type": "Hospital_Test.Models.MaintainCreateModel",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Hospital_Test.Controllers.Api.MaintainApiController",
+    "Method": "GetMaintainById",
+    "RelativePath": "api/MaintainApi/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Hospital_Test.Controllers.Api.MaintainApiController",
+    "Method": "DeleteMaintain",
+    "RelativePath": "api/MaintainApi/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Hospital_Test.Controllers.Api.MaintainApiController",
+    "Method": "UpdateMaintainStatus",
+    "RelativePath": "api/MaintainApi/updatestatus",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "Hospital_Test.Controllers.Api.MaintainApiController\u002BMaintainStatusUpdateRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Hospital_Test.Controllers.Api.RepairApiController",
+    "Method": "GetAllRepairs",
+    "RelativePath": "api/RepairApi",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Hospital_Test.Controllers.Api.RepairApiController",
+    "Method": "CreateRepair",
+    "RelativePath": "api/RepairApi",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "repair",
+        "Type": "Hospital_Test.Models.RepairCreateModel",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Hospital_Test.Controllers.Api.RepairApiController",
+    "Method": "GetRepairById",
+    "RelativePath": "api/RepairApi/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Hospital_Test.Controllers.Api.RepairApiController",
+    "Method": "DeleteRepair",
+    "RelativePath": "api/RepairApi/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Hospital_Test.Controllers.Api.RepairApiController",
+    "Method": "UpdateRepairStatus",
+    "RelativePath": "api/RepairApi/updatestatus",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "req",
+        "Type": "Hospital_Test.Controllers.Api.RepairApiController\u002BRepairStatusUpdateRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Hospital_Test.Controllers.ApiController.DeviceApiController",
+    "Method": "GetAllRooms",
+    "RelativePath": "api/room",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Hospital_Test.Controllers.Api.RoomApiController",
+    "Method": "GetAllRooms",
+    "RelativePath": "api/RoomApi",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Hospital_Test.Controllers.Api.StorageApiController",
+    "Method": "GetAllStorage",
+    "RelativePath": "api/StorageApi",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Hospital_Test.Controllers.Api.StorageApiController",
+    "Method": "DeleteStorage",
+    "RelativePath": "api/StorageApi/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Hospital_Test.Controllers.Api.StorageApiController",
+    "Method": "ExportDevice",
+    "RelativePath": "api/StorageApi/export",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "req",
+        "Type": "Hospital_Test.Controllers.Api.StorageApiController\u002BStorageRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Hospital_Test.Controllers.Api.StorageApiController",
+    "Method": "ImportDevice",
+    "RelativePath": "api/StorageApi/import",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "req",
+        "Type": "Hospital_Test.Controllers.Api.StorageApiController\u002BStorageRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Hospital_Test.Controllers.Api.StorageApiController",
+    "Method": "TransferDevice",
+    "RelativePath": "api/StorageApi/transfer",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "req",
+        "Type": "Hospital_Test.Controllers.Api.StorageApiController\u002BStorageRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  }
+]
