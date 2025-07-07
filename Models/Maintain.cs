@@ -4,9 +4,9 @@ using System;
 
 namespace Hospital_Test.Models
 {
-    public class Maintain
+	public class Maintain
     {
-        public string maintain_id { get; set; }
+	        public string maintain_id { get; set; }
         public DateTime? maintain_date { get; set; }
         public string maintain_maintenance { get; set; }
         public string maintain_maintenance_phone { get; set; }
